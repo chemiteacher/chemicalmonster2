@@ -5958,7 +5958,7 @@ const Monster3DRenderer = (() => {
       const arm = new THREE.Group();
       const shoulder = new THREE.Mesh(new THREE.SphereGeometry(0.13, 12, 12), accentMat);
       const forearm = new THREE.Mesh(
-        el.type === 'halogen' || el.type === 'transition' ? new THREE.ConeGeometry(0.11, 0.42, 6) : new THREE.CapsuleGeometry ? new THREE.CylinderGeometry(0.08, 0.11, 0.36, 10) : new THREE.CylinderGeometry(0.08, 0.11, 0.36, 10),
+        el.type === 'halogen' || el.type === 'transition' ? new THREE.ConeGeometry(0.11, 0.42, 6) : new THREE.CylinderGeometry(0.08, 0.11, 0.36, 10),
         coreMat
       );
       forearm.position.set(side * 0.08, -0.14, 0.14);
