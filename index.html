@@ -832,11 +832,84 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+    gap: 6px;
     font-size: 11px;
     font-weight: 900;
     color: #38bdf8;
     border-bottom: 1px solid #1e293b;
     padding-bottom: 4px;
+  }
+  .mini-learn-btn {
+    border: 1px solid #38bdf8;
+    background: rgba(14, 165, 233, 0.16);
+    color: #e0f2fe;
+    font-size: 10px;
+    font-weight: 800;
+    padding: 2px 6px;
+    border-radius: 6px;
+    cursor: pointer;
+    line-height: 1.2;
+    white-space: nowrap;
+  }
+  .mini-learn-btn:active { transform: scale(0.95); }
+  .mini-learn-btn.hint {
+    border-color: #facc15;
+    background: rgba(250, 204, 21, 0.16);
+    color: #fef08a;
+  }
+  .area-mastery-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 4px;
+  }
+  .area-mastery-bar {
+    flex: 1;
+    height: 6px;
+    background: #e2e8f0;
+    border-radius: 99px;
+    overflow: hidden;
+    max-width: 120px;
+  }
+  .area-mastery-fill {
+    height: 100%;
+    border-radius: 99px;
+    transition: width 0.25s ease;
+  }
+  .area-rank-badge {
+    font-size: 9.5px;
+    font-weight: 900;
+    padding: 1px 6px;
+    border-radius: 99px;
+    border: 1px solid transparent;
+  }
+  .area-rank-badge.rank-s { background: #fef08a; color: #854d0e; border-color: #eab308; }
+  .area-rank-badge.rank-a { background: #dcfce7; color: #166534; border-color: #22c55e; }
+  .area-rank-badge.rank-b { background: #dbeafe; color: #1e40af; border-color: #3b82f6; }
+  .area-rank-badge.rank-c { background: #fee2e2; color: #991b1b; border-color: #ef4444; }
+  .area-rank-badge.rank-none { background: #f1f5f9; color: #64748b; border-color: #cbd5e1; }
+  .area-note-btn {
+    background: #f0f9ff;
+    color: #0369a1;
+    border: 1.5px solid #38bdf8;
+    font-size: 10.5px;
+    font-weight: 800;
+    padding: 4px 7px;
+    border-radius: 8px;
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+  .learn-note-box {
+    width: min(92vw, 420px);
+    background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+    border: 3px solid #0284c7;
+    border-radius: 16px;
+    padding: 14px 16px;
+    box-shadow: 0 14px 36px rgba(15, 23, 42, 0.45);
+    color: #0f172a;
+    text-align: left;
+    max-height: 82vh;
+    overflow-y: auto;
   }
 
   .question-box {
@@ -1821,7 +1894,11 @@
         <div class="msg-window-card">
           <div class="msg-header-bar">
             <span id="battle-area-title">【単元1】純物質と混合物</span>
-            <span id="battle-unit-label">単位: -</span>
+            <div style="display:flex;align-items:center;gap:4px;flex-shrink:0;">
+              <button type="button" id="btn-battle-note" class="mini-learn-btn" onclick="Game.openAreaNote()">📖 要点</button>
+              <button type="button" id="btn-battle-hint" class="mini-learn-btn hint" onclick="Game.showQuestionHint()">💡 ヒント</button>
+              <span id="battle-unit-label">単位: -</span>
+            </div>
           </div>
           <div id="battle-question" class="question-box">問題を読み込み中…</div>
           <div id="battle-msg" class="msg-log-line">⚡ あっ！ やせいの ケミカルモンスター が とびだしてきた！</div>
@@ -1899,6 +1976,11 @@
       <div id="battle-exp-backdrop" class="exp-backdrop hidden">
         <div id="battle-exp-box" class="exp-banner-box"></div>
       </div>
+    </div>
+
+    <!-- 10秒要点まとめ＆公式ヒントオーバーレイ（画面のどこをタップしても閉じる） -->
+    <div id="learn-note-backdrop" class="exp-backdrop hidden" onclick="Game.closeAreaNote()">
+      <div id="learn-note-box" class="learn-note-box"></div>
     </div>
 
     <!-- チュートリアル導入・完了メッセージオーバーレイ（オーキド博士風） -->
@@ -3191,200 +3273,151 @@ const RECIPES = [
 
 const getRecipe = (id) => RECIPES.find(r => r.id === id) || RECIPES[0];
 
-// 指で動かして組み立てる有機化合物グラフ合成エンジン (OrganicLab)
+// 直感的なスロット＋ドラッグ式・有機化合物構造式ラボエンジン (OrganicLab v3)
 const OrganicLab = (() => {
   const GROUPS = [
-    { id: 'C',       label: '+C',       name: '炭素原子',       valence: 4, add: { C: 1, H: 0 },                 color: 0x334155, uiBg: '#334155', uiFg: '#ffffff', desc: '炭素鎖を伸ばす（結合の手4本）' },
-    { id: 'oh',      label: '-OH',      name: 'ヒドロキシ基',   valence: 1, add: { C: 0, H: 0, O: 1 },           color: 0xef4444, uiBg: '#fee2e2', uiFg: '#b91c1c', desc: 'アルコール / フェノール性' },
-    { id: 'cho',     label: '-CHO',     name: 'アルデヒド基',   valence: 1, add: { C: 1, H: 0, O: 1 },           color: 0xf59e0b, uiBg: '#fef3c7', uiFg: '#b45309', desc: '銀鏡・フェーリング反応陽性' },
-    { id: 'co',      label: '-CO-',     name: 'カルボニル基',   valence: 1, add: { C: 1, H: 0, O: 1 },           color: 0xf97316, uiBg: '#ffedd5', uiFg: '#c2410c', desc: 'ケトン構造（C=O）' },
-    { id: 'cooh',    label: '-COOH',    name: 'カルボキシ基',   valence: 1, add: { C: 1, H: 0, O: 2 },           color: 0xec4899, uiBg: '#fce7f3', uiFg: '#be185d', desc: '弱酸性・NaHCO₃とCO₂発生' },
-    { id: 'nh2',     label: '-NH₂',     name: 'アミノ基',       valence: 1, add: { C: 0, H: 1, N: 1 },           color: 0x3b82f6, uiBg: '#dbeafe', uiFg: '#1d4ed8', desc: '弱塩基性・ニンヒドリン陽性' },
-    { id: 'no2',     label: '-NO₂',     name: 'ニトロ基',       valence: 1, add: { C: 0, H: -1, N: 1, O: 2 },    color: 0xa855f7, uiBg: '#f3e8ff', uiFg: '#7e22ce', desc: 'ニトロ化で導入・還元でアミンへ' },
-    { id: 'cl',      label: '-Cl',      name: 'クロロ基',       valence: 1, add: { C: 0, H: -1, Cl: 1 },         color: 0x22c55e, uiBg: '#dcfce7', uiFg: '#15803d', desc: 'ハロゲン置換・バイルシュタイン' },
-    { id: 'br',      label: '-Br',      name: 'ブロモ基',       valence: 1, add: { C: 0, H: -1, Br: 1 },         color: 0xb91c1c, uiBg: '#fee2e2', uiFg: '#991b1b', desc: '臭素付加・置換誘導体' },
-    { id: 'so3h',    label: '-SO₃H',    name: 'スルホ基',       valence: 1, add: { C: 0, H: 0, S: 1, O: 3 },     color: 0xeab308, uiBg: '#fef9c3', uiFg: '#a16207', desc: '強酸性・陽イオン交換性' },
-    { id: 'och3',    label: '-OCH₃',    name: 'メトキシ基',     valence: 1, add: { C: 1, H: 2, O: 1 },           color: 0x06b6d4, uiBg: '#cffafe', uiFg: '#0e7490', desc: 'エーテル結合（-O-CH₃）' },
-    { id: 'ococh3',  label: '-OCOCH₃',  name: 'アセトキシ基',   valence: 1, add: { C: 2, H: 2, O: 2 },           color: 0x14b8a6, uiBg: '#ccfbf1', uiFg: '#0f766e', desc: 'エステル結合（アセチル化）' }
+    { id: 'oh',      label: '-OH',      name: 'ヒドロキシ基',   add: { C: 0, H: 0, O: 1 },           color: 0xef4444, uiBg: '#fee2e2', uiFg: '#b91c1c', desc: 'アルコール / フェノール性' },
+    { id: 'cooh',    label: '-COOH',    name: 'カルボキシ基',   add: { C: 1, H: 0, O: 2 },           color: 0xec4899, uiBg: '#fce7f3', uiFg: '#be185d', desc: 'カルボン酸（弱酸性・CO₂発生）' },
+    { id: 'cho',     label: '-CHO',     name: 'アルデヒド基',   add: { C: 1, H: 0, O: 1 },           color: 0xf59e0b, uiBg: '#fef3c7', uiFg: '#b45309', desc: '還元性（銀鏡・フェーリング陽性）' },
+    { id: 'coch3',   label: '-COCH₃',   name: 'アセチル(ケトン)', add: { C: 2, H: 2, O: 1 },         color: 0xf97316, uiBg: '#ffedd5', uiFg: '#c2410c', desc: 'ケトン構造（ヨードホルム陽性）' },
+    { id: 'ch3',     label: '-CH₃',     name: 'メチル基(枝)',   add: { C: 1, H: 2 },                 color: 0x334155, uiBg: '#e2e8f0', uiFg: '#0f172a', desc: '炭素鎖の枝分かれ・トルエン等' },
+    { id: 'nh2',     label: '-NH₂',     name: 'アミノ基',       add: { C: 0, H: 1, N: 1 },           color: 0x3b82f6, uiBg: '#dbeafe', uiFg: '#1d4ed8', desc: '塩基性（アニリン・アミノ酸）' },
+    { id: 'no2',     label: '-NO₂',     name: 'ニトロ基',       add: { C: 0, H: -1, N: 1, O: 2 },    color: 0xa855f7, uiBg: '#f3e8ff', uiFg: '#7e22ce', desc: 'ニトロ化（混酸で置換）' },
+    { id: 'cl',      label: '-Cl',      name: 'クロロ基',       add: { C: 0, H: -1, Cl: 1 },         color: 0x22c55e, uiBg: '#dcfce7', uiFg: '#15803d', desc: 'ハロゲン（バイルシュタイン青緑）' },
+    { id: 'br',      label: '-Br',      name: 'ブロモ基',       add: { C: 0, H: -1, Br: 1 },         color: 0xb91c1c, uiBg: '#fee2e2', uiFg: '#991b1b', desc: '臭素付加・置換誘導体' },
+    { id: 'so3h',    label: '-SO₃H',    name: 'スルホ基',       add: { C: 0, H: 0, S: 1, O: 3 },     color: 0xeab308, uiBg: '#fef9c3', uiFg: '#a16207', desc: '強酸性（スルホン化）' },
+    { id: 'och3',    label: '-OCH₃',    name: 'メトキシ基',     add: { C: 1, H: 2, O: 1 },           color: 0x06b6d4, uiBg: '#cffafe', uiFg: '#0e7490', desc: 'エーテル結合（-O-CH₃）' },
+    { id: 'ococh3',  label: '-OCOCH₃',  name: 'アセトキシ基',   add: { C: 2, H: 2, O: 2 },           color: 0x14b8a6, uiBg: '#ccfbf1', uiFg: '#0f766e', desc: 'エステル結合（アセチル化）' }
   ];
 
-  function makeBenzeneGraph() {
-    const cx = 180, cy = 110, r = 46;
-    const nodes = [];
-    const edges = [];
-    for (let i = 0; i < 6; i++) {
-      const a = (i / 6) * Math.PI * 2 - Math.PI / 2;
-      nodes.push({ id: i + 1, kind: 'C', x: Math.round(cx + Math.cos(a) * r), y: Math.round(cy + Math.sin(a) * r), aromatic: true });
-    }
-    for (let i = 0; i < 6; i++) {
-      edges.push({ a: i + 1, b: ((i + 1) % 6) + 1, order: (i % 2 === 0 ? 2 : 1), aromatic: true });
-    }
-    return { nextId: 7, nodes, edges };
+  function createChainState(cCount = 2, bonds = [], slots = {}) {
+    const b = [];
+    for (let i = 0; i < cCount - 1; i++) b.push(bonds[i] || 1);
+    return { mode: 'chain', cCount, bonds: b, slots: Object.assign({}, slots) };
+  }
+
+  function createRingState(mode = 'benzene', slots = {}) {
+    return { mode, cCount: 6, bonds: [1, 1, 1, 1, 1, 1], slots: Object.assign({}, slots) };
   }
 
   const PRESETS = [
-    {
-      label: 'エタノール',
-      build: () => ({
-        nextId: 4,
-        nodes: [{ id: 1, kind: 'C', x: 115, y: 115 }, { id: 2, kind: 'C', x: 185, y: 95 }, { id: 3, kind: 'oh', x: 255, y: 115 }],
-        edges: [{ a: 1, b: 2, order: 1 }, { a: 2, b: 3, order: 1 }]
-      })
-    },
-    {
-      label: 'エチレン',
-      build: () => ({
-        nextId: 3,
-        nodes: [{ id: 1, kind: 'C', x: 135, y: 110 }, { id: 2, kind: 'C', x: 225, y: 110 }],
-        edges: [{ a: 1, b: 2, order: 2 }]
-      })
-    },
-    {
-      label: '酢酸',
-      build: () => ({
-        nextId: 3,
-        nodes: [{ id: 1, kind: 'C', x: 135, y: 110 }, { id: 2, kind: 'cooh', x: 225, y: 110 }],
-        edges: [{ a: 1, b: 2, order: 1 }]
-      })
-    },
-    {
-      label: 'ベンゼン',
-      build: () => makeBenzeneGraph()
-    },
-    {
-      label: 'フェノール',
-      build: () => {
-        const g = makeBenzeneGraph();
-        g.nodes.push({ id: 7, kind: 'oh', x: 180, y: 26 });
-        g.edges.push({ a: 1, b: 7, order: 1 });
-        g.nextId = 8;
-        return g;
-      }
-    },
-    {
-      label: 'サリチル酸',
-      build: () => {
-        const g = makeBenzeneGraph();
-        g.nodes.push({ id: 7, kind: 'oh', x: 180, y: 26 });
-        g.nodes.push({ id: 8, kind: 'cooh', x: 270, y: 72 });
-        g.edges.push({ a: 1, b: 7, order: 1 }, { a: 2, b: 8, order: 1 });
-        g.nextId = 9;
-        return g;
-      }
-    },
-    {
-      label: 'アスピリン',
-      build: () => {
-        const g = makeBenzeneGraph();
-        g.nodes.push({ id: 7, kind: 'ococh3', x: 180, y: 26 });
-        g.nodes.push({ id: 8, kind: 'cooh', x: 270, y: 72 });
-        g.edges.push({ a: 1, b: 7, order: 1 }, { a: 2, b: 8, order: 1 });
-        g.nextId = 9;
-        return g;
-      }
-    },
-    {
-      label: 'アニリン',
-      build: () => {
-        const g = makeBenzeneGraph();
-        g.nodes.push({ id: 7, kind: 'nh2', x: 180, y: 26 });
-        g.edges.push({ a: 1, b: 7, order: 1 });
-        g.nextId = 8;
-        return g;
-      }
-    },
-    {
-      label: 'グリシン',
-      build: () => ({
-        nextId: 4,
-        nodes: [{ id: 1, kind: 'nh2', x: 105, y: 110 }, { id: 2, kind: 'C', x: 180, y: 110 }, { id: 3, kind: 'cooh', x: 258, y: 110 }],
-        edges: [{ a: 1, b: 2, order: 1 }, { a: 2, b: 3, order: 1 }]
-      })
-    }
+    { label: 'エタノール',   build: () => createChainState(2, [1], { '1_R': 'oh' }) },
+    { label: 'エチレン',     build: () => createChainState(2, [2], {}) },
+    { label: 'アセチレン',   build: () => createChainState(2, [3], {}) },
+    { label: '酢酸',         build: () => createChainState(1, [],  { '0_R': 'cooh' }) },
+    { label: 'アセトン',     build: () => createChainState(1, [],  { '0_R': 'coch3' }) },
+    { label: 'グリシン',     build: () => createChainState(1, [],  { '0_L': 'nh2', '0_R': 'cooh' }) },
+    { label: 'ベンゼン',     build: () => createRingState('benzene', {}) },
+    { label: 'フェノール',   build: () => createRingState('benzene', { 'R_0': 'oh' }) },
+    { label: 'トルエン',     build: () => createRingState('benzene', { 'R_0': 'ch3' }) },
+    { label: 'サリチル酸',   build: () => createRingState('benzene', { 'R_0': 'oh', 'R_1': 'cooh' }) },
+    { label: 'アスピリン',   build: () => createRingState('benzene', { 'R_0': 'ococh3', 'R_1': 'cooh' }) },
+    { label: 'アニリン',     build: () => createRingState('benzene', { 'R_0': 'nh2' }) }
   ];
+
+  // 現在の状態から有効な全スロット座標一覧を計算
+  function getAvailableSlots(st) {
+    const list = [];
+    if (st.mode === 'benzene' || st.mode === 'cyclo') {
+      const cx = 180, cy = 112, rC = 42, rS = 84;
+      for (let i = 0; i < 6; i++) {
+        const ang = (i / 6) * Math.PI * 2 - Math.PI / 2;
+        const cxPos = Math.round(cx + Math.cos(ang) * rC);
+        const cyPos = Math.round(cy + Math.sin(ang) * rC);
+        const sxPos = Math.round(cx + Math.cos(ang) * rS);
+        const syPos = Math.round(cy + Math.sin(ang) * rS);
+        let posLabel = `${i + 1}位`;
+        if (st.mode === 'benzene' && st.slots['R_0'] && i > 0) {
+          if (i === 1 || i === 5) posLabel = `${i + 1}位(o-)`;
+          else if (i === 2 || i === 4) posLabel = `${i + 1}位(m-)`;
+          else if (i === 3) posLabel = `4位(p-)`;
+        }
+        list.push({ key: `R_${i}`, cIdx: i, cx: cxPos, cy: cyPos, x: sxPos, y: syPos, posLabel });
+      }
+      return list;
+    }
+
+    // 鎖状モード (cCount: 1..5)
+    const n = Math.max(1, Math.min(5, st.cCount || 2));
+    const step = n <= 2 ? 72 : (n === 3 ? 62 : (n === 4 ? 52 : 44));
+    const startX = Math.round(180 - ((n - 1) * step) / 2);
+    const cy = 112;
+
+    for (let i = 0; i < n; i++) {
+      const cx = startX + i * step;
+      const leftOrder = i > 0 ? (st.bonds[i - 1] || 1) : 0;
+      const rightOrder = i < n - 1 ? (st.bonds[i] || 1) : 0;
+      const usedHands = leftOrder + rightOrder;
+      const remHands = Math.max(0, 4 - usedHands);
+
+      // 左端の左スロット
+      const candidates = [];
+      if (i === 0) candidates.push({ key: `${i}_L`, x: cx - 54, y: cy, posLabel: `C${i + 1}左` });
+      candidates.push({ key: `${i}_T`, x: cx, y: cy - 54, posLabel: `C${i + 1}上` });
+      candidates.push({ key: `${i}_B`, x: cx, y: cy + 54, posLabel: `C${i + 1}下` });
+      if (i === n - 1) candidates.push({ key: `${i}_R`, x: cx + 54, y: cy, posLabel: `C${i + 1}右` });
+
+      // 残りの手の数だけスロットを有効化（左・右を優先、次に上・下）
+      const ordered = [];
+      const lr = candidates.filter(c => c.key.endsWith('_L') || c.key.endsWith('_R'));
+      const tb = candidates.filter(c => c.key.endsWith('_T') || c.key.endsWith('_B'));
+      lr.concat(tb).slice(0, remHands).forEach(slot => {
+        ordered.push({ ...slot, cIdx: i, cx, cy });
+      });
+      list.push(...ordered);
+    }
+    return list;
+  }
 
   const SUB_DIGITS = '₀₁₂₃₄₅₆₇₈₉';
   const toSub = (n) => n <= 1 ? '' : String(n).split('').map(d => SUB_DIGITS[Number(d)] || d).join('');
-
   const ALKANE_NAMES = { 1:'メタン', 2:'エタン', 3:'プロパン', 4:'ブタン', 5:'ペンタン', 6:'ヘキサン', 7:'ヘプタン', 8:'オクタン', 9:'ノナン', 10:'デカン' };
   const KNOWN_MAP = {
     'C1H4': 'メタン', 'C2H6': 'エタン', 'C2H4': 'エチレン', 'C2H2': 'アセチレン',
-    'C3H8': 'プロパン', 'C3H6': 'プロペン / シクロプロパン', 'C4H10': 'ブタン', 'C4H8': 'ブテン / シクロブタン',
-    'C6H6': 'ベンゼン', 'C7H8': 'トルエン', 'C8H10': 'キシレン / エチルベンゼン',
-    'C1H4O1': 'メタノール', 'C2H6O1': 'エタノール', 'C3H8O1': 'プロパノール', 'C4H10O1': 'ブタノール',
+    'C3H8': 'プロパン', 'C3H6': 'プロペン', 'C4H10': 'ブタン / イソブタン', 'C4H8': 'ブテン',
+    'C5H12': 'ペンタン', 'C6H14': 'ヘキサン',
+    'C6H12': 'シクロヘキサン', 'C6H6': 'ベンゼン', 'C7H8': 'トルエン', 'C8H10': 'キシレン / エチルベンゼン',
+    'C1H4O1': 'メタノール', 'C2H6O1': 'エタノール / ジメチルエーテル', 'C3H8O1': 'プロパノール', 'C4H10O1': 'ブタノール',
     'C1H2O1': 'ホルムアルデヒド', 'C2H4O1': 'アセトアルデヒド', 'C3H6O1': 'アセトン / プロパナール',
-    'C1H2O2': 'ギ酸', 'C2H4O2': '酢酸', 'C3H6O2': 'プロピオン酸', 'C4H8O2': '酪酸',
-    'C6H6O1': 'フェノール', 'C7H8O1': 'クレゾール / ベンジルアルコール',
-    'C7H6O2': '安息香酸', 'C7H6O3': 'サリチル酸', 'C9H8O4': 'アセチルサリチル酸（アスピリン）',
+    'C1H2O2': 'ギ酸', 'C2H4O2': '酢酸', 'C3H6O2': 'プロピオン酸 / 酢酸メチル', 'C4H8O2': '酪酸 / 酢酸エチル',
+    'C6H6O1': 'フェノール', 'C6H6O2': 'カテコール / レゾルシノール / ヒドロキノン',
+    'C7H8O1': 'クレゾール / ベンジルアルコール / アニソール',
+    'C7H6O2': '安息香酸', 'C7H6O3': 'サリチル酸 / ヒドロキシ安息香酸',
+    'C8H6O4': 'フタル酸 / テレフタル酸',
+    'C9H8O4': 'アセチルサリチル酸（アスピリン）',
     'C8H8O3': 'サリチル酸メチル', 'C6H7N1': 'アニリン', 'C6H5N1O2': 'ニトロベンゼン',
     'C8H9N1O1': 'アセトアニリド', 'C2H5N1O2': 'グリシン', 'C3H7N1O2': 'アラニン',
     'C6H6O3S1': 'ベンゼンスルホン酸', 'C6H3Br3O1': '2,4,6-トリブロモフェノール'
   };
 
-  function getNodeBondOrderSum(graph, nodeId) {
-    let sum = 0;
-    (graph.edges || []).forEach(e => {
-      if (e.a === nodeId || e.b === nodeId) sum += (e.order || 1);
+  function analyzeState(st) {
+    const slots = getAvailableSlots(st);
+    const validKeys = new Set(slots.map(s => s.key));
+    // 無効になったスロットを掃除
+    Object.keys(st.slots || {}).forEach(k => {
+      if (!validKeys.has(k)) delete st.slots[k];
     });
-    return sum;
-  }
 
-  function detectRings(graph) {
-    const nodes = graph.nodes || [];
-    const edges = graph.edges || [];
-    // 連結成分数とオイラー標数: 環の数 = E - V + C_comp
-    if (nodes.length === 0) return 0;
-    const adj = {};
-    nodes.forEach(n => { adj[n.id] = []; });
-    edges.forEach(e => {
-      if (adj[e.a] && adj[e.b]) {
-        adj[e.a].push(e.b);
-        adj[e.b].push(e.a);
-      }
-    });
-    const vis = new Set();
-    let comps = 0;
-    nodes.forEach(n => {
-      if (!vis.has(n.id)) {
-        comps++;
-        const q = [n.id];
-        vis.add(n.id);
-        while (q.length) {
-          const cur = q.shift();
-          adj[cur].forEach(nxt => {
-            if (!vis.has(nxt)) { vis.add(nxt); q.push(nxt); }
-          });
-        }
-      }
-    });
-    return Math.max(0, edges.length - nodes.length + comps);
-  }
+    const nC = st.mode === 'chain' ? Math.max(1, Math.min(5, st.cCount || 2)) : 6;
+    const counts = { C: nC, H: 0, O: 0, N: 0, S: 0, Cl: 0, Br: 0 };
 
-  function analyzeGraph(graph) {
-    const nodes = graph.nodes || [];
-    const edges = graph.edges || [];
-    const cNodes = nodes.filter(n => n.kind === 'C');
-    const cBase = cNodes.length;
-    const counts = { C: 0, H: 0, O: 0, N: 0, S: 0, Cl: 0, Br: 0 };
+    // まずすべての有効スロットに H が1個ずつ付いているとし、官能基があれば置換する
+    counts.H = slots.length;
+    if (st.mode === 'cyclo') {
+      // シクロヘキサンは各CにHが2個ある（外側スロット1個＋内側H 1個）
+      counts.H += 6;
+    }
+
     const grpCounts = {};
-    const hByNode = {};
+    let hasPhenolOH = false;
+    let hasAlcoholOH = false;
 
-    // 各炭素原子の結合手(4)から残りのH数を計算
-    cNodes.forEach(n => {
-      counts.C += 1;
-      const used = getNodeBondOrderSum(graph, n.id);
-      const remH = Math.max(0, 4 - used);
-      hByNode[n.id] = remH;
-      counts.H += remH;
-    });
-
-    // 官能基ノードの原子を加算（炭素についていたHは既に結合1本分で1個減っているため、add.Hはそのまま純増分）
-    // ただし -NO2, -Cl, -Br は add.H = -1 になっていた旧仕様を修正し、結合1本で既にCからHが1つ減っているので add.H = 0 とする！
     const GRAPH_ADD = {
       oh:     { O: 1, H: 1 },
-      cho:    { C: 1, H: 1, O: 1 },
-      co:     { C: 1, O: 1 }, // -CO- (ケトン末端や置換基として) -> 実際は R-CO-CH3 相当なら CH3 もいるが単一基としては CO のみ or C=O
       cooh:   { C: 1, O: 2, H: 1 },
+      cho:    { C: 1, O: 1, H: 1 },
+      coch3:  { C: 2, O: 1, H: 3 },
+      ch3:     { C: 1, H: 3 },
       nh2:    { N: 1, H: 2 },
       no2:    { N: 1, O: 2 },
       cl:     { Cl: 1 },
@@ -3394,28 +3427,24 @@ const OrganicLab = (() => {
       ococh3: { C: 2, O: 2, H: 3 }
     };
 
-    let hasPhenolOH = false;
-    let hasAlcoholOH = false;
-    nodes.filter(n => n.kind !== 'C').forEach(n => {
-      grpCounts[n.kind] = (grpCounts[n.kind] || 0) + 1;
-      const delta = GRAPH_ADD[n.kind] || {};
+    slots.forEach(s => {
+      const gid = st.slots[s.key];
+      if (!gid) return;
+      counts.H -= 1; // H 1個が官能基に置き換わる
+      grpCounts[gid] = (grpCounts[gid] || 0) + 1;
+      const delta = GRAPH_ADD[gid] || {};
       Object.entries(delta).forEach(([el, v]) => {
         counts[el] = (counts[el] || 0) + v;
       });
-      if (n.kind === 'oh') {
-        const edge = edges.find(e => e.a === n.id || e.b === n.id);
-        const partnerId = edge ? (edge.a === n.id ? edge.b : edge.a) : null;
-        const partner = nodes.find(x => x.id === partnerId);
-        if (partner && partner.aromatic) hasPhenolOH = true;
+      if (gid === 'oh') {
+        if (st.mode === 'benzene') hasPhenolOH = true;
         else hasAlcoholOH = true;
       }
     });
 
-    // 不飽和・環判定
-    const dblCount = edges.filter(e => e.order === 2 && !e.aromatic).length;
-    const trpCount = edges.filter(e => e.order === 3).length;
-    const ringCount = detectRings(graph);
-    const hasBenzene = nodes.some(n => n.aromatic);
+    const dblCount = st.mode === 'chain' ? (st.bonds || []).filter(b => b === 2).length : 0;
+    const trpCount = st.mode === 'chain' ? (st.bonds || []).filter(b => b === 3).length : 0;
+    const hasBenzene = st.mode === 'benzene';
 
     const elemOrder = ['C', 'H', 'Br', 'Cl', 'N', 'O', 'S'];
     const rawKey = elemOrder.filter(k => counts[k] > 0).map(k => k + counts[k]).join('');
@@ -3425,17 +3454,23 @@ const OrganicLab = (() => {
     const mass = +elemOrder.reduce((s, k) => s + (counts[k] || 0) * AW[k], 0).toFixed(1);
 
     let name = KNOWN_MAP[rawKey];
+    // 同じ分子式でも構造から正確に区別できる代表例の補正
+    if (rawKey === 'C2H6O1') name = grpCounts.och3 ? 'ジメチルエーテル' : 'エタノール';
+    if (rawKey === 'C3H6O1') name = grpCounts.coch3 ? 'アセトン' : (grpCounts.cho ? 'プロパナール' : 'C₃H₆O異性体');
+    if (rawKey === 'C7H6O3' && hasBenzene) {
+      name = (st.slots['R_0'] && (st.slots['R_1'] || st.slots['R_5'])) ? 'サリチル酸（o-ヒドロキシ安息香酸）' : 'ヒドロキシ安息香酸';
+    }
     if (!name) {
-      let baseName = hasBenzene ? (cBase > 6 ? 'アルキルベンゼン' : 'ベンゼン') :
-                     ringCount > 0 ? 'シクロ' + (ALKANE_NAMES[cBase] || ('C' + cBase)) :
-                     (ALKANE_NAMES[cBase] || ('C' + cBase + '炭化水素'));
+      let baseName = hasBenzene ? 'ベンゼン' :
+                     st.mode === 'cyclo' ? 'シクロヘキサン' :
+                     (ALKANE_NAMES[counts.C] || ('C' + counts.C + '化合物'));
       if (dblCount > 0) baseName = baseName.replace('アン', 'エン').replace('タン', 'テン').replace('パン', 'ペン').replace('サン', 'セン');
       if (trpCount > 0) baseName = baseName.replace('アン', 'イン').replace('タン', 'チン').replace('パン', 'ピン').replace('サン', 'シン');
-      const gNames = Object.keys(grpCounts).map(id => {
+      const gNames = Object.keys(grpCounts).filter(id => id !== 'ch3').map(id => {
         const g = GROUPS.find(x => x.id === id);
         return (grpCounts[id] > 1 ? grpCounts[id] + '置換' : '') + (g ? g.name.replace('基', '') : '');
       });
-      name = gNames.length ? `${baseName}・${gNames.join('・')}体` : baseName;
+      name = gNames.length ? `${baseName}・${gNames.join('・')}誘導体` : baseName;
     }
 
     let chemType = null;
@@ -3446,24 +3481,24 @@ const OrganicLab = (() => {
 
     if (grpCounts.cooh || grpCounts.so3h) {
       chemType = 'acid'; monType = 'halogen'; fxColor = 0xec4899; fxColor2 = 0xfef08a;
-      props.push('弱〜強酸性（NaHCO₃と反応しCO₂発生）');
+      props.push('酸性（NaHCO₃と反応してCO₂発生）');
     } else if (hasPhenolOH) {
       chemType = 'acid'; monType = 'nonmetal'; fxColor = 0xa855f7; fxColor2 = 0xf472b6;
-      props.push('フェノール性（弱酸性・FeCl₃水溶液で紫色に呈色）');
+      props.push('フェノール類（弱酸性・FeCl₃で紫色呈色）');
     } else if (grpCounts.nh2) {
       chemType = 'base'; monType = 'alkali'; fxColor = 0x3b82f6; fxColor2 = 0x93c5fd;
-      props.push('塩基性（HClと反応して塩をつくる）');
+      props.push('塩基性（酸と塩をつくる）');
     }
     if (grpCounts.cho) {
-      props.push('還元性（銀鏡・フェーリング反応陽性）');
+      props.push('還元性（銀鏡反応・フェーリング反応陽性）');
       fxColor = 0xf59e0b;
     }
-    if (hasAlcoholOH) props.push('アルコール性-OH（Naと反応してH₂発生）');
-    if (grpCounts.co) props.push('カルボニル基（ケトン構造）');
+    if (hasAlcoholOH) props.push('アルコール性-OH（Naと反応しH₂発生・水素結合）');
+    if (grpCounts.coch3) props.push('ケトン基（ヨードホルム反応陽性）');
+    if (grpCounts.ococh3) props.push('エステル結合（けん化で加水分解）');
     if (dblCount > 0 || trpCount > 0) props.push('不飽和結合（臭素水を脱色・付加反応）');
     if (hasBenzene) props.push('ベンゼン環（芳香族・置換反応しやすい）');
-    else if (ringCount > 0) props.push('環状構造（シクロ環）');
-    if (props.length === 0) props.push('安定な飽和炭化水素骨格（光で置換反応）');
+    if (props.length === 0) props.push('飽和炭化水素（光でハロゲンと置換反応）');
 
     const cost = {};
     if (counts.C > 0) cost[6] = counts.C;
@@ -3486,6 +3521,36 @@ const OrganicLab = (() => {
       effect = 'catch_boost'; effectDesc = '【道具】捕獲率UP＆次ターン攻撃1.4倍';
     }
 
+    // 3D描画用の nodes & edges を生成
+    const nodes = [];
+    const edges = [];
+    if (st.mode === 'benzene' || st.mode === 'cyclo') {
+      for (let i = 0; i < 6; i++) {
+        const s = slots[i];
+        nodes.push({ id: i + 1, kind: 'C', x: s.cx, y: s.cy, aromatic: hasBenzene });
+        edges.push({ a: i + 1, b: ((i + 1) % 6) + 1, order: (hasBenzene && i % 2 === 0) ? 2 : 1, aromatic: hasBenzene });
+      }
+    } else {
+      const cMap = {};
+      slots.forEach(s => { cMap[s.cIdx] = { x: s.cx, y: s.cy }; });
+      for (let i = 0; i < nC; i++) {
+        const pt = cMap[i] || { x: 140 + i * 50, y: 112 };
+        nodes.push({ id: i + 1, kind: 'C', x: pt.x, y: pt.y });
+        if (i < nC - 1) {
+          edges.push({ a: i + 1, b: i + 2, order: st.bonds[i] || 1 });
+        }
+      }
+    }
+    let nextNid = nodes.length + 1;
+    slots.forEach(s => {
+      const gid = st.slots[s.key];
+      if (gid) {
+        nodes.push({ id: nextNid, kind: gid === 'coch3' ? 'co' : (gid === 'ch3' ? 'C' : gid), x: s.x, y: s.y });
+        edges.push({ a: s.cIdx + 1, b: nextNid, order: 1 });
+        nextNid++;
+      }
+    });
+
     const moves = [
       { name: `${name}・共有結合アタック`, desc: `${formula} の分子骨格から放つ有機反応弾！`, fxStyle: 'beam', fxColor, fxColor2, power: 1.0, tag: '⚔️基本(威力100)', bonusEffect: null },
       { name: grpCounts.cho ? '銀鏡還元・ミラーフラッシュ' : grpCounts.cooh ? '中和炭酸・ガスブラスト' : (hasBenzene ? '芳香族π電子・共鳴バリア' : '官能基反応・カタリスト'), desc: props[0], fxStyle: 'plasma', fxColor, fxColor2, power: 0.94, tag: chemType === 'base' ? '🧪特性(HP回復)' : '🧪特性(攻撃強化)', bonusEffect: chemType === 'base' ? 'heal_self' : 'catalyst' },
@@ -3507,15 +3572,15 @@ const OrganicLab = (() => {
       effect,
       effectDesc,
       desc: `${effectDesc} ／ 【相棒】${props.join('・')}`,
-      hByNode,
-      nodes: JSON.parse(JSON.stringify(nodes)),
-      edges: JSON.parse(JSON.stringify(edges)),
+      slots,
+      nodes,
+      edges,
       hasBenzene,
       moves
     };
   }
 
-  return { GROUPS, PRESETS, makeBenzeneGraph, getNodeBondOrderSum, analyzeGraph };
+  return { GROUPS, PRESETS, createChainState, createRingState, getAvailableSlots, analyzeState };
 })();
 
 // 単体元素モンスター(z:1..113)と合成化合物モンスター(isCompound:true)の双方を統一的に扱うメタデータ取得関数
@@ -4583,6 +4648,9 @@ const QuestionEngine = (() => {
     return null;
   }
 
+  let recentQuizByArea = {};
+  let lastQuizAnsIdx = -1;
+
   function generate(areaId) {
     const area = AREAS.find(a => a.id === areaId) || AREAS[0];
     if (area.mode === 'calc' || (area.mode === 'mix' && Math.random() < 0.55)) {
@@ -4598,20 +4666,38 @@ const QuestionEngine = (() => {
         return cq;
       }
     }
+    if (!recentQuizByArea[areaId]) recentQuizByArea[areaId] = [];
+    const qHist = recentQuizByArea[areaId];
     let item = null;
-    if (Math.random() < 0.3) {
+    if (Math.random() < 0.40) {
       item = genDynamicBasicQuiz(areaId);
+      for (let retry = 0; retry < 6 && item && qHist.includes(item.q); retry++) {
+        item = genDynamicBasicQuiz(areaId);
+      }
     }
     if (!item) {
       item = pickQuizItem(areaId);
+      for (let retry = 0; retry < 8 && item && qHist.includes(item.q); retry++) {
+        item = pickQuizItem(areaId);
+      }
+    }
+    if (item && item.q) {
+      qHist.push(item.q);
+      if (qHist.length > 10) qHist.shift();
     }
     const correctText = item.opts[item.ans];
-    const shuffled = shuffle(item.opts);
+    let shuffled = shuffle(item.opts);
+    // 直前の正解番号と連続して同じ位置に偏らないよう再シャッフル（まぐれ当たり防止）
+    if (shuffled.indexOf(correctText) === lastQuizAnsIdx && Math.random() < 0.75) {
+      shuffled = shuffle(item.opts);
+    }
+    const ansIdx = shuffled.indexOf(correctText);
+    lastQuizAnsIdx = ansIdx;
     return {
       type: 'quiz',
       q: item.q,
       opts: shuffled,
-      ansIdx: shuffled.indexOf(correctText),
+      ansIdx,
       exp: item.exp
     };
   }
@@ -7001,6 +7087,7 @@ const Game = (() => {
     lastIssuedTradeCode: '',
     mistakes: [],
     towerBest: 0,
+    areaStats: {},
     stats: { wins: 0, catches: 0, answered: 0, correct: 0 }
   };
 
@@ -7723,6 +7810,43 @@ const Game = (() => {
     if (mc) mc.textContent = Array.isArray(state.mistakes) ? state.mistakes.length : 0;
   }
 
+  // 全21単元の「10秒要点まとめ & 重要公式」
+  const AREA_NOTES = {
+    1:  { formula: '充填率＝(格子内の球の体積÷単位格子の体積)×100 / 配位数: 体心8・面心12・NaCl型6・CsCl型8', points: ['単位格子中の粒子数：体心立方＝2個、面心立方＝4個', 'イオン結晶の安定条件：陽イオンどうし・陰イオンどうしが接しない限界半径比', '共有結合結晶（ダイヤモンド・SiO₂）は高融点・硬い・電気を通さない（黒鉛は例外）'] },
+    2:  { formula: '沸点上昇 ΔTb ＝ Kb × m ／ 凝固点降下 ΔTf ＝ Kf × m', points: ['蒸気圧＝飽和蒸気圧となった温度が「沸点」', '非電解質の水溶液では質量モル濃度 m [mol/kg] に比例して沸点上昇・凝固点降下', '電解質は電離後の総粒子数（例：NaClは2倍、CaCl₂は3倍）で考える'] },
+    3:  { formula: '状態方程式 pV ＝ nRT ＝ (w/M)RT  (R ＝ 8.31×10³ Pa・L/(mol・K))', points: ['ボイル・シャルルの法則：pV / T ＝ 一定（絶対温度 T＝℃＋273）', '混合気体の全圧：P全 ＝ P₁ ＋ P₂（ドルトンの分圧の法則）', '実在気体は「高温・低圧」ほど理想気体に近づく（分子間力・体積を無視できる）'] },
+    4:  { formula: '質量モル濃度 m ＝ 溶質の物質量[mol] ÷ 溶媒の質量[kg] ／ 浸透圧 ΠV ＝ nRT', points: ['ヘンリーの法則：一定温度で液体に溶ける気体の物質量は圧力に比例する', 'コロイド溶液：チンダル現象・ブラウン運動・透析・電気泳動・凝析（多価イオンが有効）', '塩析：親水コロイドに多量の電解質を加えて沈殿させる操作'] },
+    5:  { formula: '反応エンタルピー ΔH ＝ 生成物のエンタルピー和 − 反応物のエンタルピー和', points: ['発熱反応は ΔH ＜ 0、吸熱反応は ΔH ＞ 0', 'ヘスの法則：反応の最初と最後が同じなら、経路によらず ΔH の和は一定', '結合エネルギーを使うときは「反応物の結合エネルギー和 − 生成物の結合エネルギー和」'] },
+    6:  { formula: 'ファラデーの法則: 電気量 Q ＝ I × t [C] ／ 電子の物質量 n ＝ Q ÷ 9.65×10⁴', points: ['鉛蓄電池：負極 Pb → PbSO₄、正極 PbO₂ → PbSO₄（放電でどちらも質量増加）', '燃料電池(H₂-O₂)：負極で H₂ が酸化、正極で O₂ が還元され水のみを生成', '電気分解の陽極：Pt・Au以外は電極自身が溶ける／陰極：イオン化傾向小さい陽イオンが析出'] },
+    7:  { formula: '平均の反応速度 v ＝ Δ[C] ÷ Δt ＝ k[A]ⁿ', points: ['反応速度を上げる条件：濃度大・温度上昇・表面積大・触媒の添加', '触媒は「活性化エネルギー Ea」を下げて正・逆両方の反応速度を大きくする（平衡は移動しない）', '活性化状態（遷移状態）を越えた粒子だけが反応できる'] },
+    8:  { formula: '平衡定数 K ＝ [C]ᶜ[D]ᵈ / ([A]ᵃ[B]ᵇ) ／ 水のイオン積 Kw ＝ [H⁺][OH⁻] ＝ 1.0×10⁻¹⁴', points: ['ルシャトリエの原理：変化を加えると、その変化を和らげる向きに平衡が移動する', '圧力を上げる → 気体分子の数が「減少」する向きへ移動', '電離平衡（酢酸）：[H⁺] ＝ √(cKa) ＝ cα ／ 緩衝液は少量の酸・塩基でも pH がほぼ一定'] },
+    9:  { formula: '典型元素：1〜2, 12〜18族 ／ 遷移元素：3〜11族（すべて金属・錯イオンや有色イオンが多い）', points: ['同じ族は価電子数が等しく性質が似る／遷移元素は最外殻電子が1〜2個で横にも性質が似る', '両性元素（Al, Zn, Sn, Pb：「ああすんなり」）は酸とも強塩基とも反応して H₂ 発生', '炎色反応：Li赤, Na黄, K赤紫, Cu青緑, Ca橙赤, Sr紅, Ba黄緑'] },
+    10: { formula: 'ハロゲン酸化力: F₂ ＞ Cl₂ ＞ Br₂ ＞ I₂ ／ 接触法(H₂SO₄)・オストワルト法(HNO₃)', points: ['気体捕集：NH₃(上方), HCl・Cl₂・SO₂・CO₂(下方), H₂・O₂・N₂・NO(水上)', 'ハロゲン化銀：AgFのみ水に溶け、AgCl(白)・AgBr(淡黄)・AgI(黄)は難溶', '濃硫酸の性質：不揮発性・脱水作用・吸湿性・熱濃硫酸は強い酸化作用'] },
+    11: { formula: 'Al の酸化還元・両性: 2Al + 2NaOH + 6H₂O → 2Na[Al(OH)₄] + 3H₂', points: ['NaOHは潮解性があり空気中の CO₂ を吸収する／NaHCO₃ ⇄ Na₂CO₃ 熱分解', 'CaCO₃(石灰石) → CaO(生石灰) → Ca(OH)₂(消石灰)', 'Al, Fe, Ni は濃硝酸に対して表面に緻密な酸化被膜をつくり「不動態」となる'] },
+    12: { formula: '錯イオン形状: [Ag(NH₃)₂]⁺(直線) / [Cu(NH₃)₄]²⁺(正方形) / [Zn(NH₃)₄]²⁺(正四面体)', points: ['Fe²⁺(淡緑)＋[Fe(CN)₆]³⁻ → 濃青色沈殿／Fe³⁺(黄褐)＋SCN⁻ → 血赤色溶液', 'Cu²⁺(青)にNH₃水少量→Cu(OH)₂青白沈殿、過剰→[Cu(OH)₂が溶けて]深青色溶液', 'MnO₄⁻(赤紫)は酸性で Mn²⁺(無色〜淡桃)、Cr₂O₇²⁻(橙)は還元されて Cr³⁺(緑)'] },
+    13: { formula: '金属の製錬：Fe(溶鉱炉 CO還元) / Al(融解塩電解) / Cu(電解精錬)', points: ['ソーダ石灰ガラス・陶磁器・セメントはケイ酸塩を主成分とする無機材料（セラミックス）', '光ファイバー・半導体には高純度ケイ素 Si や SiO₂ が用いられる', '合金：ジュラルミン(Al), 黄銅(Cu+Zn), 青銅(Cu+Sn), ステンレス(Fe+Cr+Ni)'] },
+    14: { formula: '燃焼法による元素分析: C → CO₂(質量×12/44)、H → H₂O(質量×2/18)、残りが O', points: ['不飽和度 ＝ (2C ＋ 2 − H − X ＋ N) ÷ 2（二重結合や環1つで1増える）', '構造異性体（鎖・位置・官能基）と立体異性体（シス-トランス・鏡像異性体）', '不斉炭素原子（4つの異なる原子団がついたC）があると鏡像異性体が存在'] },
+    15: { formula: 'アルカン CnH₂n+₂ ／ アルケン CnH₂n ／ アルキン CnH₂n-₂', points: ['アルカンは置換反応（Cl₂＋光）、アルケン・アルキンは付加反応（Br₂脱色・H₂O付加）', 'アセチレン(C₂H₂)：炭化カルシウム CaC₂＋水 で発生、直線形（三重結合）', 'マルコフニコフ則：非対称アルケンへのHX付加ではHの多い側のCにHがつく'] },
+    16: { formula: 'ヨードホルム反応: CH₃-CO- または CH₃-CH(OH)- で黄色沈殿 CHI₃', points: ['第一級アルコール → アルデヒド → カルボン酸 ／ 第二級 → ケトン ／ 第三級は酸化されにくい', '銀鏡反応・フェーリング反応：アルデヒド（とギ酸）が還元性を示す', 'カルボン酸＋アルコール ⇄ エステル＋水（濃硫酸を触媒として脱水縮合）'] },
+    17: { formula: 'ベンゼン C₆H₆（正六角形・平面・置換反応しやすい）／ 弱酸性: カルボン酸 ＞ 炭酸 ＞ フェノール', points: ['アニリン(塩基)はサラシ粉で赤紫色／塩化ジアゾニウム経由でアゾ染料（カップリング）', 'フェノールは FeCl₃ 水溶液で紫色呈色、NaOHに溶けるが NaHCO₃ には溶けない', 'サリチル酸＋メタノール → サリチル酸メチル(湿布)／＋無水酢酸 → アセチルサリチル酸(解熱鎮痛剤)'] },
+    18: { formula: 'セッケン R-COONa：親水基(-COO⁻)と疎水基(長鎖アルキル基)をもちミセルを形成', points: ['油脂＝高級脂肪酸＋グリセリンのトリエステル（不飽和が多いと液体＝脂肪油）', 'セッケンは弱塩基性を示し硬水（Ca²⁺, Mg²⁺）では沈殿するが、合成洗剤は硬水でも使える', '医薬品・食品添加物・染料などにはベンゼン環や複素環をもつ有機化合物が多い'] },
+    19: { formula: '単糖(C₆H₁₂O₆)：グルコース・フルクトース ／ 二糖(C₁₂H₂₂O₁₁)：スクロース(非還元性)・マルトース', points: ['デンプン（α-グルコース）はヨウ素デンプン反応で青紫色、セルロース（β-グルコース）は直線状', 'アミノ酸は両性イオンとなり等電点で沈殿／ペプチド結合(-CONH-)でタンパク質をつくる', 'ビウレット反応(赤紫: ペプチド2個以上)・キサントプロテイン反応(黄→橙: ベンゼン環)'] },
+    20: { formula: '付加重合：ポリエチレン・塩ビ・ポリスチレン ／ 縮合重合：ナイロン66・PET', points: ['ナイロン66：ヘキサメチレンジアミン＋アジピン酸（ポリアミド）', 'PET：テレフタル酸＋エチレングリコール（ポリエステル）', '熱可塑性樹脂（加熱で軟化）と熱硬化性樹脂（フェノール樹脂・尿素樹脂・メラミン樹脂）'] },
+    21: { formula: '天然ゴム：ポリイソプレン(シス型) ＋ 硫黄(加硫)で弾性UP ／ 高吸水性樹脂：ポリアクリル酸ナトリウム', points: ['イオン交換樹脂：陽イオン交換(-SO₃H)と陰イオン交換(-N⁺(CH₃)₃OH⁻)で純水をつくる', '生分解性プラスチック（ポリ乳酸など）は微生物によって水と CO₂ に分解される', '炭素繊維強化プラスチック(CFRP)などは軽量・高強度で航空機などに利用'] }
+  };
+
+  function getAreaMastery(areaId) {
+    const st = (state.areaStats && state.areaStats[areaId]) || { answered: 0, correct: 0 };
+    const ans = st.answered || 0;
+    const cor = st.correct || 0;
+    if (ans === 0) return { answered: 0, correct: 0, pct: 0, rank: '-', cls: 'rank-none', label: '未挑戦', color: '#94a3b8' };
+    const pct = Math.round((cor / ans) * 100);
+    if (pct >= 90 && ans >= 5) return { answered: ans, correct: cor, pct, rank: 'S', cls: 'rank-s', label: `S (${pct}%)`, color: '#eab308' };
+    if (pct >= 75) return { answered: ans, correct: cor, pct, rank: 'A', cls: 'rank-a', label: `A (${pct}%)`, color: '#22c55e' };
+    if (pct >= 55) return { answered: ans, correct: cor, pct, rank: 'B', cls: 'rank-b', label: `B (${pct}%)`, color: '#3b82f6' };
+    return { answered: ans, correct: cor, pct, rank: 'C', cls: 'rank-c', label: `C (${pct}%)`, color: '#ef4444' };
+  }
+
   function renderAreaList() {
     const list = document.getElementById('area-list');
     list.innerHTML = '';
@@ -7732,6 +7856,15 @@ const Game = (() => {
       const chCard = document.createElement('div');
       chCard.className = 'chapter-card';
 
+      // 章全体の平均正答率を集計
+      let chAns = 0, chCor = 0;
+      ch.areaIds.forEach(aid => {
+        const m = getAreaMastery(aid);
+        chAns += m.answered;
+        chCor += m.correct;
+      });
+      const chRateStr = chAns > 0 ? ` ｜ 習得率 ${Math.round((chCor / chAns) * 100)}%` : '';
+
       const header = document.createElement('div');
       header.className = 'chapter-header' + (isOpen ? ' open' : '');
       header.innerHTML = `
@@ -7740,7 +7873,7 @@ const Game = (() => {
             <span class="chapter-badge">第${ch.id}章</span>
             <span class="chapter-title">${ch.title}</span>
           </div>
-          <div class="chapter-sub">${ch.sub}（全${ch.areaIds.length}単元）</div>
+          <div class="chapter-sub">${ch.sub}（全${ch.areaIds.length}単元${chRateStr}）</div>
         </div>
         <div class="chapter-actions">
           <button type="button" class="chapter-random-btn" title="この章の単元からランダム出題">⚡章まとめ</button>
@@ -7772,17 +7905,33 @@ const Game = (() => {
           if (!a) return;
           const badgeCls = a.mode === 'calc' ? 'calc' : (a.mode === 'mix' ? 'mix' : '');
           const modeLabel = a.mode === 'calc' ? '計算' : (a.mode === 'mix' ? '混合' : '4択');
+          const m = getAreaMastery(a.id);
           const div = document.createElement('div');
           div.className = 'area-card';
           div.id = 'area-card-' + a.id;
           div.onclick = () => startWildBattle(a.id);
           div.innerHTML = `
-            <div>
+            <div style="flex:1;min-width:0;">
               <div><span class="area-num ${badgeCls}">単元${a.id}・${modeLabel}</span><span class="area-name">${a.name}</span></div>
               <div class="area-meta">出現元素: ${a.pool.slice(0,5).map(z => getElement(z).sym).join(', ')} ほか</div>
+              <div class="area-mastery-row">
+                <span class="area-rank-badge ${m.cls}">${m.label}</span>
+                <div class="area-mastery-bar"><div class="area-mastery-fill" style="width:${m.pct}%;background:${m.color};"></div></div>
+                ${m.answered > 0 ? `<span style="font-size:9.5px;color:#64748b;font-weight:700;">${m.correct}/${m.answered}問</span>` : ''}
+              </div>
             </div>
-            <div class="area-go">探索</div>
+            <div style="display:flex;align-items:center;gap:5px;flex-shrink:0;">
+              <button type="button" class="area-note-btn" title="10秒要点まとめ">📖</button>
+              <div class="area-go">探索</div>
+            </div>
           `;
+          const noteBtn = div.querySelector('.area-note-btn');
+          if (noteBtn) {
+            noteBtn.onclick = (e) => {
+              e.stopPropagation();
+              openAreaNote(a.id);
+            };
+          }
           body.appendChild(div);
         });
         chCard.appendChild(body);
@@ -8331,11 +8480,22 @@ const Game = (() => {
       battle.reviewCursor = idx + 1;
       areaId = m.areaId || 1;
       battle.areaId = areaId;
+      let revOpts = m.opts ? [...m.opts] : null;
+      let revAnsIdx = m.ansIdx;
+      // 復習時も毎回選択肢をシャッフルし直して位置覚えによるまぐれ当たりを防止
+      if (revOpts && typeof revAnsIdx === 'number' && revOpts[revAnsIdx] !== undefined) {
+        const correctTxt = revOpts[revAnsIdx];
+        for (let k = revOpts.length - 1; k > 0; k--) {
+          const rj = Math.floor(Math.random() * (k + 1));
+          [revOpts[k], revOpts[rj]] = [revOpts[rj], revOpts[k]];
+        }
+        revAnsIdx = revOpts.indexOf(correctTxt);
+      }
       q = {
         type: m.type,
         q: m.q,
-        opts: m.opts ? [...m.opts] : null,
-        ansIdx: m.ansIdx,
+        opts: revOpts,
+        ansIdx: revAnsIdx,
         ans: m.ans,
         unit: m.unit || '',
         exp: m.exp || ''
@@ -8354,6 +8514,7 @@ const Game = (() => {
     const ch = CHAPTERS.find(c => c.areaIds.includes(area.id));
     battle.currentQ = q;
     battle.selectedQuizIdx = null;
+    battle.usedHintThisTurn = false;
 
     const chPrefix = battle.kind === 'review'
       ? `【📝復習バトル・単元${area.id}】`
@@ -8440,6 +8601,11 @@ const Game = (() => {
     if (!battle || battle.locked) return;
     battle.locked = true;
     state.stats.answered++;
+    if (!state.areaStats || typeof state.areaStats !== 'object') state.areaStats = {};
+    const aidKey = String(battle.areaId || 1);
+    if (!state.areaStats[aidKey]) state.areaStats[aidKey] = { answered: 0, correct: 0 };
+    state.areaStats[aidKey].answered++;
+    if (isCorrect) state.areaStats[aidKey].correct++;
     const activeMon = getActiveBattleMon();
     const pMeta = getMonsterMeta(activeMon);
     const eMeta = getMonsterMeta(battle.enemy);
@@ -8479,7 +8645,7 @@ const Game = (() => {
 
       const activeChem = battle.equippedChem || pMeta.chemType || null;
       const mult = getTypeMultiplier(pMeta.type, eMeta.type, activeChem);
-      const rawDmg = calcAtk(activeMon) * movePowerMult * (0.92 + Math.random() * 0.22) * mult * battle.atkBuff;
+      const rawDmg = calcAtk(activeMon) * movePowerMult * (0.92 + Math.random() * 0.22) * mult * battle.atkBuff * (battle.usedHintThisTurn ? 0.85 : 1.0);
       let dmg = Math.max(12, Math.round(rawDmg));
       if (battle.kind === 'tutorial') {
         dmg = battle.eHp;
@@ -9233,6 +9399,7 @@ const Game = (() => {
     Monster3DRenderer.setHiddenMode();
     SoundEngine.playBGM('title');
     updateHomeBar();
+    renderAreaList();
     showScreen('home');
   }
 
@@ -9703,65 +9870,42 @@ const Game = (() => {
       `;
       body.appendChild(stockBox);
 
-      // 🧬 有機化合物・インタラクティブ構造式ラボ（指でドラッグ＆結合して合成）
-      if (!window.__orgGraph) {
-        window.__orgGraph = {
-          nextId: 3,
-          nodes: [
-            { id: 1, kind: 'C', x: 140, y: 110 },
-            { id: 2, kind: 'C', x: 220, y: 110 }
-          ],
-          edges: [{ a: 1, b: 2, order: 1 }]
-        };
+      // 🧬 有機化合物・直感構造式ラボ（炭素の4本の手スロット＋指ドラッグ＆ワンタップ装着）
+      if (!window.__orgState) {
+        window.__orgState = OrganicLab.createChainState(2, [1], { '1_R': 'oh' });
       }
-      if (typeof window.__orgTool === 'undefined') window.__orgTool = null; // null | { kind } | 'link'
-      if (typeof window.__orgSelId === 'undefined') window.__orgSelId = null;
-      if (typeof window.__orgLinkFrom === 'undefined') window.__orgLinkFrom = null;
-      if (typeof window.__orgMsg === 'undefined') window.__orgMsg = '💡 原子を指でドラッグ移動！下のパーツをCにドラッグ（またはタップ）してくっつけよう！';
+      if (typeof window.__orgTargetKey === 'undefined') window.__orgTargetKey = null;
+      if (typeof window.__orgMsg === 'undefined') {
+        window.__orgMsg = '💡 光っている「🎯H」の手に下の官能基がくっつきます！（ドラッグして好きな手につけたり、ついた官能基を別の手へ移動もできます）';
+      }
 
       const labBox = document.createElement('div');
       labBox.className = 'card-box';
       labBox.style.border = '2px solid #8b5cf6';
       labBox.style.background = 'linear-gradient(180deg, #faf5ff 0%, #f8fafc 100%)';
 
-      const attachPartToCarbon = (carbonId, partKind, dropX = null, dropY = null) => {
-        const g = window.__orgGraph;
-        const cNode = g.nodes.find(n => n.id === carbonId && n.kind === 'C');
-        if (!cNode) return false;
-        const used = OrganicLab.getNodeBondOrderSum(g, cNode.id);
-        if (used >= 4) {
-          window.__orgMsg = '⚠️ この炭素(C)はすでに結合の手が4本うまっています！';
-          SoundEngine.seWrong();
-          return false;
+      const pickNextEmptySlot = (slots, slotsMap, afterKey = null) => {
+        if (!slots.length) return null;
+        let startIdx = 0;
+        if (afterKey) {
+          const idx = slots.findIndex(s => s.key === afterKey);
+          if (idx !== -1) startIdx = (idx + 1) % slots.length;
         }
-        let nx = dropX, ny = dropY;
-        if (nx === null || ny === null) {
-          const cnt = g.edges.filter(e => e.a === cNode.id || e.b === cNode.id).length;
-          const ang = (cnt * 1.45) - 0.6;
-          nx = Math.max(26, Math.min(334, Math.round(cNode.x + Math.cos(ang) * 58)));
-          ny = Math.max(24, Math.min(196, Math.round(cNode.y + Math.sin(ang) * 58)));
-        } else {
-          // 少し離して配置（近すぎると見づらいため）
-          const dx = nx - cNode.x, dy = ny - cNode.y;
-          const dist = Math.hypot(dx, dy) || 1;
-          if (dist < 42) {
-            nx = Math.max(26, Math.min(334, Math.round(cNode.x + (dx / dist) * 54)));
-            ny = Math.max(24, Math.min(196, Math.round(cNode.y + (dy / dist) * 54)));
-          }
+        for (let k = 0; k < slots.length; k++) {
+          const s = slots[(startIdx + k) % slots.length];
+          if (!slotsMap[s.key]) return s.key;
         }
-        const newId = g.nextId++;
-        g.nodes.push({ id: newId, kind: partKind, x: nx, y: ny });
-        g.edges.push({ a: cNode.id, b: newId, order: 1 });
-        window.__orgSelId = newId;
-        const gMeta = OrganicLab.GROUPS.find(x => x.id === partKind);
-        window.__orgMsg = `✅ ${gMeta ? gMeta.label : partKind} を結合しました！（結合線をタップすると二重・三重結合に変えられます）`;
-        SoundEngine.seClick();
-        return true;
+        return slots[startIdx].key;
       };
 
       const renderLab = () => {
-        const g = window.__orgGraph;
-        const info = OrganicLab.analyzeGraph(g);
+        const st = window.__orgState;
+        const info = OrganicLab.analyzeState(st);
+        const slots = info.slots;
+        if (!window.__orgTargetKey || !slots.some(s => s.key === window.__orgTargetKey)) {
+          window.__orgTargetKey = pickNextEmptySlot(slots, st.slots);
+        }
+
         const canCraftOrg = Object.entries(info.cost).every(([z, need]) => (state.elements[z] || 0) >= need);
         const costHtml = Object.entries(info.cost).map(([z, need]) => {
           const have = state.elements[z] || 0;
@@ -9773,80 +9917,126 @@ const Game = (() => {
           `<button type="button" class="org-preset-btn" data-pidx="${i}" style="font-size:10px;padding:3px 7px;border-radius:999px;border:1px solid #c4b5fd;background:#fff;color:#5b21b6;font-weight:800;cursor:pointer;">${p.label}</button>`
         ).join('');
 
-        const paletteHtml = OrganicLab.GROUPS.map(gp => {
-          const isSel = window.__orgTool && window.__orgTool !== 'link' && window.__orgTool.kind === gp.id;
-          return `<button type="button" class="org-pal-btn" data-kind="${gp.id}" style="touch-action:none;font-size:10.5px;padding:5px 7px;border-radius:8px;border:2px solid ${isSel ? '#7c3aed' : '#cbd5e1'};background:${gp.uiBg};color:${gp.uiFg};font-weight:900;cursor:grab;box-shadow:${isSel ? '0 0 0 2px #c4b5fd' : 'none'};">${gp.label}</button>`;
-        }).join('');
+        const paletteHtml = OrganicLab.GROUPS.map(gp =>
+          `<button type="button" class="org-pal-btn" data-gid="${gp.id}" style="touch-action:none;font-size:10.5px;padding:5px 8px;border-radius:8px;border:1.5px solid #94a3b8;background:${gp.uiBg};color:${gp.uiFg};font-weight:900;cursor:pointer;box-shadow:0 2px 0 rgba(15,23,42,0.12);" title="${gp.name}：${gp.desc}">＋${gp.label}</button>`
+        ).join('');
 
-        // SVG 描画
-        const edgesSvg = g.edges.map((e, eIdx) => {
-          const n1 = g.nodes.find(n => n.id === e.a);
-          const n2 = g.nodes.find(n => n.id === e.b);
-          if (!n1 || !n2) return '';
-          const dx = n2.x - n1.x, dy = n2.y - n1.y;
-          const len = Math.hypot(dx, dy) || 1;
-          const nx = -dy / len, ny = dx / len;
-          const ord = e.order || 1;
-          let lines = '';
-          if (ord === 1) {
-            lines = `<line x1="${n1.x}" y1="${n1.y}" x2="${n2.x}" y2="${n2.y}" stroke="#334155" stroke-width="3.2" stroke-linecap="round"/>`;
-          } else if (ord === 2) {
-            lines = `<line x1="${n1.x+nx*3}" y1="${n1.y+ny*3}" x2="${n2.x+nx*3}" y2="${n2.y+ny*3}" stroke="#0284c7" stroke-width="2.6" stroke-linecap="round"/>
-                     <line x1="${n1.x-nx*3}" y1="${n1.y-ny*3}" x2="${n2.x-nx*3}" y2="${n2.y-ny*3}" stroke="#0284c7" stroke-width="2.6" stroke-linecap="round"/>`;
-          } else {
-            lines = `<line x1="${n1.x}" y1="${n1.y}" x2="${n2.x}" y2="${n2.y}" stroke="#7c3aed" stroke-width="2.4" stroke-linecap="round"/>
-                     <line x1="${n1.x+nx*4.5}" y1="${n1.y+ny*4.5}" x2="${n2.x+nx*4.5}" y2="${n2.y+ny*4.5}" stroke="#7c3aed" stroke-width="2.2" stroke-linecap="round"/>
-                     <line x1="${n1.x-nx*4.5}" y1="${n1.y-ny*4.5}" x2="${n2.x-nx*4.5}" y2="${n2.y-ny*4.5}" stroke="#7c3aed" stroke-width="2.2" stroke-linecap="round"/>`;
+        // 1. 骨格の炭素とC-C結合を描画
+        let backboneSvg = '';
+        if (st.mode === 'benzene' || st.mode === 'cyclo') {
+          const cx = 180, cy = 112;
+          for (let i = 0; i < 6; i++) {
+            const s1 = slots[i], s2 = slots[(i + 1) % 6];
+            backboneSvg += `<line x1="${s1.cx}" y1="${s1.cy}" x2="${s2.cx}" y2="${s2.cy}" stroke="#1e293b" stroke-width="3.5" stroke-linecap="round"/>`;
           }
-          const hit = `<line class="org-edge-hit" data-eidx="${eIdx}" x1="${n1.x}" y1="${n1.y}" x2="${n2.x}" y2="${n2.y}" stroke="transparent" stroke-width="16" style="cursor:pointer;"/>`;
-          return lines + hit;
-        }).join('');
+          if (st.mode === 'benzene') {
+            backboneSvg += `<circle cx="${cx}" cy="${cy}" r="23" fill="none" stroke="#f59e0b" stroke-width="3" stroke-dasharray="5,3"/>`;
+            backboneSvg += `<text x="${cx}" y="${cy + 3}" text-anchor="middle" font-size="8.5" font-weight="900" fill="#b45309">ベンゼン環</text>`;
+          } else {
+            backboneSvg += `<text x="${cx}" y="${cy + 3}" text-anchor="middle" font-size="8.5" font-weight="900" fill="#475569">シクロ環</text>`;
+          }
+          for (let i = 0; i < 6; i++) {
+            const s = slots[i];
+            backboneSvg += `<circle cx="${s.cx}" cy="${s.cy}" r="12" fill="#1e293b" stroke="#475569" stroke-width="1.5"/>
+                            <text x="${s.cx}" y="${s.cy + 4}" text-anchor="middle" font-size="10" font-weight="900" fill="#fff">C${i + 1}</text>`;
+          }
+        } else {
+          const n = Math.max(1, Math.min(5, st.cCount || 2));
+          const step = n <= 2 ? 72 : (n === 3 ? 62 : (n === 4 ? 52 : 44));
+          const startX = Math.round(180 - ((n - 1) * step) / 2);
+          const cy = 112;
+          for (let i = 0; i < n - 1; i++) {
+            const x1 = startX + i * step, x2 = startX + (i + 1) * step;
+            const mx = Math.round((x1 + x2) / 2);
+            const ord = st.bonds[i] || 1;
+            if (ord === 1) {
+              backboneSvg += `<line x1="${x1}" y1="${cy}" x2="${x2}" y2="${cy}" stroke="#1e293b" stroke-width="4"/>`;
+            } else if (ord === 2) {
+              backboneSvg += `<line x1="${x1}" y1="${cy - 4}" x2="${x2}" y2="${cy - 4}" stroke="#0284c7" stroke-width="3.2"/>
+                              <line x1="${x1}" y1="${cy + 4}" x2="${x2}" y2="${cy + 4}" stroke="#0284c7" stroke-width="3.2"/>`;
+            } else {
+              backboneSvg += `<line x1="${x1}" y1="${cy}" x2="${x2}" y2="${cy}" stroke="#7c3aed" stroke-width="2.6"/>
+                              <line x1="${x1}" y1="${cy - 6}" x2="${x2}" y2="${cy - 6}" stroke="#7c3aed" stroke-width="2.4"/>
+                              <line x1="${x1}" y1="${cy + 6}" x2="${x2}" y2="${cy + 6}" stroke="#7c3aed" stroke-width="2.4"/>`;
+            }
+            // タップで単⇄二重⇄三重結合を切り替える分かりやすいピルボタン
+            const bLabel = ord === 1 ? '—' : (ord === 2 ? '＝' : '≡');
+            const bCol = ord === 1 ? '#64748b' : (ord === 2 ? '#0284c7' : '#7c3aed');
+            backboneSvg += `<g class="org-bond-btn" data-bidx="${i}" style="cursor:pointer;">
+              <rect x="${mx - 12}" y="${cy - 25}" width="24" height="14" rx="5" fill="#ffffff" stroke="${bCol}" stroke-width="1.5"/>
+              <text x="${mx}" y="${cy - 15}" text-anchor="middle" font-size="10" font-weight="900" fill="${bCol}">${bLabel}</text>
+            </g>`;
+          }
+          for (let i = 0; i < n; i++) {
+            const cx = startX + i * step;
+            backboneSvg += `<circle cx="${cx}" cy="${cy}" r="16" fill="#0f172a" stroke="#475569" stroke-width="2"/>
+                            <text x="${cx}" y="${cy + 4}" text-anchor="middle" font-size="11.5" font-weight="900" fill="#ffffff">C${i + 1}</text>`;
+          }
+        }
 
-        const nodesSvg = g.nodes.map(n => {
-          const isC = n.kind === 'C';
-          const isSel = window.__orgSelId === n.id || window.__orgLinkFrom === n.id;
-          const gMeta = OrganicLab.GROUPS.find(x => x.id === n.kind);
-          const hCnt = isC ? (info.hByNode[n.id] || 0) : 0;
-          const cLabel = isC ? (hCnt === 0 ? 'C' : (hCnt === 1 ? 'CH' : 'CH' + (hCnt === 2 ? '₂' : hCnt === 3 ? '₃' : '₄'))) : (gMeta ? gMeta.label : n.kind);
-          const r = isC ? 17 : 18;
-          const fill = isC ? '#1e293b' : (gMeta ? gMeta.uiBg : '#fee2e2');
-          const txtCol = isC ? '#ffffff' : (gMeta ? gMeta.uiFg : '#991b1b');
-          const stroke = isSel ? '#facc15' : (isC ? '#64748b' : '#94a3b8');
-          const sw = isSel ? 3.5 : 2;
-          return `<g class="org-node" data-nid="${n.id}" style="cursor:grab;">
-            <circle class="org-node-ring" data-nid="${n.id}" cx="${n.x}" cy="${n.y}" r="${r + 4}" fill="none" stroke="transparent" stroke-width="3"/>
-            <circle cx="${n.x}" cy="${n.y}" r="${r}" fill="${fill}" stroke="${stroke}" stroke-width="${sw}"/>
-            <text x="${n.x}" y="${n.y + 4}" text-anchor="middle" font-size="${cLabel.length > 4 ? 9 : 11}" font-weight="900" fill="${txtCol}" pointer-events="none">${cLabel}</text>
-          </g>`;
+        // 2. 各炭素から伸びる「結合の手（スロット）」を描画
+        const slotsSvg = slots.map(s => {
+          const gid = st.slots[s.key];
+          const isTarget = window.__orgTargetKey === s.key;
+          const gMeta = gid ? OrganicLab.GROUPS.find(x => x.id === gid) : null;
+          const bondCol = gid ? '#334155' : (isTarget ? '#f59e0b' : '#94a3b8');
+          const bondDash = gid ? '' : 'stroke-dasharray="4,3"';
+          const fill = gid ? (gMeta ? gMeta.uiBg : '#fee2e2') : (isTarget ? '#fef9c3' : '#f8fafc');
+          const stroke = isTarget ? '#f59e0b' : (gid ? '#64748b' : '#94a3b8');
+          const sw = isTarget ? 3 : 1.8;
+          const label = gid ? (gMeta ? gMeta.label.replace(/^-/, '') : gid) : (isTarget ? '🎯H' : '＋H');
+          const fg = gid ? (gMeta ? gMeta.uiFg : '#991b1b') : (isTarget ? '#b45309' : '#64748b');
+          const r = gid ? 18 : 15;
+
+          return `
+            <line x1="${s.cx}" y1="${s.cy}" x2="${s.x}" y2="${s.y}" stroke="${bondCol}" stroke-width="2.4" ${bondDash}/>
+            <g class="org-slot-node" data-skey="${s.key}" style="cursor:pointer;touch-action:none;">
+              <circle class="org-slot-ring" data-skey="${s.key}" cx="${s.x}" cy="${s.y}" r="${r + 4}" fill="none" stroke="${isTarget ? 'rgba(245,158,11,0.35)' : 'transparent'}" stroke-width="4"/>
+              <circle cx="${s.x}" cy="${s.y}" r="${r}" fill="${fill}" stroke="${stroke}" stroke-width="${sw}"/>
+              <text x="${s.x}" y="${s.y + 3.5}" text-anchor="middle" font-size="${label.length > 5 ? 8 : (label.length > 3 ? 9.5 : 10.5)}" font-weight="900" fill="${fg}" pointer-events="none">${label}</text>
+              ${s.posLabel ? `<text x="${s.x}" y="${s.y - r - 3}" text-anchor="middle" font-size="8" font-weight="800" fill="#64748b" pointer-events="none">${s.posLabel}</text>` : ''}
+            </g>
+          `;
         }).join('');
 
         labBox.innerHTML = `
           <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px;">
-            <b style="font-size:13px;color:#6d28d9;">🧬 有機化合物・構造式ラボ（指で組み立て！）</b>
-            <span style="font-size:10px;font-weight:800;color:#7c3aed;">ドラッグ＆結合編集</span>
+            <b style="font-size:13px;color:#6d28d9;">🧬 有機化合物・直感構造式パズル</b>
+            <span style="font-size:10px;font-weight:800;color:#7c3aed;">炭素の4本の手にカチッと結合！</span>
           </div>
-          <div style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:6px;">${presetBtns}</div>
-          <div style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:5px;">
-            <button type="button" id="org-btn-link" style="font-size:10px;padding:4px 7px;border-radius:6px;border:1.5px solid ${window.__orgTool === 'link' ? '#0284c7' : '#94a3b8'};background:${window.__orgTool === 'link' ? '#0284c7' : '#fff'};color:${window.__orgTool === 'link' ? '#fff' : '#334155'};font-weight:800;cursor:pointer;">🔗 Cどうしを結合(環化)</button>
-            <button type="button" id="org-btn-benzene" style="font-size:10px;padding:4px 7px;border-radius:6px;border:1px solid #94a3b8;background:#fff;color:#334155;font-weight:800;cursor:pointer;">⬡ ベンゼン環</button>
-            <button type="button" id="org-btn-del" style="font-size:10px;padding:4px 7px;border-radius:6px;border:1px solid #fca5a5;background:#fef2f2;color:#dc2626;font-weight:800;cursor:pointer;">🗑️ 選択削除</button>
-            <button type="button" id="org-btn-reset" style="font-size:10px;padding:4px 7px;border-radius:6px;border:1px solid #cbd5e1;background:#fff;color:#475569;font-weight:800;cursor:pointer;">🔄 CH₄</button>
+          <div style="font-size:10px;font-weight:800;color:#475569;margin-bottom:3px;">▼ お手本プリセット（選んでから自由に改造できます）：</div>
+          <div style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:7px;">${presetBtns}</div>
+
+          <div style="font-size:10px;font-weight:800;color:#334155;margin-bottom:3px;">STEP 1：ベースの炭素骨格をえらぶ</div>
+          <div style="display:flex;gap:4px;flex-wrap:wrap;align-items:center;margin-bottom:6px;">
+            <button type="button" id="org-mode-chain" style="font-size:10.5px;padding:4px 8px;border-radius:6px;border:1.5px solid ${st.mode === 'chain' ? '#7c3aed' : '#cbd5e1'};background:${st.mode === 'chain' ? '#7c3aed' : '#fff'};color:${st.mode === 'chain' ? '#fff' : '#334155'};font-weight:800;cursor:pointer;">⛓️ 鎖状 (C${st.mode === 'chain' ? st.cCount : 2})</button>
+            ${st.mode === 'chain' ? `
+              <button type="button" id="org-c-dec" style="font-size:10.5px;padding:4px 8px;border-radius:6px;border:1px solid #94a3b8;background:#fff;font-weight:900;cursor:pointer;">−C</button>
+              <button type="button" id="org-c-inc" style="font-size:10.5px;padding:4px 8px;border-radius:6px;border:1px solid #94a3b8;background:#fff;font-weight:900;cursor:pointer;">＋C</button>
+            ` : ''}
+            <button type="button" id="org-mode-bz" style="font-size:10.5px;padding:4px 8px;border-radius:6px;border:1.5px solid ${st.mode === 'benzene' ? '#7c3aed' : '#cbd5e1'};background:${st.mode === 'benzene' ? '#7c3aed' : '#fff'};color:${st.mode === 'benzene' ? '#fff' : '#334155'};font-weight:800;cursor:pointer;">⬡ ベンゼン環</button>
+            <button type="button" id="org-mode-cy" style="font-size:10.5px;padding:4px 8px;border-radius:6px;border:1.5px solid ${st.mode === 'cyclo' ? '#7c3aed' : '#cbd5e1'};background:${st.mode === 'cyclo' ? '#7c3aed' : '#fff'};color:${st.mode === 'cyclo' ? '#fff' : '#334155'};font-weight:800;cursor:pointer;">⬢ シクロ環</button>
+            <button type="button" id="org-clear-slots" style="font-size:10px;padding:4px 7px;border-radius:6px;border:1px solid #fca5a5;background:#fef2f2;color:#dc2626;font-weight:800;cursor:pointer;">🧹 全てHに戻す</button>
           </div>
-          <div style="position:relative;border:2px solid #cbd5e1;border-radius:10px;background:#ffffff;overflow:hidden;margin-bottom:6px;box-shadow:inset 0 2px 6px rgba(15,23,42,0.06);">
-            <svg id="org-svg-canvas" viewBox="0 0 360 220" style="width:100%;height:220px;display:block;touch-action:none;user-select:none;">
+
+          <div style="position:relative;border:2px solid #cbd5e1;border-radius:10px;background:#ffffff;overflow:hidden;margin-bottom:5px;box-shadow:inset 0 2px 6px rgba(15,23,42,0.06);">
+            <svg id="org-svg-canvas" viewBox="0 0 360 224" style="width:100%;height:224px;display:block;touch-action:none;user-select:none;">
               <defs>
                 <pattern id="org-grid" width="20" height="20" patternUnits="userSpaceOnUse">
                   <path d="M 20 0 L 0 0 0 20" fill="none" stroke="#f1f5f9" stroke-width="1"/>
                 </pattern>
               </defs>
-              <rect width="360" height="220" fill="url(#org-grid)"/>
-              ${edgesSvg}
-              ${nodesSvg}
+              <rect width="360" height="224" fill="url(#org-grid)"/>
+              ${slotsSvg}
+              ${backboneSvg}
             </svg>
           </div>
-          <div id="org-guide-bar" style="font-size:10.5px;font-weight:800;color:#4c1d95;background:#ede9fe;border-radius:6px;padding:4px 8px;margin-bottom:6px;">${window.__orgMsg}</div>
-          <div style="font-size:10px;font-weight:800;color:#475569;margin-bottom:3px;">👇 パーツを指で上の「C」へドラッグ（またはタップ→Cをタップ）して結合：</div>
+
+          <div id="org-guide-bar" style="font-size:10.5px;font-weight:800;color:#4c1d95;background:#ede9fe;border-radius:6px;padding:5px 8px;margin-bottom:6px;line-height:1.4;">${window.__orgMsg}</div>
+
+          <div style="font-size:10px;font-weight:800;color:#334155;margin-bottom:4px;">STEP 2：官能基をタップ（または上の「＋H」へ指でドラッグ）して結合！</div>
           <div style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:8px;">${paletteHtml}</div>
+
           <div style="background:#0f172a;color:#f8fafc;border-radius:8px;padding:8px 10px;margin-bottom:8px;">
             <div style="display:flex;justify-content:space-between;align-items:baseline;gap:6px;">
               <b style="font-size:14px;color:#fde047;">${info.formula} 【${info.name}】</b>
@@ -9855,6 +10045,7 @@ const Game = (() => {
             <div style="font-size:10.5px;color:#cbd5e1;margin-top:3px;">性質: ${info.props.join(' ／ ')}</div>
             <div style="font-size:10.5px;margin-top:4px;background:rgba(255,255,255,0.1);padding:4px 6px;border-radius:4px;">必要元素: ${costHtml}</div>
           </div>
+
           <div style="display:flex;gap:6px;">
             <button type="button" id="org-craft-item" class="btn-primary" style="flex:1;padding:8px;font-size:11px;" ${canCraftOrg ? '' : 'disabled style="flex:1;padding:8px;font-size:11px;opacity:0.45;"'}>🎒 道具として錬成</button>
             <button type="button" id="org-craft-buddy" class="btn-primary" style="flex:1;padding:8px;font-size:11px;background:linear-gradient(180deg,#8b5cf6,#6d28d9);" ${canCraftOrg ? '' : 'disabled style="flex:1;padding:8px;font-size:11px;opacity:0.45;background:#64748b;"'}>🧬 有機相棒として合成</button>
@@ -9865,84 +10056,108 @@ const Game = (() => {
         const toSvgPt = (clientX, clientY) => {
           const r = svgEl.getBoundingClientRect();
           return {
-            x: Math.max(20, Math.min(340, Math.round(((clientX - r.left) / r.width) * 360))),
-            y: Math.max(20, Math.min(200, Math.round(((clientY - r.top) / r.height) * 220)))
+            x: ((clientX - r.left) / r.width) * 360,
+            y: ((clientY - r.top) / r.height) * 224
           };
         };
 
-        // ノードのドラッグ移動 & タップ処理
-        svgEl.querySelectorAll('.org-node').forEach(nodeEl => {
-          nodeEl.addEventListener('pointerdown', (ev) => {
+        const findClosestSlotKey = (clientX, clientY) => {
+          const sr = svgEl.getBoundingClientRect();
+          if (clientX < sr.left || clientX > sr.right || clientY < sr.top || clientY > sr.bottom) return null;
+          const pt = toSvgPt(clientX, clientY);
+          let bestKey = null, bestD = 32;
+          slots.forEach(s => {
+            const d = Math.hypot(s.x - pt.x, s.y - pt.y);
+            if (d < bestD) { bestD = d; bestKey = s.key; }
+          });
+          return bestKey;
+        };
+
+        // C-C結合バッジのタップで単結合(1)→二重結合(2)→三重結合(3)を切り替え
+        svgEl.querySelectorAll('.org-bond-btn').forEach(bEl => {
+          bEl.addEventListener('pointerdown', (ev) => {
             ev.stopPropagation();
-            const nid = Number(nodeEl.dataset.nid);
-            const nodeObj = g.nodes.find(x => x.id === nid);
-            if (!nodeObj) return;
-            nodeEl.setPointerCapture(ev.pointerId);
+            const bIdx = Number(bEl.dataset.bidx);
+            const cur = st.bonds[bIdx] || 1;
+            const next = (cur % 3) + 1;
+            st.bonds[bIdx] = next;
+            // 隣の炭素と合わせて4本を超える場合は自動で隣を単結合に調整
+            if (bIdx > 0 && st.bonds[bIdx - 1] + next > 3) st.bonds[bIdx - 1] = 1;
+            if (bIdx + 1 < st.bonds.length && st.bonds[bIdx + 1] + next > 3) st.bonds[bIdx + 1] = 1;
+            window.__orgMsg = next === 2
+              ? '⚡ 二重結合(C＝C)にしました！炭素の手が2本使われ、上下のHが1個ずつ減りました！'
+              : (next === 3 ? '⚡ 三重結合(C≡C)にしました！直線形になり上下のHがすべて外れました！' : '🔄 単結合(C—C)に戻しました！');
+            SoundEngine.seClick();
+            renderLab();
+          });
+        });
+
+        // スロットのタップ（🎯移動 or 官能基をHに戻す）＆ 指ドラッグで別のスロットへ移動（位置異性体体験！）
+        svgEl.querySelectorAll('.org-slot-node').forEach(sEl => {
+          sEl.addEventListener('pointerdown', (ev) => {
+            ev.stopPropagation();
+            const skey = sEl.dataset.skey;
+            const curGid = st.slots[skey];
             const startX = ev.clientX, startY = ev.clientY;
-            const origX = nodeObj.x, origY = nodeObj.y;
-            let moved = false;
+            let dragging = false;
+            let ghost = null;
+            let hoverKey = null;
 
             const onMove = (mv) => {
-              if (Math.hypot(mv.clientX - startX, mv.clientY - startY) > 4) moved = true;
-              if (!moved) return;
-              const pt = toSvgPt(mv.clientX, mv.clientY);
-              nodeObj.x = pt.x;
-              nodeObj.y = pt.y;
-              nodeEl.setAttribute('transform', `translate(${pt.x - origX}, ${pt.y - origY})`);
+              if (!curGid) return; // 空きスロットはドラッグ不要
+              if (Math.hypot(mv.clientX - startX, mv.clientY - startY) > 6) dragging = true;
+              if (!dragging) return;
+              const gMeta = OrganicLab.GROUPS.find(x => x.id === curGid);
+              if (!ghost) {
+                ghost = document.createElement('div');
+                ghost.textContent = gMeta ? gMeta.label : curGid;
+                ghost.style.cssText = `position:fixed;z-index:9999;pointer-events:none;padding:5px 10px;border-radius:999px;font-size:12px;font-weight:900;background:${gMeta ? gMeta.uiBg : '#fee2e2'};color:${gMeta ? gMeta.uiFg : '#991b1b'};border:2px solid #7c3aed;box-shadow:0 4px 12px rgba(0,0,0,0.28);transform:translate(-50%,-50%);`;
+                document.body.appendChild(ghost);
+              }
+              ghost.style.left = mv.clientX + 'px';
+              ghost.style.top = mv.clientY + 'px';
+              svgEl.querySelectorAll('.org-slot-ring').forEach(r => r.setAttribute('stroke', 'transparent'));
+              hoverKey = findClosestSlotKey(mv.clientX, mv.clientY);
+              if (hoverKey) {
+                const ring = svgEl.querySelector(`.org-slot-ring[data-skey="${hoverKey}"]`);
+                if (ring) ring.setAttribute('stroke', '#22c55e');
+              }
             };
+
             const onUp = () => {
               window.removeEventListener('pointermove', onMove);
               window.removeEventListener('pointerup', onUp);
-              if (moved) {
-                renderLab();
-                return;
-              }
-              if (!moved) {
-                // タップ動作
-                if (window.__orgTool === 'link') {
-                  if (nodeObj.kind !== 'C') {
-                    window.__orgMsg = '⚠️ 環化・結合できるのは炭素(C)どうしです！';
-                    renderLab();
-                    return;
-                  }
-                  if (!window.__orgLinkFrom) {
-                    window.__orgLinkFrom = nid;
-                    window.__orgMsg = '🔗 2つ目の炭素(C)をタップして結合してください！';
-                    SoundEngine.seClick();
-                    renderLab();
-                  } else if (window.__orgLinkFrom === nid) {
-                    window.__orgLinkFrom = null;
-                    renderLab();
-                  } else {
-                    const nA = g.nodes.find(x => x.id === window.__orgLinkFrom);
-                    const exists = g.edges.some(e => (e.a === nA.id && e.b === nid) || (e.a === nid && e.b === nA.id));
-                    if (exists) {
-                      window.__orgMsg = '⚠️ すでに結合しています（結合線をタップで多重結合にできます）';
-                    } else if (OrganicLab.getNodeBondOrderSum(g, nA.id) >= 4 || OrganicLab.getNodeBondOrderSum(g, nid) >= 4) {
-                      window.__orgMsg = '⚠️ 炭素の結合の手は4本までです！';
-                      SoundEngine.seWrong();
-                    } else {
-                      g.edges.push({ a: nA.id, b: nid, order: 1 });
-                      window.__orgMsg = '✅ 炭素どうしを結合しました！';
-                      SoundEngine.seClick();
-                    }
-                    window.__orgLinkFrom = null;
-                    window.__orgTool = null;
-                    renderLab();
-                  }
-                } else if (window.__orgTool && window.__orgTool.kind) {
-                  if (nodeObj.kind === 'C') {
-                    attachPartToCarbon(nodeObj.id, window.__orgTool.kind);
-                    renderLab();
-                  } else {
-                    window.__orgMsg = '⚠️ パーツは炭素(C)にくっつけてください！';
-                    renderLab();
-                  }
-                } else {
-                  window.__orgSelId = (window.__orgSelId === nid ? null : nid);
+              if (ghost) { ghost.remove(); ghost = null; }
+              if (dragging && curGid) {
+                if (hoverKey && hoverKey !== skey) {
+                  // 別のスロットへ付け替え（スワップ）
+                  const tmp = st.slots[hoverKey];
+                  st.slots[hoverKey] = curGid;
+                  if (tmp) st.slots[skey] = tmp;
+                  else delete st.slots[skey];
+                  window.__orgTargetKey = hoverKey;
+                  window.__orgMsg = '🔀 官能基の位置を付け替えました！（位置異性体・構造異性体の変化を確認しよう）';
                   SoundEngine.seClick();
-                  renderLab();
+                } else if (!hoverKey) {
+                  // キャンバス外にドラッグで取り外し
+                  delete st.slots[skey];
+                  window.__orgTargetKey = skey;
+                  window.__orgMsg = '🗑️ 官能基を取り外して「H」に戻しました！';
+                  SoundEngine.seClick();
                 }
+                renderLab();
+              } else {
+                // タップ動作
+                if (curGid) {
+                  delete st.slots[skey];
+                  window.__orgTargetKey = skey;
+                  window.__orgMsg = '🔄 タップした官能基を外して「🎯H」に戻しました！';
+                } else {
+                  window.__orgTargetKey = skey;
+                  window.__orgMsg = '🎯 装着先の手を選びました！下の官能基ボタンを押すとここにくっつきます！';
+                }
+                SoundEngine.seClick();
+                renderLab();
               }
             };
             window.addEventListener('pointermove', onMove);
@@ -9950,171 +10165,111 @@ const Game = (() => {
           });
         });
 
-        // 結合線のタップで単結合→二重→三重結合を切り替え
-        svgEl.querySelectorAll('.org-edge-hit').forEach(edgeEl => {
-          edgeEl.addEventListener('pointerdown', (ev) => {
-            ev.stopPropagation();
-            const eIdx = Number(edgeEl.dataset.eidx);
-            const e = g.edges[eIdx];
-            if (!e) return;
-            const nA = g.nodes.find(x => x.id === e.a);
-            const nB = g.nodes.find(x => x.id === e.b);
-            if (!nA || !nB || nA.kind !== 'C' || nB.kind !== 'C') {
-              window.__orgMsg = '💡 官能基との結合は単結合(1本)です。多重結合はCどうしで変更できます。';
-              renderLab();
-              return;
-            }
-            const cur = e.order || 1;
-            const nextOrd = (cur % 3) + 1;
-            if (nextOrd > cur) {
-              const sumA = OrganicLab.getNodeBondOrderSum(g, nA.id) + (nextOrd - cur);
-              const sumB = OrganicLab.getNodeBondOrderSum(g, nB.id) + (nextOrd - cur);
-              if (sumA > 4 || sumB > 4) {
-                e.order = 1;
-                window.__orgMsg = '🔄 炭素の結合手が4本を超えるため単結合に戻しました。';
-                SoundEngine.seClick();
-                renderLab();
-                return;
-              }
-            }
-            e.order = nextOrd;
-            window.__orgMsg = nextOrd === 2 ? '✅ 二重結合(C＝C)にしました！' : (nextOrd === 3 ? '✅ 三重結合(C≡C)にしました！' : '✅ 単結合(C−C)にしました！');
-            SoundEngine.seClick();
-            renderLab();
-          });
-        });
-
-        // パレットからの指ドラッグ＆ドロップ装着（タップ選択も両対応）
+        // パレットの官能基ボタン：ワンタップで🎯に即装着 ＆ 指ドラッグで好きなスロットへドロップ装着！
         labBox.querySelectorAll('.org-pal-btn').forEach(btn => {
           btn.addEventListener('pointerdown', (ev) => {
             ev.preventDefault();
-            const kind = btn.dataset.kind;
-            const gMeta = OrganicLab.GROUPS.find(x => x.id === kind);
+            const gid = btn.dataset.gid;
+            const gMeta = OrganicLab.GROUPS.find(x => x.id === gid);
             const startX = ev.clientX, startY = ev.clientY;
             let dragging = false;
             let ghost = null;
-            let hoverCid = null;
-
-            const clearHighlights = () => {
-              svgEl.querySelectorAll('.org-node-ring').forEach(el => el.setAttribute('stroke', 'transparent'));
-            };
+            let hoverKey = null;
 
             const onMove = (mv) => {
               if (Math.hypot(mv.clientX - startX, mv.clientY - startY) > 7) dragging = true;
               if (!dragging) return;
               if (!ghost) {
                 ghost = document.createElement('div');
-                ghost.textContent = gMeta ? gMeta.label : kind;
-                ghost.style.cssText = `position:fixed;z-index:9999;pointer-events:none;padding:6px 10px;border-radius:999px;font-size:12px;font-weight:900;background:${gMeta ? gMeta.uiBg : '#334155'};color:${gMeta ? gMeta.uiFg : '#fff'};border:2px solid #7c3aed;box-shadow:0 4px 12px rgba(0,0,0,0.3);transform:translate(-50%,-50%);`;
+                ghost.textContent = gMeta ? gMeta.label : gid;
+                ghost.style.cssText = `position:fixed;z-index:9999;pointer-events:none;padding:6px 10px;border-radius:999px;font-size:12px;font-weight:900;background:${gMeta ? gMeta.uiBg : '#fff'};color:${gMeta ? gMeta.uiFg : '#000'};border:2px solid #7c3aed;box-shadow:0 4px 12px rgba(0,0,0,0.3);transform:translate(-50%,-50%);`;
                 document.body.appendChild(ghost);
               }
               ghost.style.left = mv.clientX + 'px';
               ghost.style.top = mv.clientY + 'px';
-
-              clearHighlights();
-              hoverCid = null;
-              const sr = svgEl.getBoundingClientRect();
-              if (mv.clientX >= sr.left && mv.clientX <= sr.right && mv.clientY >= sr.top && mv.clientY <= sr.bottom) {
-                const pt = toSvgPt(mv.clientX, mv.clientY);
-                let bestD = 36;
-                g.nodes.filter(n => n.kind === 'C').forEach(cn => {
-                  const d = Math.hypot(cn.x - pt.x, cn.y - pt.y);
-                  if (d < bestD) { bestD = d; hoverCid = cn.id; }
-                });
-                if (hoverCid !== null) {
-                  const ring = svgEl.querySelector(`.org-node-ring[data-nid="${hoverCid}"]`);
-                  if (ring) ring.setAttribute('stroke', '#22c55e');
-                }
+              svgEl.querySelectorAll('.org-slot-ring').forEach(r => r.setAttribute('stroke', 'transparent'));
+              hoverKey = findClosestSlotKey(mv.clientX, mv.clientY);
+              if (hoverKey) {
+                const ring = svgEl.querySelector(`.org-slot-ring[data-skey="${hoverKey}"]`);
+                if (ring) ring.setAttribute('stroke', '#22c55e');
               }
             };
 
-            const onUp = (up) => {
+            const onUp = () => {
               window.removeEventListener('pointermove', onMove);
               window.removeEventListener('pointerup', onUp);
               if (ghost) { ghost.remove(); ghost = null; }
-              clearHighlights();
-              if (dragging) {
-                if (hoverCid !== null) {
-                  const pt = toSvgPt(up.clientX, up.clientY);
-                  attachPartToCarbon(hoverCid, kind, pt.x, pt.y);
-                  window.__orgTool = null;
-                } else {
-                  window.__orgMsg = '💡 キャンバス上の「C」の上で指を離すと結合できます！';
-                }
-                renderLab();
-              } else {
-                // タップで選択トグル
-                const same = window.__orgTool && window.__orgTool.kind === kind;
-                window.__orgTool = same ? null : { kind };
-                window.__orgLinkFrom = null;
-                window.__orgMsg = same ? '選択を解除しました' : `👆 「${gMeta ? gMeta.label : kind}」を選択中！上の炭素(C)をタップして結合しよう！`;
+              const targetKey = dragging ? hoverKey : (window.__orgTargetKey || (slots[0] && slots[0].key));
+              if (targetKey) {
+                st.slots[targetKey] = gid;
+                window.__orgTargetKey = pickNextEmptySlot(slots, st.slots, targetKey);
+                window.__orgMsg = `✅ ${gMeta ? gMeta.name + '(' + gMeta.label + ')' : gid} を結合しました！（${gMeta ? gMeta.desc : ''}）`;
                 SoundEngine.seClick();
-                renderLab();
+              } else if (dragging) {
+                window.__orgMsg = '💡 構造式の「＋H」の丸の上で指を離すと結合できます！（ボタンをポンとタップするだけでも結合します）';
               }
+              renderLab();
             };
             window.addEventListener('pointermove', onMove);
             window.addEventListener('pointerup', onUp);
           });
         });
 
+        // プリセット・骨格切替ボタン
         labBox.querySelectorAll('.org-preset-btn').forEach(btn => {
           btn.onclick = () => {
             SoundEngine.seClick();
             const p = OrganicLab.PRESETS[Number(btn.dataset.pidx)];
             if (p) {
-              window.__orgGraph = p.build();
-              window.__orgTool = null;
-              window.__orgSelId = null;
-              window.__orgMsg = `✨ 「${p.label}」を読み込みました！指で動かしたり官能基を付け替えられます！`;
+              window.__orgState = p.build();
+              window.__orgTargetKey = null;
+              window.__orgMsg = `✨ お手本「${p.label}」を展開しました！ここから官能基をタップやドラッグで自由に改造できます！`;
             }
             renderLab();
           };
         });
-
-        labBox.querySelector('#org-btn-link').onclick = () => {
+        labBox.querySelector('#org-mode-chain').onclick = () => {
           SoundEngine.seClick();
-          window.__orgTool = (window.__orgTool === 'link') ? null : 'link';
-          window.__orgLinkFrom = null;
-          window.__orgMsg = window.__orgTool === 'link' ? '🔗 つなぎたい1つ目の炭素(C)をタップしてください' : '結合モードを解除しました';
+          if (st.mode !== 'chain') window.__orgState = OrganicLab.createChainState(2, [1], {});
+          window.__orgTargetKey = null;
           renderLab();
         };
-        labBox.querySelector('#org-btn-benzene').onclick = () => {
+        const decBtn = labBox.querySelector('#org-c-dec');
+        if (decBtn) decBtn.onclick = () => {
           SoundEngine.seClick();
-          window.__orgGraph = OrganicLab.makeBenzeneGraph();
-          window.__orgTool = null;
-          window.__orgSelId = null;
-          window.__orgMsg = '⬡ ベンゼン環を配置しました！置換基をドラッグして芳香族を作ろう！';
+          const nextC = Math.max(1, (st.cCount || 2) - 1);
+          window.__orgState = OrganicLab.createChainState(nextC, st.bonds.slice(0, nextC - 1), st.slots);
+          window.__orgTargetKey = null;
           renderLab();
         };
-        labBox.querySelector('#org-btn-reset').onclick = () => {
+        const incBtn = labBox.querySelector('#org-c-inc');
+        if (incBtn) incBtn.onclick = () => {
           SoundEngine.seClick();
-          window.__orgGraph = { nextId: 2, nodes: [{ id: 1, kind: 'C', x: 180, y: 110 }], edges: [] };
-          window.__orgTool = null;
-          window.__orgSelId = null;
-          window.__orgMsg = '🔄 メタン(CH₄)にリセットしました！';
+          const nextC = Math.min(5, (st.cCount || 2) + 1);
+          window.__orgState = OrganicLab.createChainState(nextC, st.bonds, st.slots);
+          window.__orgTargetKey = null;
           renderLab();
         };
-        labBox.querySelector('#org-btn-del').onclick = () => {
-          if (!window.__orgSelId) {
-            window.__orgMsg = '💡 削除したい原子・官能基をタップして黄色枠で選択してから押してください';
-            renderLab();
-            return;
-          }
-          if (g.nodes.length <= 1) {
-            window.__orgMsg = '⚠️ 最後の炭素1個は削除できません';
-            renderLab();
-            return;
-          }
-          const delId = window.__orgSelId;
-          g.nodes = g.nodes.filter(n => n.id !== delId);
-          g.edges = g.edges.filter(e => e.a !== delId && e.b !== delId);
-          // 孤立ノード防止：1つもCがなくなったらリセット
-          if (!g.nodes.some(n => n.kind === 'C')) {
-            window.__orgGraph = { nextId: 2, nodes: [{ id: 1, kind: 'C', x: 180, y: 110 }], edges: [] };
-          }
-          window.__orgSelId = null;
-          window.__orgMsg = '🗑️ 選択したパーツを取り外しました';
+        labBox.querySelector('#org-mode-bz').onclick = () => {
           SoundEngine.seClick();
+          window.__orgState = OrganicLab.createRingState('benzene', {});
+          window.__orgTargetKey = 'R_0';
+          window.__orgMsg = '⬡ ベンゼン環(C₆H₆)にしました！1位〜6位(o-, m-, p-)の手に官能基をつけよう！';
+          renderLab();
+        };
+        labBox.querySelector('#org-mode-cy').onclick = () => {
+          SoundEngine.seClick();
+          window.__orgState = OrganicLab.createRingState('cyclo', {});
+          window.__orgTargetKey = 'R_0';
+          window.__orgMsg = '⬢ シクロヘキサン環(C₆H₁₂)にしました！';
+          renderLab();
+        };
+        labBox.querySelector('#org-clear-slots').onclick = () => {
+          SoundEngine.seClick();
+          st.slots = {};
+          if (st.mode === 'chain') st.bonds = st.bonds.map(() => 1);
+          window.__orgTargetKey = null;
+          window.__orgMsg = '🧹 すべての手を「H」に戻しました！';
           renderLab();
         };
 
@@ -10675,10 +10830,87 @@ const Game = (() => {
     }
   }
 
+  function openAreaNote(targetAreaId) {
+    SoundEngine.seClick();
+    const aid = targetAreaId || (battle && battle.areaId) || 1;
+    const area = AREAS.find(a => a.id === aid) || AREAS[0];
+    const note = AREA_NOTES[aid] || AREA_NOTES[1];
+    const m = getAreaMastery(aid);
+    const box = document.getElementById('learn-note-box');
+    const bd = document.getElementById('learn-note-backdrop');
+    if (!box || !bd) return;
+    box.innerHTML = `
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+        <span style="font-size:11px;font-weight:900;color:#0284c7;">📖 10秒要点まとめ｜単元${area.id}</span>
+        <span class="area-rank-badge ${m.cls}">${m.label}</span>
+      </div>
+      <div style="font-size:15px;font-weight:900;color:#0f172a;margin-bottom:8px;">${area.name}</div>
+      <div style="background:#eff6ff;border:1.5px solid #38bdf8;border-radius:10px;padding:8px 10px;font-size:12px;font-weight:900;color:#1e3a8a;margin-bottom:8px;line-height:1.45;">
+        🔑 重要公式・ルール<br>${note.formula}
+      </div>
+      <ul style="margin:0;padding-left:18px;font-size:12px;color:#1e293b;line-height:1.6;">
+        ${note.points.map(pt => `<li style="margin-bottom:4px;">${pt}</li>`).join('')}
+      </ul>
+      <div style="margin-top:10px;text-align:center;font-size:11px;font-weight:800;color:#64748b;">（画面のどこをタップしても閉じます）</div>
+    `;
+    bd.classList.remove('hidden');
+  }
+
+  function closeAreaNote() {
+    const bd = document.getElementById('learn-note-backdrop');
+    if (bd) bd.classList.add('hidden');
+  }
+
+  function showQuestionHint() {
+    if (!battle || !battle.currentQ) return;
+    SoundEngine.seClick();
+    battle.usedHintThisTurn = true;
+    const q = battle.currentQ;
+    const aid = battle.areaId || 1;
+    const area = AREAS.find(a => a.id === aid) || AREAS[0];
+    const note = AREA_NOTES[aid] || AREA_NOTES[1];
+
+    let hintHtml = '';
+    if (q.type === 'calc') {
+      hintHtml = `
+        <div style="font-size:12.5px;font-weight:800;color:#92400e;margin-bottom:6px;">計算のヒント（この単元の公式）</div>
+        <div style="background:#fffbeb;border:1.5px solid #f59e0b;border-radius:10px;padding:8px 10px;font-size:12px;font-weight:900;color:#78350f;line-height:1.5;">
+          ${note.formula}
+        </div>
+        <div style="font-size:11.5px;color:#334155;margin-top:8px;line-height:1.5;">
+          ・与えられた数値の単位（${q.unit || '値'}）を整理して式に当てはめよう！
+        </div>
+      `;
+    } else {
+      // 4択：答えのテキストは伏せつつ、単元の核心ポイントを提示
+      const keyPt = note.points[0] || note.formula;
+      hintHtml = `
+        <div style="font-size:12.5px;font-weight:800;color:#92400e;margin-bottom:6px;">考え方のヒント（${area.name}）</div>
+        <div style="background:#fffbeb;border:1.5px solid #f59e0b;border-radius:10px;padding:8px 10px;font-size:12px;font-weight:800;color:#78350f;line-height:1.5;">
+          💡 ${note.formula}<br>・${keyPt}
+        </div>
+        <div style="font-size:11.5px;color:#334155;margin-top:8px;line-height:1.5;">
+          ・当てずっぽうに選ばず、定義や性質に合わない選択肢から消去法で絞ってみよう！
+        </div>
+      `;
+    }
+
+    const box = document.getElementById('learn-note-box');
+    const bd = document.getElementById('learn-note-backdrop');
+    if (!box || !bd) return;
+    box.innerHTML = `
+      <div style="font-size:11px;font-weight:900;color:#d97706;margin-bottom:4px;">💡 ヒント（使用時ダメージ 0.85倍）</div>
+      ${hintHtml}
+      <div style="margin-top:10px;text-align:center;font-size:11px;font-weight:800;color:#64748b;">（画面のどこをタップしても閉じます）</div>
+    `;
+    bd.classList.remove('hidden');
+  }
+
   return {
     init, startFromTitle, returnToTitle, startWildBattle, startTower,
     onCommandFight, onCommandFlask, onCommandBag, onCommandSwitch, onCommandRun,
     onConfirmCatch, openSubpage, closeSubpage,
+    openAreaNote, closeAreaNote, showQuestionHint,
     advanceTutorialIntro, advanceHomeTutorial, advanceBattleTutorial, skipTutorial, onTutorialCalcInput
   };
 })();
