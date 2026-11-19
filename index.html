@@ -6844,9 +6844,29 @@ const Monster3DRenderer = (() => {
     }
   }
 
+  function playIsotopeEntranceEffect() {
+    if (!scene) return;
+    const targetPos = enemyMesh ? enemyMesh.position.clone() : new THREE.Vector3(1.45, 0.22, -1.55);
+    const colors = [0xfacc15, 0xf472b6, 0x38bdf8, 0xffffff];
+    colors.forEach((col, idx) => {
+      setTimeout(() => {
+        if (!scene || mode !== 'battle') return;
+        const p = enemyMesh ? enemyMesh.position.clone() : targetPos;
+        spawnBurst(p.clone().add(new THREE.Vector3(0, 0.35, 0)), col, 28);
+        spawnShockwave(p.clone().add(new THREE.Vector3(0, -0.15, 0)), col, 3.2 + idx * 0.4, 0.11);
+      }, idx * 140);
+    });
+    if (impactLight) {
+      impactLight.position.copy(targetPos).add(new THREE.Vector3(0, 0.8, 0.6));
+      impactLight.color.setHex(0xfacc15);
+      impactLight.intensity = 6.5;
+    }
+    shakeEnemy = 0.55;
+  }
+
   return {
     init, setTitleMode, setBattleMode, setCalcLayout, setHiddenMode,
-    triggerShake, spawnBurst, playFlaskAnimation, playAttackEffect,
+    triggerShake, spawnBurst, playFlaskAnimation, playAttackEffect, playIsotopeEntranceEffect,
     buildMonsterMesh, updateMonsterMotion
   };
 })();
@@ -6999,6 +7019,46 @@ const Game = (() => {
     state.buddyIdx = state.team[0];
   }
 
+  function decodeFullTransferCode(rawText) {
+    const txt = String(rawText || '').trim();
+    if (!txt) return null;
+    let jsonStr = txt;
+    if (txt.startsWith('CHEMMON1:')) {
+      const b64 = txt.slice(9).replace(/\s+/g, '');
+      const bin = atob(b64);
+      const bytes = new Uint8Array(bin.length);
+      for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+      jsonStr = new TextDecoder().decode(bytes);
+    }
+    const parsed = JSON.parse(jsonStr);
+    const data = (parsed && parsed.data && Array.isArray(parsed.data.party)) ? parsed.data : parsed;
+    if (!data || !Array.isArray(data.party) || data.party.length === 0) return null;
+    return data;
+  }
+
+  function applyImportedSaveData(data) {
+    if (!data || !Array.isArray(data.party) || data.party.length === 0) return false;
+    const validParty = data.party.filter(m => m && typeof m.z === 'number' && typeof m.lv === 'number');
+    if (validParty.length === 0) return false;
+    state.party = validParty;
+    state.team = Array.isArray(data.team) ? data.team.slice(0, 3) : [0];
+    state.buddyIdx = typeof data.buddyIdx === 'number' ? data.buddyIdx : 0;
+    if (data.dex && typeof data.dex === 'object') state.dex = data.dex;
+    if (data.elements && typeof data.elements === 'object') state.elements = data.elements;
+    if (data.compounds && typeof data.compounds === 'object') state.compounds = data.compounds;
+    if (Array.isArray(data.customCompounds)) state.customCompounds = data.customCompounds;
+    if (Array.isArray(data.usedTradeCodes)) state.usedTradeCodes = data.usedTradeCodes;
+    if (typeof data.lastIssuedTradeCode === 'string') state.lastIssuedTradeCode = data.lastIssuedTradeCode;
+    if (Array.isArray(data.mistakes)) state.mistakes = data.mistakes;
+    if (typeof data.towerBest === 'number') state.towerBest = data.towerBest;
+    if (data.stats && typeof data.stats === 'object') {
+      state.stats = Object.assign({ wins: 0, catches: 0, answered: 0, correct: 0 }, data.stats);
+    }
+    normalizeTeam();
+    save();
+    return true;
+  }
+
   function load() {
     try {
       const raw = localStorage.getItem(SAVE_KEY);
@@ -7006,6 +7066,13 @@ const Game = (() => {
         const parsed = JSON.parse(raw);
         if (parsed && Array.isArray(parsed.party) && parsed.party.length > 0) {
           state = Object.assign(state, parsed);
+        }
+      } else {
+        // 初代ケミカルモンスターが同一ブラウザ/同一オリジンにあれば自動引き継ぎ
+        const legacyRaw = localStorage.getItem('chem_mon_save_v2');
+        if (legacyRaw) {
+          const legacyParsed = JSON.parse(legacyRaw);
+          applyImportedSaveData(legacyParsed);
         }
       }
     } catch (e) { console.warn('Save load failed', e); }
@@ -7034,14 +7101,18 @@ const Game = (() => {
   function calcMaxHp(mon) {
     const meta = getMonsterMeta(mon);
     const baseBonus = mon.isCompound ? 26 + Math.min(45, meta.mass * 0.25) : Math.min(40, (mon.z || 1) * 0.4);
-    return Math.round((70 + mon.lv * 10 + baseBonus) * (mon.ivMult || 1));
+    const isoMult = mon.isIsotope ? 1.25 : 1.0;
+    return Math.round((70 + mon.lv * 10 + baseBonus) * (mon.ivMult || 1) * isoMult);
   }
 
-  // モンスターのHPを全体的に低く抑えてテンポよく反復練習できるように調整
+  // モンスターのHPを全体的に低く抑えてテンポよく反復練習できるように調整（ただし同位体はタフ！）
   function calcEnemyMaxHp(eMon) {
     const baseHp = calcMaxHp(eMon);
     if (eMon.role === 'boss') {
       return Math.max(55, Math.round(baseHp * 0.72));
+    }
+    if (eMon.isIsotope) {
+      return Math.max(52, Math.round(baseHp * 0.68));
     }
     if (eMon.role === 'midboss') {
       return Math.max(40, Math.round(baseHp * 0.52));
@@ -7052,7 +7123,8 @@ const Game = (() => {
   function calcAtk(mon) {
     const meta = getMonsterMeta(mon);
     const baseBonus = mon.isCompound ? 12 + Math.min(28, meta.mass * 0.16) : Math.min(25, (mon.z || 1) * 0.25);
-    return Math.round((18 + mon.lv * 3.5 + baseBonus) * (mon.ivMult || 1));
+    const isoMult = mon.isIsotope ? 1.25 : 1.0;
+    return Math.round((18 + mon.lv * 3.5 + baseBonus) * (mon.ivMult || 1) * isoMult);
   }
 
   function rollIV() {
@@ -7740,8 +7812,10 @@ const Game = (() => {
     const buddy = getBuddy();
     const enemyLv = Math.max(2, buddy.lv + Math.floor(Math.random() * 3) - 1);
     const iv = rollIV();
-    const isIsotope = Math.random() < 0.12;
+    // 出現率低めの希少な同位体（アイソトープ）枠
+    const isIsotope = Math.random() < 0.07;
     const isRareCompound = Math.random() < 0.06;
+    const RARE_ISOTOPE_Z_POOL = [47, 54, 55, 74, 76, 77, 78, 79, 80, 86, 88, 92, 94, 111, 113];
 
     let eMon;
     if (isRareCompound && RECIPES.length > 0) {
@@ -7750,7 +7824,7 @@ const Game = (() => {
         z: 1,
         isCompound: true,
         compoundId: r.id,
-        lv: enemyLv + 1,
+        lv: enemyLv + (isIsotope ? 2 : 1),
         isIsotope,
         role: 'midboss',
         ivRank: iv.rank === 'C' ? 'A' : iv.rank,
@@ -7758,15 +7832,24 @@ const Game = (() => {
         ivMult: Math.max(1.08, iv.mult)
       };
     } else {
-      const enemyZ = Math.random() < 0.12
-        ? Math.floor(Math.random() * 113) + 1
-        : area.pool[Math.floor(Math.random() * area.pool.length)];
+      let enemyZ;
+      if (isIsotope && Math.random() < 0.70) {
+        enemyZ = RARE_ISOTOPE_Z_POOL[Math.floor(Math.random() * RARE_ISOTOPE_Z_POOL.length)];
+      } else {
+        enemyZ = Math.random() < 0.12
+          ? Math.floor(Math.random() * 113) + 1
+          : area.pool[Math.floor(Math.random() * area.pool.length)];
+      }
       // 同位体または章まとめの低確率強敵は「中ボス」、それ以外の野生モンスターは「通常(低HP)」
       const role = isIsotope ? 'midboss' : (chapterAreaIds && Math.random() < 0.25 ? 'midboss' : 'normal');
       eMon = {
-        z: enemyZ, lv: enemyLv, isIsotope,
+        z: enemyZ,
+        lv: enemyLv + (isIsotope ? 1 : 0),
+        isIsotope,
         role,
-        ivRank: iv.rank, ivScale: iv.scale, ivMult: iv.mult
+        ivRank: isIsotope && iv.rank === 'C' ? 'A' : iv.rank,
+        ivScale: isIsotope ? Math.max(1.10, iv.scale) : iv.scale,
+        ivMult: isIsotope ? Math.max(1.10, iv.mult) : iv.mult
       };
     }
     const eHpVal = calcEnemyMaxHp(eMon);
@@ -7880,6 +7963,23 @@ const Game = (() => {
     showScreen('battle');
     Monster3DRenderer.setBattleMode(activeMon, ctx.enemy);
     SoundEngine.playBGM(ctx.kind === 'tower' ? 'tower' : 'battle');
+
+    if (ctx.enemy.isIsotope) {
+      Monster3DRenderer.playIsotopeEntranceEffect();
+      SoundEngine.seCatchFanfare();
+      const flashEl = document.getElementById('battle-flash-overlay');
+      if (flashEl) {
+        flashEl.style.background = 'radial-gradient(circle, #fef08a 0%, #f472b6aa 45%, #38bdf866 75%, transparent 100%)';
+        flashEl.style.opacity = '1';
+        setTimeout(() => { flashEl.style.opacity = '0'; }, 450);
+      }
+      const banner = document.getElementById('attack-fx-banner');
+      if (banner) {
+        banner.textContent = '✨ 幻の同位体【レア元素】降臨！ ✨';
+        banner.classList.add('show');
+        setTimeout(() => banner.classList.remove('show'), 2200);
+      }
+    }
 
     const towerBadge = document.getElementById('tower-hud-badge');
     if (ctx.kind === 'tower') {
@@ -8847,12 +8947,21 @@ const Game = (() => {
     SoundEngine.stopBGM();
 
     const hpRatio = battle.eHp / battle.eMaxHp;
-    let rate = afterKnockout ? 0.62 : (0.22 + (1 - hpRatio) * 0.42);
-    rate = Math.min(0.88, rate + battle.catchBonus);
+    let rate;
+    if (battle.enemy.isIsotope) {
+      // 同位体は非常に捕まえにくいレア仕様
+      rate = afterKnockout ? 0.28 : (0.08 + (1 - hpRatio) * 0.24);
+      rate = Math.min(0.55, rate + battle.catchBonus * 0.7);
+    } else {
+      rate = afterKnockout ? 0.62 : (0.22 + (1 - hpRatio) * 0.42);
+      rate = Math.min(0.88, rate + battle.catchBonus);
+    }
     const willCatch = battle.kind === 'tutorial' ? true : (Math.random() < rate);
 
     const eMeta = getMonsterMeta(battle.enemy);
-    setBattleMsg(`🧑‍🔬 トレーナーが 特殊捕集フラスコを 振りかぶって なげた！`);
+    setBattleMsg(battle.enemy.isIsotope
+      ? `🧑‍🔬 トレーナーが 特殊捕集フラスコを なげた！（✨同位体は抵抗力が強く捕まえにくい！）`
+      : `🧑‍🔬 トレーナーが 特殊捕集フラスコを 振りかぶって なげた！`);
 
     Monster3DRenderer.playFlaskAnimation(
       willCatch,
@@ -10416,6 +10525,72 @@ const Game = (() => {
         alert('✨ ふっかつのじゅもん を となえた！\nセーブデータの引き継ぎが完了しました！');
         subpageReturnScreen = 'home';
         closeSubpage();
+      };
+
+      // 初代ケミカルモンスターから全データ引き継ぎ
+      const importCard = document.createElement('div');
+      importCard.className = 'card-box';
+      importCard.style.marginTop = '10px';
+      importCard.style.borderLeft = '4px solid #16a34a';
+      importCard.innerHTML = `
+        <div style="font-size:13px;font-weight:900;color:#15803d;margin-bottom:4px;">📥 初代ケミカルモンスターから 全データ引き継ぎ</div>
+        <div style="font-size:11px;color:#475569;margin-bottom:8px;line-height:1.5;">
+          初代で発行した「全データ引継ぎコード（CHEMMON1:...）」または「chem_mon_save.json」を読み込むと、モンスター・図鑑・元素・化合物・戦績をすべて引き継げます。
+        </div>
+        <textarea id="input-full-transfer" rows="3" placeholder="初代でコピーした CHEMMON1:... コードをここに貼り付け" style="width:100%;padding:8px;font-size:11px;font-family:monospace;border-radius:8px;border:2px solid #16a34a;background:#f8fafc;color:#0f172a;resize:vertical;margin-bottom:8px;"></textarea>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;">
+          <button type="button" id="btn-import-full-code" class="btn-primary" style="flex:1;min-width:150px;padding:10px;font-size:12.5px;background:linear-gradient(180deg,#22c55e,#16a34a);">📥 コードで引き継ぐ！</button>
+          <button type="button" id="btn-import-full-file" class="btn-primary" style="flex:1;min-width:150px;padding:10px;font-size:12.5px;background:linear-gradient(180deg,#0ea5e9,#0284c7);">📂 .jsonファイル読込</button>
+        </div>
+        <input id="input-full-file" type="file" accept=".json,application/json" style="display:none;">
+      `;
+      body.appendChild(importCard);
+
+      const finishFullImport = (rawText) => {
+        try {
+          const data = decodeFullTransferCode(rawText);
+          if (!data || !applyImportedSaveData(data)) {
+            SoundEngine.seWrong();
+            alert('引き継ぎデータの形式が正しくありません。\n初代の「全データ引継ぎコード」または「.jsonファイル」か確認してください。');
+            return;
+          }
+          SoundEngine.seCatchFanfare();
+          refreshTitleScreen();
+          renderAreaList();
+          updateHomeBar();
+          alert(`✨ 初代ケミカルモンスターからの引き継ぎが完了しました！\nモンスター: ${state.party.length}体 ／ 図鑑: ${Object.keys(state.dex).length}種`);
+          subpageReturnScreen = 'home';
+          closeSubpage();
+        } catch (err) {
+          SoundEngine.seWrong();
+          alert('引き継ぎデータの読み込みに失敗しました。\nコードが途中で切れていないか確認してください。');
+        }
+      };
+
+      document.getElementById('btn-import-full-code').onclick = () => {
+        const raw = document.getElementById('input-full-transfer').value;
+        if (!raw.trim()) {
+          alert('引継ぎコードを貼り付けてください。');
+          return;
+        }
+        if (confirm('現在のケミカルモンスターⅡのセーブデータを上書きして、初代のデータを引き継ぎますか？')) {
+          finishFullImport(raw);
+        }
+      };
+      document.getElementById('btn-import-full-file').onclick = () => {
+        document.getElementById('input-full-file').click();
+      };
+      document.getElementById('input-full-file').onchange = (e) => {
+        const file = e.target.files && e.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = () => {
+          if (confirm(`「${file.name}」を読み込み、現在のセーブデータを上書きして引き継ぎますか？`)) {
+            finishFullImport(String(reader.result || ''));
+          }
+        };
+        reader.readAsText(file);
+        e.target.value = '';
       };
     }
 
