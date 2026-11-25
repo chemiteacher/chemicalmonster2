@@ -12336,6 +12336,11 @@ const Game = (() => {
     }
     else if (tab === 'party') {
       titleEl.textContent = `🧬 バトル編成 (最大3体) & 所持一覧 (${state.party.length}体)`;
+      body.classList.add('dex-fixed-layout');
+      const stickyTop = document.createElement('div');
+      stickyTop.className = 'dex-sticky-top';
+      stickyTop.style.paddingBottom = '4px';
+      stickyTop.style.borderBottom = '1.5px solid #cbd5e1';
 
       // 現在のバトル3体編成サマリーボックス
       const teamBox = document.createElement('div');
@@ -12359,7 +12364,7 @@ const Game = (() => {
         <div style="font-size:10px;color:#475569;margin-bottom:6px;">元素モンスターも合成した化合物モンスターも最大3体まで編成し、バトル中に自由交代＆3種類の技を使い分けられます！</div>
         <div style="display:flex;gap:6px;">${slotsHtml}</div>
       `;
-      body.appendChild(teamBox);
+      stickyTop.appendChild(teamBox);
 
       // ソート＆物質名検索コントロール（個体値順・原子番号順・入手順・リアルタイム検索）
       if (typeof window.__partyUiState === 'undefined') {
@@ -12385,10 +12390,19 @@ const Game = (() => {
         </div>
         <div id="party-filter-count" style="font-size:10.5px;color:#475569;margin-top:4px;font-weight:700;"></div>
       `;
-      body.appendChild(ctrlBox);
+      stickyTop.appendChild(ctrlBox);
+      body.appendChild(stickyTop);
 
       const listContainer = document.createElement('div');
       listContainer.id = 'party-list-container';
+      listContainer.style.flex = '1';
+      listContainer.style.minHeight = '0';
+      listContainer.style.overflowY = 'auto';
+      listContainer.style.webkitOverflowScrolling = 'touch';
+      listContainer.style.display = 'flex';
+      listContainer.style.flexDirection = 'column';
+      listContainer.style.gap = '8px';
+      listContainer.style.paddingRight = '2px';
       body.appendChild(listContainer);
 
       const searchInput = ctrlBox.querySelector('#party-search-input');
