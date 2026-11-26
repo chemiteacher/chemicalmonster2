@@ -1814,6 +1814,313 @@
     100% { opacity: 0; transform: translateX(40px) scaleY(0.7); }
   }
 
+
+  /* 計算問題専用 ポップアップ計算電卓（既存レイアウトに影響しない独立オーバーレイ） */
+  .mini-learn-btn.calc-tool {
+    background: linear-gradient(180deg, #0ea5e9 0%, #0284c7 100%);
+    color: #ffffff;
+    border-color: #7dd3fc;
+  }
+  .scratch-calc-backdrop {
+    position: absolute;
+    inset: 0;
+    z-index: 95;
+    background: rgba(15, 23, 42, 0.72);
+    backdrop-filter: blur(2px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 10px;
+  }
+  .scratch-calc-backdrop.hidden {
+    display: none !important;
+  }
+  .scratch-calc-box {
+    width: 100%;
+    max-width: 386px;
+    max-height: 92%;
+    overflow-y: auto;
+    background: linear-gradient(180deg, #0f172a 0%, #1e293b 100%);
+    border: 2.5px solid #38bdf8;
+    border-radius: 16px;
+    padding: 10px 12px 12px;
+    box-shadow: 0 18px 42px rgba(0, 0, 0, 0.55);
+    color: #f8fafc;
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+  }
+  .scratch-calc-qref {
+    background: rgba(56, 189, 248, 0.12);
+    border-left: 3px solid #38bdf8;
+    border-radius: 6px;
+    padding: 5px 8px;
+    font-size: 11px;
+    line-height: 1.45;
+    color: #e0f2fe;
+    max-height: 54px;
+    overflow-y: auto;
+  }
+  .scratch-calc-screen {
+    background: #020617;
+    border: 1.5px solid #334155;
+    border-radius: 10px;
+    padding: 7px 10px;
+    text-align: right;
+    font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+  }
+  .scratch-calc-expr {
+    font-size: 13px;
+    color: #94a3b8;
+    min-height: 18px;
+    word-break: break-all;
+  }
+  .scratch-calc-res {
+    font-size: 23px;
+    font-weight: 900;
+    color: #fde047;
+    min-height: 28px;
+    word-break: break-all;
+  }
+  .scratch-calc-hist {
+    display: flex;
+    gap: 5px;
+    flex-wrap: wrap;
+    min-height: 20px;
+  }
+  .scratch-calc-hist-chip {
+    background: rgba(148, 163, 184, 0.18);
+    border: 1px solid rgba(148, 163, 184, 0.35);
+    color: #cbd5e1;
+    border-radius: 6px;
+    padding: 2px 6px;
+    font-size: 10px;
+    cursor: pointer;
+  }
+  .scratch-calc-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 5px;
+  }
+  .sc-key {
+    padding: 10px 4px;
+    border-radius: 9px;
+    border: 1.5px solid #334155;
+    background: #1e293b;
+    color: #f8fafc;
+    font-size: 14px;
+    font-weight: 900;
+    cursor: pointer;
+    box-shadow: 0 2px 0 #020617;
+  }
+  .sc-key:active { transform: translateY(1px); }
+  .sc-key.op { background: #0369a1; border-color: #38bdf8; color: #ffffff; }
+  .sc-key.fn { background: #312e81; border-color: #818cf8; color: #e0e7ff; font-size: 12px; }
+  .sc-key.del { background: #991b1b; border-color: #f87171; color: #ffffff; font-size: 12px; }
+  .sc-key.eq { background: linear-gradient(180deg, #22c55e 0%, #15803d 100%); border-color: #86efac; color: #ffffff; }
+
+
+  /* カードガチャ＆カード図鑑スタイル */
+  .nav-tile.gacha-btn {
+    background: linear-gradient(135deg, #f59e0b 0%, #ec4899 55%, #8b5cf6 100%) !important;
+    color: #ffffff !important;
+    border-color: #fde047 !important;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.45);
+  }
+  .gacha-banner {
+    background: linear-gradient(135deg, #0f172a 0%, #312e81 55%, #701a75 100%);
+    border: 2px solid #facc15;
+    border-radius: 14px;
+    padding: 12px;
+    color: #ffffff;
+    box-shadow: 0 8px 20px rgba(49, 46, 129, 0.35);
+  }
+  .gacha-tabs {
+    display: flex;
+    gap: 5px;
+    margin-bottom: 4px;
+  }
+  .gacha-tab-btn {
+    flex: 1;
+    padding: 7px 4px;
+    border-radius: 9px;
+    border: 1.5px solid #cbd5e1;
+    background: #e2e8f0;
+    color: #334155;
+    font-size: 11px;
+    font-weight: 900;
+    cursor: pointer;
+  }
+  .gacha-tab-btn.active {
+    background: linear-gradient(180deg, #0284c7 0%, #0369a1 100%);
+    color: #ffffff;
+    border-color: #7dd3fc;
+  }
+  .chem-card-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 7px;
+  }
+  .chem-card {
+    position: relative;
+    border-radius: 10px;
+    padding: 5px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    cursor: pointer;
+    transition: transform 0.14s ease;
+    overflow: hidden;
+  }
+  .chem-card:active { transform: scale(0.96); }
+  .chem-card.rar-N {
+    background: linear-gradient(160deg, #f8fafc 0%, #cbd5e1 100%);
+    border: 2px solid #64748b;
+    color: #0f172a;
+  }
+  .chem-card.rar-R {
+    background: linear-gradient(160deg, #e0f2fe 0%, #7dd3fc 100%);
+    border: 2px solid #0284c7;
+    color: #0c4a6e;
+  }
+  .chem-card.rar-SR {
+    background: linear-gradient(160deg, #fef9c3 0%, #facc15 55%, #f59e0b 100%);
+    border: 2px solid #b45309;
+    color: #451a03;
+    box-shadow: 0 3px 10px rgba(245, 158, 11, 0.35);
+  }
+  .chem-card.rar-SSR {
+    background: linear-gradient(135deg, #fde047 0%, #f472b6 32%, #818cf8 66%, #38bdf8 100%);
+    border: 2.5px solid #fef08a;
+    color: #ffffff;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.65);
+    box-shadow: 0 4px 14px rgba(168, 85, 247, 0.5);
+  }
+  .chem-card.locked {
+    background: #1e293b !important;
+    border: 2px dashed #475569 !important;
+    color: #94a3b8 !important;
+    text-shadow: none !important;
+    box-shadow: none !important;
+  }
+  .chem-card-art {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    border-radius: 7px;
+    overflow: hidden;
+    background: rgba(15, 23, 42, 0.85);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 4px;
+  }
+  .chem-card-rar-badge {
+    position: absolute;
+    top: 4px;
+    left: 4px;
+    font-size: 9px;
+    font-weight: 900;
+    padding: 1px 5px;
+    border-radius: 5px;
+    background: rgba(15, 23, 42, 0.82);
+    color: #fde047;
+    z-index: 2;
+  }
+  .chem-card-cnt-badge {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    font-size: 9px;
+    font-weight: 900;
+    padding: 1px 5px;
+    border-radius: 5px;
+    background: rgba(2, 132, 199, 0.9);
+    color: #ffffff;
+    z-index: 2;
+  }
+  .chem-card-new-badge {
+    position: absolute;
+    bottom: 24px;
+    right: 4px;
+    font-size: 8.5px;
+    font-weight: 900;
+    padding: 1px 5px;
+    border-radius: 5px;
+    background: #ef4444;
+    color: #ffffff;
+    z-index: 2;
+  }
+  .card-detail-backdrop {
+    position: absolute;
+    inset: 0;
+    z-index: 98;
+    background: rgba(2, 6, 23, 0.84);
+    backdrop-filter: blur(3px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 12px;
+  }
+  .card-detail-backdrop.hidden { display: none !important; }
+  .card-detail-sheet {
+    width: 100%;
+    max-width: 376px;
+    max-height: 92%;
+    overflow-y: auto;
+    border-radius: 16px;
+    padding: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.65);
+  }
+
+
+  .chem-card.rar-SEC {
+    background: linear-gradient(135deg, #020617 0%, #3b0764 30%, #ca8a04 65%, #0f172a 100%) !important;
+    border: 2.5px solid #fde047 !important;
+    color: #fef08a !important;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.9);
+    box-shadow: 0 0 16px rgba(250, 204, 21, 0.75), inset 0 0 10px rgba(236, 72, 153, 0.45);
+  }
+  .gacha-badge-dot {
+    display: inline-block;
+    background: #ef4444;
+    color: #fff;
+    font-size: 8.5px;
+    font-weight: 900;
+    padding: 0 4px;
+    border-radius: 999px;
+    margin-left: 2px;
+    vertical-align: top;
+  }
+  .gacha-tut-backdrop {
+    position: absolute;
+    inset: 0;
+    z-index: 99;
+    background: rgba(2, 6, 23, 0.86);
+    backdrop-filter: blur(3px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 14px;
+  }
+  .gacha-tut-backdrop.hidden { display: none !important; }
+  .gacha-tut-box {
+    width: 100%;
+    max-width: 384px;
+    background: linear-gradient(180deg, #0f172a 0%, #1e1b4b 100%);
+    border: 2.5px solid #facc15;
+    border-radius: 16px;
+    padding: 14px;
+    color: #f8fafc;
+    box-shadow: 0 18px 45px rgba(0,0,0,0.65);
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+  }
+
 </style>
 </head>
 <body>
@@ -1876,10 +2183,11 @@
         <div id="nav-tile-alchemy" class="nav-tile" onclick="Game.openSubpage('alchemy')"><span class="ico">⚗️</span>化合物錬成</div>
         <div id="nav-tile-tower" class="nav-tile tower-btn" onclick="Game.startTower()"><span class="ico">🗼</span>アボガドロ塔</div>
       </div>
-      <div class="home-nav-grid" style="grid-template-columns: 1.1fr 1fr 1fr; padding-top:0;">
-        <div id="nav-tile-versus" class="nav-tile" onclick="Game.openSubpage('versus')">📡 通信・交換</div>
+      <div class="home-nav-grid" style="grid-template-columns: repeat(4, 1fr); padding-top:0;">
+        <div id="nav-tile-gacha" class="nav-tile gacha-btn" onclick="Game.openSubpage('gacha')">🎴 ガチャ<br><span style="font-size:9.5px;">🪙<b id="home-coin-count">100</b></span></div>
+        <div id="nav-tile-versus" class="nav-tile" onclick="Game.openSubpage('versus')">📡 通信</div>
         <div class="nav-tile" id="nav-mistake-tile" onclick="Game.openSubpage('mistakes')">📝 復習(<span id="home-mistake-count">0</span>)</div>
-        <div id="nav-tile-typechart" class="nav-tile" onclick="Game.openSubpage('typechart')">🏆 称号・相性</div>
+        <div id="nav-tile-typechart" class="nav-tile" onclick="Game.openSubpage('typechart')">🏆 称号</div>
       </div>
       <div class="section-bar">
         <span>🗺️ 学習エリア選択（全5部・21単元）</span>
@@ -1951,6 +2259,7 @@
             <div style="display:flex;align-items:center;gap:4px;flex-shrink:0;">
               <button type="button" id="btn-battle-note" class="mini-learn-btn" onclick="Game.openAreaNote()">📖 要点</button>
               <button type="button" id="btn-battle-hint" class="mini-learn-btn hint" onclick="Game.showQuestionHint()">💡 ヒント</button>
+              <button type="button" id="btn-battle-scratch-calc" class="mini-learn-btn calc-tool hidden" onclick="ScratchCalc.open()">🧮 電卓</button>
               <span id="battle-unit-label">単位: -</span>
             </div>
           </div>
@@ -2036,6 +2345,70 @@
     <div id="learn-note-backdrop" class="exp-backdrop hidden" onclick="Game.closeAreaNote()">
       <div id="learn-note-box" class="learn-note-box"></div>
     </div>
+
+    <!-- 計算問題専用 ポップアップ計算電卓オーバーレイ -->
+    <div id="scratch-calc-backdrop" class="scratch-calc-backdrop hidden" onclick="ScratchCalc.close()">
+      <div class="scratch-calc-box" onclick="event.stopPropagation()">
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:6px;">
+          <span style="font-size:14px;font-weight:900;color:#7dd3fc;">🧮 化学計算電卓（メモ計算）</span>
+          <button type="button" onclick="ScratchCalc.close()" style="background:#ef4444;color:#fff;border:1.5px solid #fecaca;border-radius:7px;padding:3px 9px;font-size:11px;font-weight:900;cursor:pointer;">✕ 閉じる</button>
+        </div>
+        <div id="scratch-calc-tut-banner" class="hidden" style="background:linear-gradient(90deg,#f59e0b,#eab308);color:#0f172a;font-size:11.5px;font-weight:900;line-height:1.45;padding:6px 9px;border-radius:8px;border:1.5px solid #fef08a;"></div>
+        <div id="scratch-calc-qref" class="scratch-calc-qref"></div>
+        <div class="scratch-calc-screen">
+          <div id="scratch-calc-expr" class="scratch-calc-expr">0</div>
+          <div id="scratch-calc-res" class="scratch-calc-res">0</div>
+        </div>
+        <div id="scratch-calc-hist" class="scratch-calc-hist"></div>
+        <div class="scratch-calc-grid">
+          <button type="button" class="sc-key fn" onclick="ScratchCalc.press('(')">(</button>
+          <button type="button" class="sc-key fn" onclick="ScratchCalc.press(')')">)</button>
+          <button type="button" class="sc-key fn" onclick="ScratchCalc.funcSqrt()">√</button>
+          <button type="button" class="sc-key fn" onclick="ScratchCalc.funcSq()">x²</button>
+          <button type="button" class="sc-key del" onclick="ScratchCalc.clearAll()">AC</button>
+
+          <button type="button" class="sc-key" onclick="ScratchCalc.press('7')">7</button>
+          <button type="button" class="sc-key" onclick="ScratchCalc.press('8')">8</button>
+          <button type="button" class="sc-key" onclick="ScratchCalc.press('9')">9</button>
+          <button type="button" class="sc-key op" onclick="ScratchCalc.press('/')">÷</button>
+          <button type="button" class="sc-key del" onclick="ScratchCalc.backspace()">⌫</button>
+
+          <button type="button" class="sc-key" onclick="ScratchCalc.press('4')">4</button>
+          <button type="button" class="sc-key" onclick="ScratchCalc.press('5')">5</button>
+          <button type="button" class="sc-key" onclick="ScratchCalc.press('6')">6</button>
+          <button type="button" class="sc-key op" onclick="ScratchCalc.press('*')">×</button>
+          <button type="button" class="sc-key fn" onclick="ScratchCalc.press('e')">×10ˣ</button>
+
+          <button type="button" class="sc-key" onclick="ScratchCalc.press('1')">1</button>
+          <button type="button" class="sc-key" onclick="ScratchCalc.press('2')">2</button>
+          <button type="button" class="sc-key" onclick="ScratchCalc.press('3')">3</button>
+          <button type="button" class="sc-key op" onclick="ScratchCalc.press('-')">−</button>
+          <button type="button" class="sc-key fn" onclick="ScratchCalc.useAns()">Ans</button>
+
+          <button type="button" class="sc-key" onclick="ScratchCalc.press('0')">0</button>
+          <button type="button" class="sc-key" onclick="ScratchCalc.press('.')">.</button>
+          <button type="button" class="sc-key fn" onclick="ScratchCalc.toggleSign()">±</button>
+          <button type="button" class="sc-key op" onclick="ScratchCalc.press('+')">＋</button>
+          <button type="button" class="sc-key eq" onclick="ScratchCalc.evaluate()">＝</button>
+        </div>
+        <div style="display:flex;gap:6px;margin-top:2px;">
+          <button type="button" onclick="ScratchCalc.applyToAnswer()" style="flex:1;padding:8px 10px;border-radius:9px;border:1.5px solid #fde047;background:linear-gradient(180deg,#f59e0b 0%,#d97706 100%);color:#fff;font-size:12px;font-weight:900;cursor:pointer;">📥 この結果を解答欄に入力して閉じる</button>
+        </div>
+      </div>
+    </div>
+
+
+    
+    <!-- 化学カード詳細拡大モーダル（タップで表面・裏面切替／背景タップで閉じる） -->
+    <div id="card-detail-backdrop" class="card-detail-backdrop hidden" onclick="CardGacha.closeDetail()">
+      <div id="card-detail-sheet" class="card-detail-sheet" onclick="event.stopPropagation()"></div>
+    </div>
+
+    <!-- ガチャ初回チュートリアルオーバーレイ -->
+    <div id="gacha-tut-backdrop" class="gacha-tut-backdrop hidden">
+      <div id="gacha-tut-box" class="gacha-tut-box"></div>
+    </div>
+
 
     <!-- チュートリアル導入・完了メッセージオーバーレイ（オーキド博士風） -->
     <div id="tutorial-intro-overlay" class="hidden" onclick="Game.advanceTutorialIntro()">
@@ -9484,6 +9857,911 @@ const CalcUI = (() => {
   return { reset, press, toggleSign, backspace, clear, submit, getRaw };
 })();
 
+
+const ScratchCalc = (() => {
+  let expr = '';
+  let lastAns = 0;
+  let justEvaluated = false;
+  let history = [];
+
+  function formatNum(v) {
+    if (!Number.isFinite(v)) return 'エラー';
+    if (v === 0) return '0';
+    const abs = Math.abs(v);
+    if (abs >= 1e7 || abs < 1e-4) {
+      return Number(v.toPrecision(6)).toExponential().replace(/e\+/, 'e');
+    }
+    return String(Number(v.toPrecision(10)));
+  }
+
+  function safeEval(raw) {
+    const s = String(raw || '').trim();
+    if (!s) return 0;
+    // 許可文字のみ（数字・四則・括弧・小数点・指数e・Math.sqrt）
+    const cleaned = s.replace(/√\(/g, 'Math.sqrt(');
+    const checkOnly = cleaned.replace(/Math\.sqrt/g, '');
+    if (!/^[0-9+\-*/().eE\s]+$/.test(checkOnly)) return NaN;
+    try {
+      const val = Function('"use strict"; return (' + cleaned + ');')();
+      return (typeof val === 'number' && Number.isFinite(val)) ? val : NaN;
+    } catch (_) {
+      return NaN;
+    }
+  }
+
+  function render() {
+    const exprEl = document.getElementById('scratch-calc-expr');
+    const resEl = document.getElementById('scratch-calc-res');
+    const histEl = document.getElementById('scratch-calc-hist');
+    if (exprEl) {
+      const disp = expr
+        ? expr.replace(/\*/g, '×').replace(/\//g, '÷')
+        : '0';
+      exprEl.textContent = disp;
+    }
+    if (resEl) {
+      const preview = expr ? safeEval(expr) : lastAns;
+      resEl.textContent = Number.isNaN(preview) ? '…' : formatNum(preview);
+    }
+    if (histEl) {
+      histEl.innerHTML = '';
+      history.slice(0, 3).forEach(item => {
+        const chip = document.createElement('button');
+        chip.type = 'button';
+        chip.className = 'scratch-calc-hist-chip';
+        chip.textContent = item.label;
+        chip.onclick = () => {
+          SoundEngine.seClick();
+          expr = String(item.valStr);
+          justEvaluated = false;
+          render();
+        };
+        histEl.appendChild(chip);
+      });
+    }
+  }
+
+  function open() {
+    SoundEngine.seClick();
+    const bd = document.getElementById('scratch-calc-backdrop');
+    const qRef = document.getElementById('scratch-calc-qref');
+    const qEl = document.getElementById('battle-question');
+    if (qRef && qEl) {
+      qRef.textContent = '📝 ' + (qEl.textContent || '');
+    }
+    if (bd) bd.classList.remove('hidden');
+    if (typeof Game !== 'undefined' && Game.onTutorialScratchCalcOpen) Game.onTutorialScratchCalcOpen();
+    render();
+  }
+
+  function close() {
+    const bd = document.getElementById('scratch-calc-backdrop');
+    if (bd) bd.classList.add('hidden');
+    const tb = document.getElementById('scratch-calc-tut-banner');
+    if (tb) tb.classList.add('hidden');
+    if (typeof Game !== 'undefined' && Game.onTutorialScratchCalcClose) Game.onTutorialScratchCalcClose();
+  }
+
+  function press(ch) {
+    SoundEngine.seClick();
+    const isOp = (ch === '+' || ch === '-' || ch === '*' || ch === '/');
+    if (justEvaluated) {
+      if (isOp) {
+        expr = formatNum(lastAns);
+      } else {
+        expr = '';
+      }
+      justEvaluated = false;
+    }
+    if (ch === 'e') {
+      if (!expr || /[+\-*/(]$/.test(expr)) expr += '1';
+      expr += 'e';
+    } else if (isOp) {
+      if (!expr) {
+        if (ch === '-') expr = '-';
+      } else if (expr.endsWith('e')) {
+        if (ch === '+' || ch === '-') expr += ch;
+      } else if (/[+\-*/]$/.test(expr)) {
+        expr = expr.slice(0, -1) + ch;
+      } else {
+        expr += ch;
+      }
+    } else if (ch === '.') {
+      const seg = expr.split(/[+\-*/()e]/).pop() || '';
+      if (!seg.includes('.')) expr += (seg === '' ? '0.' : '.');
+    } else {
+      if (expr === '0') expr = ch;
+      else expr += ch;
+    }
+    render();
+  }
+
+  function toggleSign() {
+    SoundEngine.seClick();
+    justEvaluated = false;
+    if (!expr) {
+      expr = '-';
+    } else if (expr.startsWith('-')) {
+      expr = expr.slice(1);
+    } else {
+      expr = '-' + expr;
+    }
+    render();
+  }
+
+  function funcSqrt() {
+    SoundEngine.seClick();
+    const val = expr ? safeEval(expr) : lastAns;
+    if (!Number.isNaN(val) && val >= 0 && (justEvaluated || /^[+-]?[0-9.eE-]+$/.test(expr))) {
+      const r = Math.sqrt(val);
+      lastAns = r;
+      const rStr = formatNum(r);
+      history.unshift({ label: '√' + formatNum(val) + '=' + rStr, valStr: rStr });
+      history = history.slice(0, 5);
+      expr = rStr;
+      justEvaluated = true;
+    } else {
+      if (justEvaluated) { expr = ''; justEvaluated = false; }
+      expr += '√(';
+    }
+    render();
+  }
+
+  function funcSq() {
+    SoundEngine.seClick();
+    const val = expr ? safeEval(expr) : lastAns;
+    if (!Number.isNaN(val)) {
+      const r = val * val;
+      lastAns = r;
+      const rStr = formatNum(r);
+      history.unshift({ label: '(' + formatNum(val) + ')²=' + rStr, valStr: rStr });
+      history = history.slice(0, 5);
+      expr = rStr;
+      justEvaluated = true;
+      render();
+    }
+  }
+
+  function useAns() {
+    SoundEngine.seClick();
+    const aStr = formatNum(lastAns);
+    if (justEvaluated || !expr || expr === '0') {
+      expr = aStr;
+    } else {
+      expr += aStr;
+    }
+    justEvaluated = false;
+    render();
+  }
+
+  function backspace() {
+    SoundEngine.seClick();
+    justEvaluated = false;
+    if (expr.endsWith('√(')) expr = expr.slice(0, -2);
+    else expr = expr.slice(0, -1);
+    render();
+  }
+
+  function clearAll() {
+    SoundEngine.seClick();
+    expr = '';
+    justEvaluated = false;
+    render();
+  }
+
+  function evaluate() {
+    SoundEngine.seClick();
+    if (!expr) return;
+    // 開き括弧が閉じていなければ自動補完
+    const opens = (expr.match(/\(/g) || []).length;
+    const closes = (expr.match(/\)/g) || []).length;
+    const toEval = opens > closes ? expr + ')'.repeat(opens - closes) : expr;
+    const val = safeEval(toEval);
+    if (Number.isNaN(val)) {
+      const resEl = document.getElementById('scratch-calc-res');
+      if (resEl) resEl.textContent = '式を確認';
+      return;
+    }
+    lastAns = val;
+    const rStr = formatNum(val);
+    const dispExpr = toEval.replace(/\*/g, '×').replace(/\//g, '÷');
+    history.unshift({ label: dispExpr + '=' + rStr, valStr: rStr });
+    history = history.slice(0, 5);
+    expr = rStr;
+    justEvaluated = true;
+    render();
+  }
+
+  function applyToAnswer() {
+    SoundEngine.seClick();
+    const val = expr ? safeEval(expr) : lastAns;
+    if (Number.isNaN(val)) {
+      evaluate();
+      return;
+    }
+    const rStr = formatNum(val);
+    if (typeof CalcUI !== 'undefined' && CalcUI.clear && CalcUI.press) {
+      CalcUI.clear();
+      for (const ch of rStr) {
+        if (ch === '+') continue;
+        CalcUI.press(ch);
+      }
+    }
+    close();
+  }
+
+  return { open, close, press, toggleSign, funcSqrt, funcSq, useAns, backspace, clearAll, evaluate, applyToAnswer, _safeEval: safeEval };
+})();
+
+
+
+// ======================== 化学トレーディングカード全80種＆ガチャシステム ========================
+const CHEM_CARDS_80 = [{"id":"C01","cat":"scientist","rar":"SSR","art":"sci_table","name":"メンデレーエフ","sub":"周期表の父","desc":"元素を原子量順に並べると性質が周期的に現れることを発見し、未発見元素（Ga・Ge等）の性質まで見事に予言したロシアの化学者。","exam":"「周期律」と未発見元素の空欄予言が超頻出。現代の周期表はモーズリーにより原子番号順に整理された。","unit":"周期表"},{"id":"C02","cat":"scientist","rar":"SSR","art":"sci_rad","name":"マリー・キュリー","sub":"史上初の2部門ノーベル賞","desc":"ウラン鉱石から新元素ポロニウム(Po)とラジウム(Ra)を発見し、「放射能」という概念を確立した物理・化学者。","exam":"物理学賞(1903)と化学賞(1911)の両方を受賞。放射性同位体・半減期の単元とセットで押さえよう。","unit":"原子の構造・同位体"},{"id":"C03","cat":"scientist","rar":"SSR","art":"sci_mol","name":"アボガドロ","sub":"物質量 mol の礎","desc":"「同温・同圧・同体積の気体には同じ数の分子が含まれる」という分子説を提唱。1 mol の粒子数 6.02×10²³ に名を残す。","exam":"アボガドロ定数 N_A ＝ 6.0×10²³ /mol、標準状態(0℃・1.013×10⁵Pa)の気体 1 mol ＝ 22.4 L！","unit":"物質量(mol)"},{"id":"C04","cat":"scientist","rar":"SR","art":"sci_scale","name":"ラヴォアジエ","sub":"近代化学の父","desc":"精密な質量測定により「質量保存の法則」を確立し、燃焼が酸素との化合であることを証明してフロギストン説を覆した。","exam":"「化学反応の前後で物質の総質量は変わらない」。酸素(Oxygen)の命名者でもある。","unit":"化学反応の法則"},{"id":"C05","cat":"scientist","rar":"SR","art":"sci_atom","name":"ドルトン","sub":"原子説＆分圧の法則","desc":"物質は分割できない粒子「原子」からなるという原子説と、倍数比例の法則、さらに混合気体の「分圧の法則」を提唱した。","exam":"全圧 P ＝ P₁ ＋ P₂（ドルトンの分圧の法則）と「倍数比例の法則」の2大業績は必出！","unit":"原子説・気体の性質"},{"id":"C06","cat":"scientist","rar":"R","art":"sci_elec","name":"J.J.トムソン","sub":"電子の発見者","desc":"真空放電管の陰極線の実験から、すべての原子に共通する負の電荷をもつ粒子「電子」を発見したイギリスの物理学者。","exam":"「陰極線の正体＝電子(e⁻)」の発見者。電子の比電荷(e/m)も測定した。","unit":"原子の構造"},{"id":"C07","cat":"scientist","rar":"SR","art":"sci_nuc","name":"ラザフォード","sub":"原子核の発見者","desc":"薄い金箔にα線を当てる散乱実験で、ほとんどのα線が素通りし一部だけ大きく跳ね返ることから「原子核」の存在を発見。","exam":"原子の中心に正電荷と質量が集中した極めて小さい「原子核」があることを証明した。","unit":"原子の構造"},{"id":"C08","cat":"scientist","rar":"SR","art":"sci_orbit","name":"ニールス・ボーア","sub":"電子殻モデルの提唱者","desc":"水素原子の線スペクトルを説明するため、電子が特定のエネルギー準位（K殻・L殻…）だけを回る原子モデルを提唱した。","exam":"K(2)・L(8)・M(18)・N(32) の電子殻と、エネルギー準位間の遷移による光の放出・吸収につながる。","unit":"電子配置"},{"id":"C09","cat":"scientist","rar":"SSR","art":"sci_bolt","name":"マイケル・ファラデー","sub":"電気分解の法則＆ベンゼン発見","desc":"電気分解で析出する物質量が電気量に比例する「ファラデーの法則」を確立。さらにベンゼンの発見者でもある天才実験家。","exam":"ファラデー定数 F ＝ 9.65×10⁴ C/mol（電子 1 mol の電気量）。Q ＝ I×t から n(e⁻) ＝ Q/F を計算！","unit":"電気分解・芳香族"},{"id":"C10","cat":"scientist","rar":"SR","art":"sci_eq","name":"ルシャトリエ","sub":"化学平衡の支配者","desc":"平衡状態にある系に温度・圧力・濃度の変化を加えると、その変化を打ち消す向きへ平衡が移動する原理を発見した。","exam":"高温→吸熱方向、高圧→気体分子数が減る方向へ移動。体積一定での不活性ガス添加は移動なし！","unit":"化学平衡"},{"id":"C11","cat":"scientist","rar":"SR","art":"sci_heat","name":"ジェルマン・ヘス","sub":"熱化学の開拓者","desc":"化学反応のエンタルピー変化は、最初と最後の状態だけで決まり途中の経路によらない「ヘスの法則（総熱量保存）」を発見。","exam":"エネルギー図を描けば、生成エンタルピー・燃焼エンタルピーから未知の ΔH を足し引きで求められる！","unit":"エンタルピー"},{"id":"C12","cat":"scientist","rar":"R","art":"sci_gas","name":"ボイル＆シャルル","sub":"気体の法則の立役者","desc":"ボイルは圧力と体積の反比例(PV=一定)、シャルルは体積と絶対温度の比例(V/T=一定)を発見し、状態方程式の土台を築いた。","exam":"合体した「ボイル・シャルルの法則 PV/T ＝ 一定」では温度を必ず絶対温度 K ＝ ℃＋273 に直す！","unit":"気体の性質"},{"id":"C13","cat":"scientist","rar":"R","art":"sci_ion","name":"アレーニウス","sub":"電離説＆活性化エネルギー","desc":"電解質が水中でイオンに分かれる電離説と、酸・塩基の定義、さらに反応速度と活性化エネルギーの関係式を確立した。","exam":"アレーニウスの定義：水に溶けて H⁺ を出すのが酸、OH⁻ を出すのが塩基。","unit":"酸と塩基・反応速度"},{"id":"C14","cat":"scientist","rar":"R","art":"sci_acid","name":"ブレンステッド＆ローリー","sub":"H⁺授受による酸・塩基","desc":"水溶液中以外でも適用できるよう、酸を「H⁺(プロトン)を与える物質」、塩基を「H⁺を受け取る物質」と拡張定義した。","exam":"NH₃ + H₂O ⇄ NH₄⁺ + OH⁻ で、H⁺を受け取る NH₃ が塩基、H⁺を渡す H₂O が酸になるのが定番！","unit":"酸と塩基"},{"id":"C15","cat":"scientist","rar":"R","art":"sci_cat","name":"オストワルト","sub":"硝酸工業製法＆触媒研究","desc":"アンモニアを白金(Pt)触媒で酸化して硝酸(HNO₃)を大量生産する「オストワルト法」を開発し、1909年ノーベル化学賞を受賞。","exam":"オストワルト法：NH₃ →(Pt触媒) NO → NO₂ → HNO₃。触媒が Pt である点が最頻出！","unit":"非金属元素"},{"id":"C16","cat":"scientist","rar":"SR","art":"sci_nh3","name":"フリッツ・ハーバー","sub":"空気からパンを作った男","desc":"窒素と水素から高温・高圧・鉄(Fe₃O₄)触媒でアンモニアを合成するハーバー・ボッシュ法を確立し、世界の食糧危機を救った。","exam":"N₂ + 3H₂ ⇄ 2NH₃ (ΔH＜0)。触媒は Fe₃O₄。高圧・適温(約500℃)で平衡と反応速度を両立！","unit":"化学平衡・非金属"},{"id":"C17","cat":"scientist","rar":"SSR","art":"sci_poly","name":"白川英樹","sub":"電気を通すプラスチック","desc":"ポリアセチレン薄膜にヨウ素(I₂)などをドーピングすると金属並みに電気を通す「導電性高分子」を発見（2000年ノーベル化学賞）。","exam":"高分子＝絶縁体の常識を覆した！ポリアセチレンの「共役二重結合」と「ドーピング」がキーワード。","unit":"生活と高分子"},{"id":"C18","cat":"scientist","rar":"SR","art":"sci_benz","name":"ケクレ","sub":"ベンゼン環構造のひらめき","desc":"蛇が自分の尾を噛む夢から着想を得て、ベンゼン(C₆H₆)が6個の炭素が輪になった正六角形構造であることを提唱した。","exam":"実際のベンゼンは単結合と二重結合の中間の結合をもち、6本のC-C結合がすべて等価で非常に安定。","unit":"芳香族化合物"},{"id":"C19","cat":"scientist","rar":"R","art":"sci_osm","name":"ファントホッフ","sub":"第1回ノーベル化学賞","desc":"希薄溶液の浸透圧が気体の状態方程式と同じ形 ΠV ＝ nRT に従うことを発見し、立体化学（不斉炭素）も切り拓いた。","exam":"Π ＝ cRT（cはモル濃度 mol/L）。高分子の分子量測定に浸透圧法が使われる理由も一緒に覚えよう！","unit":"溶液の性質・有機"},{"id":"C20","cat":"scientist","rar":"N","art":"sci_chiral","name":"ルイ・パスツール","sub":"鏡像異性体の先駆者","desc":"酒石酸塩の結晶を顕微鏡で右手型・左手型に選り分け、分子の立体構造と光学活性（鏡像異性体）の関係を世界で初めて示した。","exam":"不斉炭素原子をもつ分子は鏡像異性体（光学異性体）をもち、旋光性や生体への作用が異なる。","unit":"有機化合物の構造"},{"id":"C21","cat":"tool","rar":"SR","art":"tool_burette","name":"ビュレット","sub":"滴定の精密ディスペンサー","desc":"下部にコックがついた細長い目盛り付きガラス管。中和滴定や酸化還元滴定で滴下した正確な体積を 0.01 mL 単位まで測る。","exam":"使用前に「滴下する溶液で共洗い」が必須！水滴が残ると濃度が薄まって誤差の原因になる。","unit":"中和滴定"},{"id":"C22","cat":"tool","rar":"SR","art":"tool_pipette","name":"ホールピペット","sub":"一定体積を正確に量り取る","desc":"中央が膨らみ上部に標線が1本だけ刻まれたガラス管。決まった体積（10 mL等）の溶液を極めて正確に量り取る器具。","exam":"「共洗い」が必要！先端にわずかに残った液は吹き出さず、容器の内壁に軽く当てて切るのが基本。","unit":"中和滴定"},{"id":"C23","cat":"tool","rar":"SR","art":"tool_volflask","name":"メスフラスコ","sub":"正確なモル濃度溶液の調製","desc":"長い首に標線が1本ある平底フラスコ。溶質を溶かしてから標線まで純水を加え、正確なモル濃度の標準溶液をつくる。","exam":"「共洗い不要（純水で濡れていてOK）」かつ「加熱厳禁（体積が狂うため）」が2大頻出ポイント！","unit":"溶液の濃度・中和滴定"},{"id":"C24","cat":"tool","rar":"R","art":"tool_conical","name":"コニカルビーカー","sub":"滴定の受け皿コンテナ","desc":"上がすぼまった円すい形のビーカー。中和滴定で溶液を受け、振り混ぜても液が外に飛び散りにくい構造になっている。","exam":"「純水で洗ったあと濡れたまま使ってOK（共洗い厳禁！）」。中の溶質の mol さえ変わらなければよい！","unit":"中和滴定"},{"id":"C25","cat":"tool","rar":"SR","art":"tool_liebig","name":"リービッヒ冷却器","sub":"蒸留の要となる二重管","desc":"内管を蒸気が通り、外管に冷却水を流して蒸気を冷やし液体に戻す装置。蒸留・分留に欠かせない。","exam":"冷却水は必ず「下から入れて上から流す」！外管全体を効率よく水で満たすため。","unit":"純物質と混合物"},{"id":"C26","cat":"tool","rar":"R","art":"tool_sep","name":"分液漏斗","sub":"水層と有機層をピタリ分離","desc":"混ざり合わない2層の液体（水層とエーテル層など）を振り混ぜて抽出し、下のコックから下層だけを抜いて分離する器具。","exam":"上の栓を外してからコックを開ける！芳香族4種混合物の分離実験で主役となる重要器具。","unit":"抽出・芳香族分離"},{"id":"C27","cat":"tool","rar":"R","art":"tool_distill","name":"枝付きフラスコ","sub":"蒸留・分留の加熱フラスコ","desc":"首の横に枝管がついた丸底フラスコ。突沸防止の沸騰石を入れ、温度計の球部を枝管の付け根の高さに合わせる。","exam":"温度計の球部は「液中ではなく枝管の付け根（留出する蒸気の温度を測る位置）」に置く！","unit":"純物質と混合物"},{"id":"C28","cat":"tool","rar":"N","art":"tool_evap","name":"蒸発皿","sub":"水溶液から結晶を析出","desc":"耐熱磁器製の浅い皿。食塩水などを加熱して水を蒸発させ、溶けていた固体を取り出すときに使う。","exam":"再結晶や乾固の操作で使用。加熱時は急な飛散を防ぐため弱火や湯浴に調整する。","unit":"分離と精製"},{"id":"C29","cat":"tool","rar":"N","art":"tool_crucible","name":"磁製るつぼ","sub":"超高温に耐える強熱容器","desc":"ふた付きの耐熱磁器カップ。三角架にのせてガスバーナーで直接強熱し、結晶水の脱水や金属の燃焼実験を行う。","exam":"高温のるつぼは「るつぼばさみ」で持ち、冷ますときは吸湿を防ぐためデシケーターに入れる。","unit":"実験基本操作"},{"id":"C30","cat":"tool","rar":"R","art":"tool_desic","name":"デシケーター","sub":"湿気をシャットアウトする保管庫","desc":"下部にシリカゲルや塩化カルシウムなどの乾燥剤を入れ、試料が空気中の水分を吸わないよう乾燥保管する密閉ガラス容器。","exam":"強熱したるつぼを室温まで冷ます際、空気中の水蒸気を吸って質量が増えるのを防ぐために使う。","unit":"実験基本操作"},{"id":"C31","cat":"tool","rar":"SR","art":"tool_kipp","name":"キップの装置","sub":"気体をオンデマンド発生","desc":"固体と液体（例：Zn＋希硫酸、FeS＋希塩酸、CaCO₃＋希塩酸）の反応で、コックの開閉だけで気体発生をON/OFFできる装置。","exam":"加熱せずに反応する固体＋液体にのみ使用可能。H₂・CO₂・H₂S の発生が代表例！","unit":"気体の製法"},{"id":"C32","cat":"tool","rar":"N","art":"tool_wash","name":"洗気びん","sub":"気体の不純物・水分除去","desc":"発生した気体を液体（水や濃硫酸など）にくぐらせて不純物や水分を取り除くガラスびん。","exam":"長いガラス管側から気体を入れ、短い管から出す！塩素発生時の「①水(HCl除去)→②濃硫酸(水分除去)」が必出。","unit":"非金属元素"},{"id":"C33","cat":"tool","rar":"N","art":"tool_erlen","name":"三角フラスコ","sub":"振り混ぜやすい定番フラスコ","desc":"底が広く口が狭い円すい形のフラスコ。溶液の攪拌・反応・培養など、化学実験室で最も頻繁に使われる万能容器。","exam":"口が狭いため液体を振り混ぜてもこぼれにくく、気体発生装置の反応容器にもよく使われる。","unit":"実験基本操作"},{"id":"C34","cat":"tool","rar":"N","art":"tool_tube","name":"試験管＆試験管ばさみ","sub":"定性分析の小さな舞台","desc":"少量の試薬を混ぜて沈殿・呈色・気体発生を観察する基本器具。加熱時は口を人のいない方向へ向け、振りながら温める。","exam":"固体を加熱して水が発生する実験（NaHCO₃熱分解等）では、水が逆流して割れないよう口をわずかに下げる！","unit":"実験基本操作"},{"id":"C35","cat":"tool","rar":"N","art":"tool_burner","name":"ガスバーナー","sub":"青い炎を操る熱源","desc":"ガス調節ねじ（下）と空気調節ねじ（上）の2つのねじで火力と空気量を調整する。完全燃焼の青い炎（酸化炎）が最も高温。","exam":"点火は「ガス先・空気後」、消火は「空気先・ガス後」。ねじの順番を間違えると逆火の危険あり！","unit":"実験基本操作"},{"id":"C36","cat":"tool","rar":"N","art":"tool_funnel","name":"ろうと（漏斗）","sub":"ろ過の相棒","desc":"ろ紙を4つ折りにしてセットし、液体と不溶の固体を分離する器具。ろ過時はガラス棒を伝わせて注ぐ。","exam":"ろうとの脚の斜めカット面を「ビーカーの内壁につける」ことで、ろ液が跳ねずスムーズに流れる！","unit":"純物質と混合物"},{"id":"C37","cat":"tool","rar":"N","art":"tool_dropper","name":"駒込ピペット","sub":"数滴ずつ正確に滴下","desc":"上部にゴム球がついた目盛り付きピペット。指示薬を数滴加えたり、少量の試薬を移し替えたりするときに使う。","exam":"試薬がゴム球に触れて変質・汚染するのを防ぐため、液が入った状態で絶対に逆さ（横倒し）にしない！","unit":"実験基本操作"},{"id":"C38","cat":"tool","rar":"N","art":"tool_bal","name":"電子天びん","sub":"0.001 g まで見抜く精密計量","desc":"風袋引き（TARE）機能により薬包紙の重さをゼロにして、試料の正確な質量を素早くデジタル測定できる精密秤。","exam":"水平器の気泡を中央に合わせ、熱いものや湿った試薬を直接のせないのが正確な計量の鉄則。","unit":"実験基本操作"},{"id":"C39","cat":"tool","rar":"R","art":"tool_ph","name":"pHメーター","sub":"水素イオン濃度を数値化","desc":"ガラス電極を水溶液に浸すだけで、色のついた溶液でも正確に pH を小数点以下までデジタル測定できる装置。","exam":"中和滴定曲線（pHジャンプ）をリアルタイムに描く実験で活躍。緩衝液で校正してから使用する。","unit":"pH・中和滴定"},{"id":"C40","cat":"tool","rar":"N","art":"tool_sbulb","name":"安全ピペッター","sub":"口で吸わない安全吸引器","desc":"ホールピペットの上に取り付け、バルブ操作だけで安全に薬液を吸い上げ・排出できるゴム製器具。","exam":"酸・塩基・有害試薬を扱う際、口で吸う事故を完全に防ぐための現代の標準安全器具。","unit":"実験基本操作"},{"id":"C41","cat":"matter","rar":"SSR","art":"mat_dia","name":"ダイヤモンド (C)","sub":"自然界最強の共有結合結晶","desc":"炭素原子が4本の共有結合で正四面体状に三次元網目構造をつくった結晶。極めて硬く、融点が非常に高く、電気を通さない。","exam":"炭素の同素体（ダイヤ・黒鉛・フラーレン・ナノチューブ）。すべての価電子が結合に使われるため不導体！","unit":"共有結合結晶"},{"id":"C42","cat":"matter","rar":"R","art":"mat_graph","name":"黒鉛 / グラファイト (C)","sub":"電気を通す珍しい非金属","desc":"炭素が平面正六角形の層をつくり、層どうしが弱いファンデルワールス力で重なった結晶。柔らかく剥がれやすい。","exam":"炭素の4つの価電子のうち1個が層内を自由に動けるため、非金属なのに電気をよく通す！","unit":"共有結合結晶"},{"id":"C43","cat":"matter","rar":"SSR","art":"mat_c60","name":"フラーレン (C₆₀)","sub":"ナノサイズのサッカーボール","desc":"炭素原子60個が五角形12個と六角形20個のサッカーボール状に結合した分子。1996年ノーベル化学賞の対象。","exam":"ダイヤ・黒鉛は「共有結合の結晶」だが、フラーレン(C₆₀)は独立した「分子（分子結晶）」である点が頻出！","unit":"同素体・結晶"},{"id":"C44","cat":"matter","rar":"SR","art":"mat_cnt","name":"カーボンナノチューブ","sub":"未来の超高強度ナノ繊維","desc":"黒鉛のシート（グラフェン）を筒状に丸めた極細の炭素同素体。鉄の何倍もの強度と優れた電気伝導性をもつ。","exam":"飯島澄男博士が発見。巻き方によって金属的にも半導体的にもなる先端ナノ材料。","unit":"同素体・先端材料"},{"id":"C45","cat":"matter","rar":"R","art":"mat_ice","name":"氷 (H₂O 結晶)","sub":"水に浮く不思議な水素結合結晶","desc":"水分子が正四面体状に水素結合でつながり、内部に隙間の多い六角網目構造をつくるため、液体の水より密度が小さい。","exam":"水は4℃で密度最大！氷になると隙間が増えて体積が約9%膨張するため、氷は水に浮く。","unit":"水素結合・状態図"},{"id":"C46","cat":"matter","rar":"N","art":"mat_co2","name":"ドライアイス (CO₂)","sub":"液体を経ずに昇華する分子結晶","desc":"二酸化炭素分子がファンデルワールス力で面心立方格子状に並んだ分子結晶。常圧では−78.5℃で固体から直接気体に昇華する。","exam":"CO₂は直線形の無極性分子。状態図の三重点が5.1 atmにあるため常圧では液体にならない！","unit":"分子結晶・状態図"},{"id":"C47","cat":"matter","rar":"R","art":"mat_nacl","name":"塩化ナトリウム型結晶","sub":"イオン結晶の王道モデル","desc":"Na⁺とCl⁻が交互に並んだ代表的なイオン結晶。配位数は6、単位格子中にNa⁺とCl⁻が4個ずつ（4組）含まれる。","exam":"融点が高く硬いがもろい（へき開）。固体は電気を通さないが、融解液や水溶液は電気を通す！","unit":"イオン結晶・固体の構造"},{"id":"C48","cat":"matter","rar":"N","art":"mat_cscl","name":"塩化セシウム型結晶","sub":"体心位置に鎮座する配位数8","desc":"立方体の頂点にCl⁻(8個×1/8=1)、中心(体心)にCs⁺(1個)が入るイオン結晶。配位数は8、単位格子中にCsClが1組。","exam":"体心立方格子と見た目が似ているが、中心と頂点が「異なるイオン」なので体心立方格子とは区別する！","unit":"固体の構造"},{"id":"C49","cat":"matter","rar":"N","art":"mat_bcc","name":"体心立方格子 (BCC)","sub":"Na・K・Feがとる金属結晶","desc":"立方体の8頂点とど真ん中(体心)に同じ金属原子が並ぶ構造。単位格子中の原子数は2個、配位数8、充填率は約68%。","exam":"立方体の対角線上で原子が接するため「√3 a ＝ 4 r」の関係式が成り立つ！","unit":"固体の構造"},{"id":"C50","cat":"matter","rar":"R","art":"mat_fcc","name":"面心立方格子 (FCC)","sub":"Cu・Ag・Au・Alの最密構造","desc":"8頂点と6つの面の中心に金属原子が並ぶ最密充填構造。単位格子中の原子数は4個、配位数12、充填率は約74%。","exam":"正方形の面の対角線上で接するため「√2 a ＝ 4 r」。六方最密構造と同じ配位数12・充填率74%！","unit":"固体の構造"},{"id":"C51","cat":"matter","rar":"R","art":"mat_o3","name":"オゾン (O₃)","sub":"成層圏を守る青い酸化剤","desc":"酸素の同素体で、淡青色・特異臭の折れ線形気体。強い酸化作用をもち、上空のオゾン層で有害な紫外線を吸収する。","exam":"ヨウ化カリウムデンプン紙を酸化して I₂ を遊離させ「青紫色」にする検出反応が超頻出！","unit":"同素体・非金属"},{"id":"C52","cat":"matter","rar":"R","art":"mat_s8","name":"斜方硫黄 (S₈)","sub":"王冠型の最も安定な硫黄","desc":"硫黄原子8個が王冠のように輪になった S₈ 分子の黄色結晶。単斜硫黄・ゴム状硫黄と並ぶ硫黄の3同素体のうち常温で最安定。","exam":"二硫化炭素(CS₂)によく溶ける（ゴム状硫黄は高分子鎖のため溶けない）違いもチェック！","unit":"同素体・非金属"},{"id":"C53","cat":"matter","rar":"SR","art":"mat_p4","name":"黄リン (P₄)","sub":"水中で眠る正四面体の猛毒分子","desc":"リン原子4個が正四面体をつくった淡黄色ワックス状の固体。猛毒で発火点が約35℃と極めて低く、空気中で自然発火する。","exam":"「水中保存」が絶対ルール（Naの石油保存と対比して出題！）。同素体の赤リンは安定でマッチ箱側薬に利用。","unit":"非金属元素"},{"id":"C54","cat":"matter","rar":"SSR","art":"mat_aqua","name":"王水 (濃HCl : 濃HNO₃＝3:1)","sub":"金も白金も溶かす最強の混酸","desc":"濃塩酸と濃硝酸を体積比 3 : 1 で混ぜた液体。単独の酸では絶対に溶けない金(Au)や白金(Pt)を錯イオンにして溶かす。","exam":"混合比「濃塩酸 3 ： 濃硝酸 1」の数字の向き（塩酸が多い！）を逆にしないよう要注意！","unit":"金属の反応・遷移元素"},{"id":"C55","cat":"matter","rar":"N","art":"mat_nh3","name":"アンモニア (NH₃)","sub":"水に激しく溶ける塩基性気体","desc":"三角錐形の極性分子。刺激臭があり空気より軽く水に極めてよく溶けるため「上方置換」で捕集する。","exam":"乾燥剤は「ソーダ石灰 or CaO」のみ！濃硫酸（中和する）やCaCl₂（付加化合物をつくる）はNG！","unit":"非金属元素"},{"id":"C56","cat":"matter","rar":"R","art":"mat_h2so4","name":"濃硫酸 (H₂SO₄)","sub":"4つの顔をもつ化学工業の母","desc":"粘性の高い油状の強酸。①不揮発性、②吸湿性（乾燥剤）、③脱水作用（砂糖を炭化）、④熱濃硫酸の酸化作用の4大性質をもつ。","exam":"希釈時は「大量の水に濃硫酸を少しずつ注ぐ」！逆にすると激しい溶解熱で突沸し非常に危険。","unit":"非金属元素"},{"id":"C57","cat":"matter","rar":"N","art":"mat_bleach","name":"さらし粉 CaCl(ClO)・H₂O","sub":"常温で塩素を生む白色粉末","desc":"消石灰 Ca(OH)₂ に塩素を吸収させてつくる粉末。強い酸化作用による漂白・殺菌剤で、希塩酸を加えると常温で Cl₂ が発生。","exam":"アニリン水溶液に加えると「赤紫色」に呈色する（アニリンの検出反応）ことも超重要！","unit":"非金属・芳香族"},{"id":"C58","cat":"matter","rar":"SR","art":"mat_benz","name":"ベンゼン (C₆H₆)","sub":"芳香族の絶対王者","desc":"6個の炭素が正六角形の平面環をつくり、π電子が非局在化して極めて安定な芳香族炭化水素。","exam":"二重結合があるように書かれるが付加より「置換反応（ニトロ化・スルホン化・ハロゲン化）」が起きやすい！","unit":"芳香族化合物"},{"id":"C59","cat":"matter","rar":"R","art":"mat_phenol","name":"フェノール (C₆H₅OH)","sub":"ベンゼン環直結の弱酸","desc":"消毒薬やフェノール樹脂の原料。クメン法でアセトンと同時に工業生産される。弱酸性だが炭酸より弱い。","exam":"FeCl₃水溶液で「青紫〜紫色」、臭素水で「2,4,6-トリブロモフェノール(白色沈殿)」、NaOHには溶けNaHCO₃には不溶！","unit":"芳香族化合物"},{"id":"C60","cat":"matter","rar":"SR","art":"mat_asp","name":"アスピリン（アセチルサリチル酸）","sub":"世界初の人工合成医薬品","desc":"サリチル酸のフェノール性 -OH を無水酢酸でアセチル化して胃への刺激を和らげた解熱鎮痛剤。","exam":"フェノール性 -OH が消えているため「FeCl₃で呈色しない」！湿布薬のサリチル酸メチル（呈色あり）と対比必出。","unit":"芳香族・医薬品"},{"id":"C61","cat":"matter","rar":"R","art":"mat_gluc","name":"グルコース（ブドウ糖 C₆H₁₂O₆）","sub":"生命エネルギーの主役単糖","desc":"水中でα型・β型の環状構造と鎖状構造の平衡を保つ単糖。鎖状構造に -CHO が現れるため還元性を示す。","exam":"銀鏡反応・フェーリング反応が陽性！デンプンはα-グルコース、セルロースはβ-グルコースの縮合重合体。","unit":"天然高分子"},{"id":"C62","cat":"matter","rar":"SSR","art":"mat_dna","name":"DNA（デオキシリボ核酸）","sub":"生命の設計図・二重らせん","desc":"リン酸・デオキシリボース・4種の塩基(A,T,G,C)からなるヌクレオチドが鎖状につながり、水素結合で二重らせんを形成。","exam":"相補的塩基対は「AとT（水素結合2本）」「GとC（水素結合3本）」。RNAは糖がリボースでTの代わりにU！","unit":"核酸・天然高分子"},{"id":"C63","cat":"matter","rar":"R","art":"mat_nylon","name":"ナイロン66","sub":"世界初の合成繊維","desc":"ヘキサメチレンジアミン（C6）とアジピン酸（C6）の縮合重合で得られるポリアミド系合成繊維。","exam":"アミド結合(-CONH-)でつながる。単量体がどちらも炭素数6なので「66」と呼ばれる！","unit":"合成高分子"},{"id":"C64","cat":"matter","rar":"N","art":"mat_pet","name":"ポリエチレンテレフタラート (PET)","sub":"飲料ボトルから衣類まで活躍","desc":"テレフタル酸とエチレングリコールの縮合重合でつくられるポリエステル樹脂。透明・軽量で繊維にも広く使われる。","exam":"エステル結合(-COO-)をもつ。ケミカルリサイクルで単量体に戻して再生する話題も入試頻出！","unit":"合成高分子・リサイクル"},{"id":"C65","cat":"phenom","rar":"SSR","art":"ph_flame","name":"炎色反応7色スペクトル","sub":"炎に咲く元素の指紋","desc":"特定の金属元素を炎に入れると、励起された電子が元の軌道に戻る際に元素固有の波長の光を放つ現象。","exam":"語呂「リアカー(Li赤)無き(Na黄)K村(K赤紫)動力(Cu青緑)借りようか(Ca橙赤)するも(Sr紅)くれない馬力(Ba黄緑)」！","unit":"物質の構成元素"},{"id":"C66","cat":"phenom","rar":"SR","art":"ph_mirror","name":"銀鏡反応","sub":"試験管を鏡に変える還元反応","desc":"アンモニア性硝酸銀水溶液にアルデヒド(R-CHO)やギ酸を加えて温めると、Ag⁺が還元されて内壁に美しい銀の鏡が析出する。","exam":"ホルミル基(-CHO)をもつアルデヒド・ギ酸・還元糖（グルコース等）の超定番検出反応！","unit":"酸素を含む有機物"},{"id":"C67","cat":"phenom","rar":"R","art":"ph_fehling","name":"フェーリング反応","sub":"深青色から赤色沈殿への変化","desc":"Cu²⁺を含む深青色のフェーリング液にアルデヒドを加えて加熱すると、還元されて赤色の酸化銅(I)(Cu₂O)が沈殿する。","exam":"沈殿は単体のCuではなく「赤色の酸化銅(I) Cu₂O」（酸化数 +2→+1）である点が引っかけポイント！","unit":"酸素を含む有機物"},{"id":"C68","cat":"phenom","rar":"R","art":"ph_iodo","name":"ヨードホルム反応","sub":"特有の臭いをもつ黄色沈殿","desc":"CH₃-CO- 基または CH₃-CH(OH)- 基をもつ化合物に I₂ と NaOH を加えて温めると、黄色沈殿 CHI₃（ヨードホルム）が生じる。","exam":"エタノール・アセトアルデヒド・アセトン・2-プロパノールが陽性。メタノールや1-プロパノールは陰性！","unit":"酸素を含む有機物"},{"id":"C69","cat":"phenom","rar":"SR","art":"ph_therm","name":"テルミット反応","sub":"2000℃超の灼熱還元反応","desc":"酸化鉄(III)(Fe₂O₃)とアルミニウム粉末に点火すると、Alの強い還元力で激しく発熱し、真っ赤に溶けた鉄が得られる。","exam":"Fe₂O₃ + 2Al → 2Fe + Al₂O₃ (ΔH＜0)。鉄道レールの現場溶接に今も使われる実用反応！","unit":"典型金属・酸化還元"},{"id":"C70","cat":"phenom","rar":"R","art":"ph_daniell","name":"ダニエル電池","sub":"素焼き板が支える安定電池","desc":"負極にZn板(ZnSO₄水)、正極にCu板(CuSO₄水)を素焼き板で仕切った電池。分極が起こらず安定した起電力(約1.1V)を保つ。","exam":"負極：Zn→Zn²⁺+2e⁻（質量減）、正極：Cu²⁺+2e⁻→Cu（質量増）。イオン移動で電気的中性を維持！","unit":"電池"},{"id":"C71","cat":"phenom","rar":"R","art":"ph_lead","name":"鉛蓄電池","sub":"自動車を支えるタフな二次電池","desc":"負極Pb、正極PbO₂、電解液に希硫酸を使う充電可能な二次電池。放電すると両極とも白色の硫酸鉛(II)(PbSO₄)に変化する。","exam":"放電で「負極も正極も質量が増加」し、「電解液の希硫酸の濃度（密度）が減少」するのが最頻出！","unit":"電池"},{"id":"C72","cat":"phenom","rar":"SR","art":"ph_fuel","name":"水素-酸素燃料電池","sub":"排出物は水だけのクリーン電池","desc":"負極にH₂、正極にO₂を供給し、水の生成反応の化学エネルギーを直接電気エネルギーとして取り出す高効率電池。","exam":"リン酸型(酸性)とアルカリ型(KOH)の両方の半反応式を書けるようにしておこう！全体式は 2H₂+O₂→2H₂O。","unit":"電池"},{"id":"C73","cat":"phenom","rar":"R","art":"ph_cumene","name":"クメン法","sub":"一石二鳥のフェノール工業製法","desc":"ベンゼンとプロペンからクメンをつくり、O₂酸化→希硫酸分解を経てフェノールとアセトンを同時に高収率で得る。","exam":"副生成物が有用な「アセトン」である点と、中間体「クメンヒドロペルオキシド」の名称が頻出！","unit":"芳香族化合物"},{"id":"C74","cat":"phenom","rar":"N","art":"ph_contact","name":"接触法（硫酸の工業製法）","sub":"V₂O₅触媒が支える硫酸量産","desc":"硫黄を燃やしたSO₂を、酸化バナジウム(V)(V₂O₅)触媒でSO₃に酸化し、濃硫酸に吸収させて発煙硫酸→希釈で硫酸を得る。","exam":"SO₃を直接水に通じると激しい発熱で霧状になり吸収しにくいため、「濃硫酸に吸収」させるのがポイント！","unit":"非金属元素"},{"id":"C75","cat":"phenom","rar":"N","art":"ph_ostwald","name":"オストワルト法（硝酸製法）","sub":"白金網が光るアンモニア酸化","desc":"NH₃を白金(Pt)触媒で約800℃で酸化してNOにし、空気酸化でNO₂、さらに温水と反応させて硝酸(HNO₃)を製造する。","exam":"3段階の反応式をまとめた全体式「NH₃ + 2O₂ → HNO₃ + H₂O」から1 molのNH₃→1 molのHNO₃が一発で出る！","unit":"非金属元素"},{"id":"C76","cat":"phenom","rar":"N","art":"ph_solvay","name":"アンモニアソーダ法（ソルベー法）","sub":"循環型の炭酸ナトリウム製法","desc":"飽和食塩水にNH₃とCO₂を通じて難溶性のNaHCO₃を沈殿させ、加熱分解して炭酸ナトリウム(Na₂CO₃)を得る工業製法。","exam":"NH₃とCO₂を回収して再利用するため、全体の原料は「NaClとCaCO₃」、副生成物は「CaCl₂」のみ！","unit":"典型金属元素"},{"id":"C77","cat":"phenom","rar":"SR","art":"ph_azo","name":"ジアゾカップリング","sub":"鮮やかなアゾ染料を生む反応","desc":"氷冷下(0〜5℃)の塩化ベンゼンジアゾニウム水溶液にナトリウムフェノキシドを加えると、橙赤色のアゾ化合物が析出する。","exam":"アゾ基(-N＝N-)が発色団！ジアゾニウム塩は50℃以上でN₂を出してフェノールになるため氷冷必須。","unit":"芳香族化合物"},{"id":"C78","cat":"phenom","rar":"N","art":"ph_tyndall","name":"チンダル現象","sub":"光の道筋が浮かぶコロイドの証","desc":"コロイド溶液に横から強い光を当てると、コロイド粒子が光を散乱するため光の通り道が明るく輝いて見える現象。","exam":"真の溶液（食塩水など）では起きない！ブラウン運動・透析・電気泳動と並ぶコロイド4大現象の1つ。","unit":"コロイド"},{"id":"C79","cat":"phenom","rar":"SSR","art":"ph_lumi","name":"ルミノール化学発光","sub":"熱を出さず青白く光る化学反応","desc":"ルミノールと過酸化水素の塩基性溶液に、血液中のヘモグロビン（鉄イオン）などが触媒として働くと強い青白い光を放つ。","exam":"化学エネルギーが熱ではなく直接「光エネルギー」に変わる化学発光の代表例（鑑識の血痕検出に利用）。","unit":"化学反応と光エネルギー"},{"id":"C80","cat":"phenom","rar":"SSR","art":"ph_super","name":"超伝導・マイスナー効果","sub":"電気抵抗ゼロ＆磁石が宙に浮く","desc":"特定の物質を臨界温度以下に冷やすと電気抵抗が完全にゼロになり、内部から磁場を排除して磁石を空中に浮かせる現象。","exam":"リニアモーターカーやMRIの超強力電磁石に応用。高温超伝導体（イットリウム系銅酸化物等）も注目！","unit":"生活と無機物質"},{"id":"C81","cat":"scientist","rar":"SR","art":"sci_table","name":"ヘンリー・モーズリー","sub":"原子番号で周期表を完成","desc":"X線スペクトルの研究から「原子番号＝原子核の陽子数」を発見し、メンデレーエフの周期表を現代の原子番号順へ完成させた。","exam":"Ar(原子量40)とK(原子量39)の逆転も原子番号順ならスッキリ解決！現代周期表の土台。","unit":"周期表"},{"id":"C82","cat":"scientist","rar":"SSR","art":"sci_orbit","name":"ライナス・ポーリング","sub":"電気陰性度の提唱者","desc":"共有結合の理論と「電気陰性度」の尺度を確立し、タンパク質のα-ヘリックス構造も発見。ノーベル化学賞と平和賞を単独受賞。","exam":"ポーリングの電気陰性度はフッ素(F)が最大(約4.0)。分子の極性・水素結合の理解に不可欠！","unit":"分子の極性・タンパク質"},{"id":"C83","cat":"scientist","rar":"SR","art":"sci_heat","name":"ウィラード・ギブズ","sub":"自発的変化の判定者","desc":"化学反応が自発的に進むかどうかをエンタルピー(ΔH)とエントロピー(ΔS)で判定する「ギブズエネルギー(ΔG)」を確立。","exam":"現行課程の重要式「ΔG ＝ ΔH − TΔS ＜ 0」のとき反応は自発的に進行する！","unit":"エンタルピー・エントロピー"},{"id":"C84","cat":"scientist","rar":"R","art":"sci_nh3","name":"カール・ボッシュ","sub":"高圧化学工業の開拓者","desc":"ハーバーのアンモニア合成法を巨大工場で安全に大量生産できる「ハーバー・ボッシュ法」へと工業化しノーベル化学賞を受賞。","exam":"200〜300気圧・約500℃という極限条件に耐える反応装置を開発し、窒素肥料の量産を実現。","unit":"化学平衡・非金属"},{"id":"C85","cat":"scientist","rar":"R","art":"sci_chiral","name":"エミール・フィッシャー","sub":"糖類と酵素の鍵と鍵穴","desc":"グルコースなど糖類の立体構造を決定し、酵素と基質の特異的な結びつきを「鍵と鍵穴モデル」で説明した有機化学の巨人。","exam":"酵素は特定の基質だけに働く「基質特異性」をもち、高温や極端なpHでは変性して失活する！","unit":"糖類・酵素"},{"id":"C86","cat":"scientist","rar":"SR","art":"sci_rad","name":"アルフレッド・ノーベル","sub":"ダイナマイトとノーベル賞","desc":"ニトログリセリンを珪藻土に染み込ませて安全化したダイナマイトを発明し、遺言で人類に貢献した科学者を讃えるノーベル賞を創設。","exam":"ニトログリセリンはグリセリンの硝酸エステル（ニトロ化合物ではない！）である点が入試のひっかけ！","unit":"有機化学・エステル"},{"id":"C87","cat":"scientist","rar":"SR","art":"sci_chiral","name":"野依良治","sub":"鏡像異性体を作り分ける魔法","desc":"鏡像異性体（右手型・左手型）のうち必要な片方だけを高選択的に合成する「不斉触媒反応」を開発（2001年ノーベル化学賞）。","exam":"医薬品では一方の鏡像異性体だけが薬効を示し他方が副作用をもつ場合があるため、不斉合成は極めて重要！","unit":"鏡像異性体・触媒"},{"id":"C88","cat":"scientist","rar":"SSR","art":"sci_bolt","name":"吉野彰","sub":"リチウムイオン電池の父","desc":"負極に炭素材料・正極にコバルト酸リチウムを用いた小型・軽量・高起電力のリチウムイオン二次電池を実用化（2019年ノーベル化学賞）。","exam":"スマホ・EVを支える二次電池！電解液には水ではなく「有機溶媒（非水電解液）」を使うのが必出ポイント！","unit":"電池"},{"id":"C89","cat":"tool","rar":"N","art":"tool_bal","name":"上皿天びん","sub":"分銅で比べるアナログ天びん","desc":"左右の皿に薬包紙を敷き、利き手側に分銅・反対側に試料をのせてつり合わせる伝統的な計量器具。","exam":"分銅は「重いものから順にピンセットで」のせる！指で触ると錆や脂で質量が変わるためNG。","unit":"実験基本操作"},{"id":"C90","cat":"tool","rar":"N","art":"tool_burette","name":"メスシリンダー","sub":"液体の体積を素早く計量","desc":"目盛りが刻まれた細長いガラス筒。厳密な滴定には使わないが、おおよその液体体積を測るときに大活躍する。","exam":"目盛りは「目の高さを液面と同じにして、メニスカス（凹んだ底）を読む」かつ最小目盛りの1/10まで読む！","unit":"実験基本操作"},{"id":"C91","cat":"tool","rar":"N","art":"tool_dropper","name":"褐色びん（試薬びん）","sub":"光を嫌う試薬のシェルター","desc":"紫外線や可視光を遮断する茶色のガラスびん。光で分解しやすい試薬の保存に使われる。","exam":"褐色びん保存の定番：濃硝酸(HNO₃)・硝酸銀(AgNO₃)・過酸化水素水(H₂O₂)・塩素水！","unit":"試薬の保存"},{"id":"C92","cat":"tool","rar":"N","art":"tool_wash","name":"洗びん＆ガラス棒","sub":"純水リンス＆静かな注ぎの名手","desc":"ポリエチレン製の洗びんは純水を狙った場所へ噴射でき、ガラス棒はろ過や溶液の攪拌・液だれ防止に欠かせない。","exam":"ろ過のときは必ず「ガラス棒を伝わせて」ろ紙の3重の側へ静かに注ぐのが基本操作！","unit":"実験基本操作"},{"id":"C93","cat":"tool","rar":"R","art":"tool_kipp","name":"U字管（電解・乾燥管）","sub":"気体乾燥＆電気分解の舞台","desc":"U字型に曲がったガラス管。塩化カルシウムやソーダ石灰を詰めて元素分析の吸収管にしたり、電気分解の電解槽として使う。","exam":"元素分析では「①CaCl₂管(H₂O吸収)→②ソーダ石灰管(CO₂吸収)」の順番が絶対ルール！","unit":"元素分析・電気分解"},{"id":"C94","cat":"tool","rar":"N","art":"tool_ph","name":"温度計（棒状）","sub":"反応熱や沸点を正確キャッチ","desc":"液体の膨張を利用して温度を測る計器。蒸留時の沸点測定や、中和エンタルピーの比熱測定実験に必須。","exam":"温度計をガラス棒代わりに「かき混ぜ棒として使ってはいけない」（球部が薄く割れやすいため）！","unit":"エンタルピー・蒸留"},{"id":"C95","cat":"tool","rar":"R","art":"tool_burner","name":"マグネチックスターラー","sub":"磁力で自動かくはんする名機","desc":"容器の中に白い回転子（磁石）を入れ、台座内部の回転磁場で手を触れずに溶液を均一にかき混ぜ続ける装置。","exam":"中和滴定や反応速度実験で、溶液の濃度ムラをなくし正確な測定を行うために広く使われる。","unit":"実験基本操作"},{"id":"C96","cat":"tool","rar":"R","art":"tool_desic","name":"遠心分離機","sub":"高速回転で微粒子を一気に沈降","desc":"試験管を高速回転させて強力な遠心力をかけ、ろ過では分離しにくい細かい沈殿やコロイド・血球を素早く分離する装置。","exam":"必ず「向かい合う位置に同じ質量の試験管を対称にセット」してバランスをとってから回転させる！","unit":"分離と精製"},{"id":"C97","cat":"matter","rar":"SR","art":"mat_graph","name":"グラフェン","sub":"原子1個分の厚さの最強シート","desc":"黒鉛(グラファイト)を原子1層分だけはがした六角形網目シート。透明で極めて丈夫かつ電子移動度が驚異的に高い（2010年ノーベル物理学賞）。","exam":"グラフェンを丸めるとカーボンナノチューブ、球状に閉じるとフラーレン(C₆₀)になる！","unit":"同素体・先端材料"},{"id":"C98","cat":"matter","rar":"N","art":"mat_phenol","name":"エタノール (C₂H₅OH)","sub":"唯一の第一級ヨードホルム陽性","desc":"酒類の主成分であり消毒薬や溶媒としても大活躍する第一級アルコール。濃硫酸脱水で130℃→エーテル、160℃→エチレン。","exam":"酸化すると「エタノール→アセトアルデヒド→酢酸」。第一級アルコールで唯一ヨードホルム反応陽性！","unit":"アルコール"},{"id":"C99","cat":"matter","rar":"N","art":"mat_asp","name":"酢酸 (CH₃COOH)","sub":"電離平衡の主役・弱酸代表","desc":"食酢の酸味成分。純粋なものは16.7℃以下で氷のように固まるため「氷酢酸」と呼ばれる。水中では一部しか電離しない弱酸。","exam":"電離平衡の定番：[H⁺] ＝ cα ＝ √(c·Ka)。酢酸＋酢酸ナトリウムの混合液は代表的な緩衝液！","unit":"電離平衡・カルボン酸"},{"id":"C100","cat":"matter","rar":"N","art":"mat_phenol","name":"アセトン (CH₃COCH₃)","sub":"水にも油にも溶ける万能溶媒","desc":"最も簡単なケトン。2-プロパノールの酸化やクメン法の副生成物として得られ、除光液や実験器具の洗浄に広く使われる。","exam":"ケトンなので還元性なし（銀鏡・フェーリング陰性）だが、CH₃-CO- をもつためヨードホルム反応は陽性！","unit":"ケトン・クメン法"},{"id":"C101","cat":"matter","rar":"R","art":"mat_gluc","name":"スクロース（ショ糖 C₁₂H₂₂O₁₁）","sub":"還元性をもたない唯一の重要二糖","desc":"砂糖の主成分。α-グルコースとβ-フルクトースが互いの還元基どうしでグリコシド結合しているため、環が開かず還元性を示さない。","exam":"希硫酸やインベルターゼで加水分解するとグルコース＋フルクトース（転化糖）になり還元性が復活！","unit":"糖類"},{"id":"C102","cat":"matter","rar":"R","art":"mat_nylon","name":"セルロース (C₆H₁₀O₅)ₙ","sub":"植物の細胞壁をつくるβ-グルコース鎖","desc":"β-グルコースが直線状に縮合重合した天然多糖。分子間に強い水素結合が働くため水にも有機溶媒にも溶けず非常に丈夫。","exam":"ヨウ素デンプン反応は「陰性」！レーヨン（再生繊維）やアセテート（半合成繊維）の原料になる。","unit":"天然高分子"},{"id":"C103","cat":"matter","rar":"R","art":"mat_pet","name":"天然ゴム（ポリイソプレン）","sub":"シス型二重結合が生む驚異の弾性","desc":"ゴムノキの樹液（ラテックス）から得られるイソプレンの付加重合体。分子鎖がすべてシス型のため柔らかく強い弾性を示す。","exam":"生ゴムに数%の硫黄(S)を加えて加熱する「加硫」を行うと、分子鎖どうしが架橋され強度・弾性が大幅UP！","unit":"合成高分子・ゴム"},{"id":"C104","cat":"matter","rar":"SR","art":"mat_pet","name":"テフロン (PTFE)","sub":"焦げ付かない最強のフッ素樹脂","desc":"テトラフルオロエチレン(CF₂＝CF₂)の付加重合体。C-F結合が極めて強固なため、耐熱性・耐薬品性・非粘着性が抜群。","exam":"フライパンのフッ素加工や理化学部品に活躍。強酸・強塩基・王水にも侵されない最強クラスの高分子！","unit":"合成高分子"},{"id":"C105","cat":"matter","rar":"R","art":"mat_nacl","name":"シリコーン樹脂（シロキサン結合）","sub":"無機と有機のハイブリッド高分子","desc":"ケイ素(Si)と酸素(O)が交互につながった -Si-O- 骨格にメチル基などの有機側鎖がついた高分子。耐熱・撥水・絶縁性に優れる。","exam":"キッチン用品から医療用チューブ、撥水コーティングまで幅広く活躍する機能性高分子！","unit":"生活と高分子"},{"id":"C106","cat":"phenom","rar":"SR","art":"ph_contact","name":"ハーバー・ボッシュ法","sub":"空気中のN₂をアンモニアへ固定","desc":"N₂ + 3H₂ ⇄ 2NH₃ (ΔH＝−92 kJ)。鉄(Fe₃O₄)触媒・高温(約500℃)・高圧(200〜300 atm)でアンモニアを工業合成する。","exam":"発熱・分子数減少反応なので平衡上は「低温・高圧」が有利だが、反応速度を保つため触媒＋約500℃にする！","unit":"化学平衡・非金属"},{"id":"C107","cat":"phenom","rar":"R","art":"ph_daniell","name":"ホール・エルー法（Al製錬）","sub":"氷晶石で融点を下げてAlを電解","desc":"ボーキサイトから精製したAl₂O₃(融点2050℃)を融解した氷晶石(Na₃AlF₆)に溶かし約1000℃で溶融塩電解するAlの工業製法。","exam":"大量の電力を消費するためAlは「電気の缶詰」と呼ばれる。リサイクルすれば新製錬の約3%の電力で済む！","unit":"電気分解・典型金属"},{"id":"C108","cat":"phenom","rar":"R","art":"ph_lead","name":"イオン交換膜法（NaOH製法）","sub":"食塩水からNaOH・Cl₂・H₂を同時生産","desc":"飽和食塩水を陽イオン交換膜で仕切って電気分解し、陽極でCl₂、陰極でH₂と高純度のNaOH水溶液を得る工業製法。","exam":"陽イオン交換膜は「Na⁺だけを通しOH⁻やCl⁻を通さない」ため、陰極室に純粋なNaOHが生成する！","unit":"電気分解・典型金属"},{"id":"C109","cat":"phenom","rar":"R","art":"ph_cumene","name":"マルコフニコフ則","sub":"非対称アルケン付加の行き先ルール","desc":"プロペン(CH₃-CH＝CH₂)など非対称なアルケンにHBrやH₂Oが付加するとき、Hは「すでにHが多く結合している炭素」に優先的に付く。","exam":"プロペン＋HBr → 主生成物は 2-ブロモプロパン！プロペン＋H₂O → 主生成物は 2-プロパノール！","unit":"脂肪族炭化水素"},{"id":"C110","cat":"phenom","rar":"N","art":"ph_iodo","name":"エステル化 ＆ けん化","sub":"可逆の香り合成と不可逆の石けん分解","desc":"カルボン酸＋アルコール⇄エステル＋水（濃硫酸触媒・可逆）。一方NaOHでエステルを加水分解する「けん化」は不可逆で完全に進む。","exam":"けん化が不可逆な理由：生成したカルボン酸が直ちに強塩基NaOHと中和して塩(R-COONa)になるため！","unit":"エステル・油脂"},{"id":"C111","cat":"phenom","rar":"R","art":"ph_mirror","name":"タンパク質3大検出反応","sub":"紫・黄・赤紫でアミノ酸と結合を見抜く","desc":"ニンヒドリン反応(アミノ基→青紫)、ビウレット反応(ペプチド結合2個以上→赤紫)、キサントプロテイン反応(ベンゼン環→黄→橙黄)。","exam":"「ビウレット＝トリペプチド以上（ジペプチドは陰性！）」「キサント＝濃硝酸で加熱」の区別が超頻出！","unit":"タンパク質"},{"id":"C112","cat":"phenom","rar":"SR","art":"ph_lumi","name":"酸化チタン光触媒（本多-藤嶋効果）","sub":"太陽の光だけで汚れも水も分解","desc":"酸化チタン(IV)(TiO₂)に紫外線を当てると強い酸化力と超親水性を示し、有機汚れの分解や水の光分解を起こす日本発の技術。","exam":"ビルの外壁のセルフクリーニングや空気清浄機・抗菌コーティングに世界中で利用されている！","unit":"化学反応と光エネルギー"},{"id":"C113","cat":"phenom","rar":"N","art":"ph_tyndall","name":"ブラウン運動","sub":"分子の衝突が踊らせる不規則運動","desc":"限外顕微鏡でコロイド粒子を観察すると、周囲の溶媒分子（水分子など）の激しい熱運動による不規則な衝突を受けてジグザグに動き続ける現象。","exam":"コロイド粒子自身が生きているのではなく「溶媒分子の熱運動」の証拠！アインシュタインが理論的に証明した。","unit":"コロイド"},{"id":"S01","cat":"secret","rar":"SEC","art":"sec_nh","name":"【SEC】ニホニウム (113 Nh)","sub":"アジア初！日本が名付けた113番元素","desc":"理化学研究所・森田浩介グループが亜鉛(³⁰Zn)ビームをビスマス(⁸³Bi)標的に9年間照射し続け、30+83＝113番の新元素合成に成功！","exam":"周期表に日本の名が刻まれた歴史的偉業！超重元素は極めて短い半減期でα崩壊を繰り返して確認される。","unit":"シークレット・周期表"},{"id":"S02","cat":"secret","rar":"SEC","art":"sec_stone","name":"【SEC】賢者の石（現代の元素変換）","sub":"中世の夢から原子核反応の現実へ","desc":"中世の錬金術師が追い求めた「卑金属を金に変える石」。化学反応では原子核は変わらないが、現代の粒子加速器なら核反応で実際に元素変換できる！","exam":"化学反応＝外側の電子のやりとり（原子核は不変）、核反応＝陽子数が変わり別元素になる！この違いが本質。","unit":"シークレット・原子核"},{"id":"S03","cat":"secret","rar":"SEC","art":"sec_bigbang","name":"【SEC】ビッグバン元素合成","sub":"私たちは星のかけらでできている","desc":"宇宙誕生直後にHとHeが生まれ、恒星内部の核融合でC・O・Feがつくられ、超新星爆発や中性子星合体でAu・Uなど重い元素が宇宙へ放たれた。","exam":"地球上の元素存在比と宇宙の元素存在比（H約75%・He約25%）の違いも化学の壮大なロマン！","unit":"シークレット・宇宙化学"},{"id":"S04","cat":"secret","rar":"SEC","art":"sec_nobel","name":"【SEC】日本のノーベル化学賞の系譜","sub":"世界に誇る日本の化学力","desc":"福井謙一(フロンティア軌道)、白川英樹(導電性高分子)、野依良治(不斉合成)、田中耕一(質量分析)、下村脩(GFP)、根岸英一＆鈴木章(クロスカップリング)、吉野彰(Liイオン電池)！","exam":"高校化学で学ぶ「触媒・高分子・有機合成・電池」の最先端がそのまま世界のノーベル賞につながっている！","unit":"シークレット・化学史"},{"id":"S05","cat":"secret","rar":"SEC","art":"sec_master","name":"【SEC】周期表完全マスターの紋章","sub":"全113元素を統べる究極の証","desc":"電子配置・イオン化エネルギー・化学結合・エンタルピー・平衡・無機・有機・高分子――すべての化学法則を貫く最強の地図「周期表」の黄金紋章。","exam":"迷ったら必ず「周期表の位置（族と周期）」に立ち返ろう。化学のあらゆる性質は電子配置から導かれる！","unit":"シークレット・総合化学"}];
+
+const CardGacha = (() => {
+  const CAT_LABELS = {
+    scientist: '🧑‍🔬 科学者',
+    tool: '🧪 実験器具',
+    matter: '💎 物質・結晶',
+    phenom: '⚡ 反応・現象',
+    secret: '🌟 シークレット'
+  };
+  const NORMAL_CARDS = CHEM_CARDS_80.filter(c => c.rar !== 'SEC');
+  const SECRET_CARDS = CHEM_CARDS_80.filter(c => c.rar === 'SEC');
+  const RAR_WEIGHTS = { SEC: 0.8, SSR: 4.2, SR: 16, R: 32, N: 47 };
+  const DUP_POINTS = { N: 5, R: 15, SR: 40, SSR: 100, SEC: 250 };
+  const EXCH_COST = { N: 30, R: 80, SR: 200, SSR: 400 };
+  const SINGLE_COST = 50;
+  const TEN_COST = 450;
+
+  const DAILY_MISSIONS = [
+    { id: 'corr5',  title: '🎯 問題に 5 問正解しよう',       key: 'correct',     goal: 5,  reward: 30 },
+    { id: 'corr15', title: '🔥 問題に 15 問正解しよう',      key: 'correct',     goal: 15, reward: 60 },
+    { id: 'win3',   title: '⚔️ バトルで 3 回勝利しよう',     key: 'wins',        goal: 3,  reward: 50 },
+    { id: 'calc3',  title: '🧮 計算問題に 3 問正解しよう',   key: 'calcCorrect', goal: 3,  reward: 50 },
+    { id: 'free1',  title: '🎁 今日の1日1回無料ガチャを引こう', key: 'freePull',    goal: 1,  reward: 25 }
+  ];
+
+  let activeTab = 'pull'; // 'pull' | 'daily' | 'dex' | 'shop'
+  let dexCatFilter = 'all';
+  let dexRarFilter = 'all';
+  let lastPullResults = [];
+
+  function getTodayKey() {
+    const d = new Date();
+    const y = d.getFullYear();
+    const m = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    return `${y}-${m}-${day}`;
+  }
+
+  function ensureState(st) {
+    if (typeof st.coins !== 'number' || Number.isNaN(st.coins)) st.coins = 100;
+    if (!st.gachaCards || typeof st.gachaCards !== 'object') st.gachaCards = {};
+    if (typeof st.gachaPts !== 'number' || Number.isNaN(st.gachaPts)) st.gachaPts = 0;
+    if (typeof st.gachaTutDone !== 'boolean') st.gachaTutDone = false;
+    if (typeof st.gachaFreeDate !== 'string') st.gachaFreeDate = '';
+    const today = getTodayKey();
+    if (!st.daily || st.daily.date !== today) {
+      st.daily = { date: today, correct: 0, calcCorrect: 0, wins: 0, freePull: 0, claimed: {} };
+    }
+    if (!st.daily.claimed || typeof st.daily.claimed !== 'object') st.daily.claimed = {};
+  }
+
+  function canFreePullToday(st) {
+    ensureState(st);
+    return st.gachaFreeDate !== getTodayKey();
+  }
+
+  function countClaimableDaily(st) {
+    ensureState(st);
+    let n = 0;
+    DAILY_MISSIONS.forEach(m => {
+      const cur = st.daily[m.key] || 0;
+      if (cur >= m.goal && !st.daily.claimed[m.id]) n++;
+    });
+    return n;
+  }
+
+  function recordDailyProgress(st, key, delta = 1) {
+    ensureState(st);
+    st.daily[key] = (st.daily[key] || 0) + delta;
+  }
+
+  function claimDaily(st, missionId, saveFn, updateBarFn, rerenderFn) {
+    ensureState(st);
+    const m = DAILY_MISSIONS.find(x => x.id === missionId);
+    if (!m) return;
+    if ((st.daily[m.key] || 0) < m.goal || st.daily.claimed[m.id]) return;
+    st.daily.claimed[m.id] = true;
+    st.coins += m.reward;
+    SoundEngine.seCatchFanfare();
+    saveFn();
+    updateBarFn();
+    rerenderFn();
+  }
+
+  function getTitleForCount(normalOwned, secOwned) {
+    if (normalOwned >= 113 && secOwned >= 5) return '👑 究極のグランド・ケミスト（全118種完全制覇！）';
+    if (normalOwned >= 113) return '🌟 伝説の化学マスター（通常113種コンプ！）';
+    if (normalOwned >= 85) return '🏆 ノーベル化学賞候補';
+    if (normalOwned >= 55) return '🏅 化学博士';
+    if (normalOwned >= 30) return '⚗️ 熟練ケミスト';
+    if (normalOwned >= 12) return '🔬 若手化学研究員';
+    return '🧪 見習いラボ生';
+  }
+
+  function renderCardSvg(card, locked = false) {
+    if (locked) {
+      const isSec = card.rar === 'SEC';
+      return `<svg viewBox="0 0 120 90" width="100%" height="100%"><rect width="120" height="90" fill="${isSec ? '#1e1033' : '#0f172a'}"/><circle cx="60" cy="42" r="22" fill="#1e293b" stroke="${isSec ? '#facc15' : '#475569'}" stroke-width="2" stroke-dasharray="4 3"/><text x="60" y="50" text-anchor="middle" fill="${isSec ? '#fde047' : '#64748b'}" font-size="24" font-weight="900">?</text><text x="60" y="78" text-anchor="middle" fill="${isSec ? '#facc15' : '#475569'}" font-size="9" font-weight="900">${isSec ? 'SECRET' : '未所持'}</text></svg>`;
+    }
+    const bgMap = {
+      scientist: ['#1e1b4b', '#312e81', '#818cf8'],
+      tool:      ['#082f49', '#0369a1', '#38bdf8'],
+      matter:    ['#064e3b', '#047857', '#34d399'],
+      phenom:    ['#4c0519', '#9d174d', '#f472b6'],
+      secret:    ['#020617', '#581c87', '#fde047']
+    };
+    const [c1, c2, acc] = bgMap[card.cat] || ['#0f172a', '#1e293b', '#38bdf8'];
+    const gid = 'g_' + card.id + '_' + Math.floor(Math.random() * 9999);
+    let motif = '';
+    const a = card.art || '';
+
+    if (card.cat === 'secret') {
+      let badge = 'SEC';
+      if (a === 'sec_nh') badge = '113 Nh';
+      else if (a === 'sec_stone') badge = '賢者の石';
+      else if (a === 'sec_bigbang') badge = 'BIG BANG';
+      else if (a === 'sec_nobel') badge = 'NOBEL';
+      else if (a === 'sec_master') badge = 'MASTER';
+      motif = `
+        <circle cx="60" cy="45" r="34" fill="none" stroke="#fde047" stroke-width="2" stroke-dasharray="5 3"/>
+        <polygon points="60,10 68,36 96,45 68,54 60,80 52,54 24,45 52,36" fill="rgba(250,204,21,0.35)" stroke="#fef08a" stroke-width="2"/>
+        <circle cx="60" cy="45" r="18" fill="rgba(15,23,42,0.85)" stroke="#f472b6" stroke-width="2"/>
+        <text x="60" y="49" text-anchor="middle" fill="#fde047" font-size="${badge.length > 5 ? 8.5 : 10.5}" font-weight="900">${badge}</text>
+      `;
+    } else if (card.cat === 'scientist') {
+      let sym = '⚛';
+      if (a === 'sci_table') sym = '周期表';
+      else if (a === 'sci_rad') sym = '☢';
+      else if (a === 'sci_mol') sym = '6×10²³';
+      else if (a === 'sci_scale') sym = '⚖';
+      else if (a === 'sci_bolt') sym = '⚡Li+';
+      else if (a === 'sci_eq') sym = '⇄';
+      else if (a === 'sci_heat') sym = 'ΔG/ΔH';
+      else if (a === 'sci_benz') sym = '⬡';
+      else if (a === 'sci_poly') sym = '⚡Poly';
+      else if (a === 'sci_nh3') sym = 'NH₃';
+      else if (a === 'sci_gas') sym = 'PV/T';
+      else if (a === 'sci_osm') sym = 'Π=cRT';
+      else if (a === 'sci_acid') sym = 'H⁺';
+      else if (a === 'sci_chiral') sym = '鏡像';
+      motif = `
+        <circle cx="42" cy="46" r="24" fill="rgba(255,255,255,0.12)" stroke="${acc}" stroke-width="2"/>
+        <circle cx="42" cy="37" r="10" fill="#fde68a"/>
+        <path d="M25,65 C25,52 59,52 59,65" fill="#e2e8f0"/>
+        <path d="M36,52 L42,63 L48,52" fill="#38bdf8"/>
+        <rect x="68" y="18" width="44" height="32" rx="7" fill="rgba(15,23,42,0.72)" stroke="#fde047" stroke-width="1.5"/>
+        <text x="90" y="39" text-anchor="middle" fill="#fde047" font-size="${sym.length > 3 ? 9.5 : 13.5}" font-weight="900">${sym}</text>
+        <circle cx="96" cy="68" r="10" fill="rgba(250,204,21,0.2)" stroke="#facc15" stroke-width="1.2"/>
+        <text x="96" y="72" text-anchor="middle" fill="#fef08a" font-size="10">★</text>
+      `;
+    } else if (card.cat === 'tool') {
+      if (a === 'tool_burette' || a === 'tool_pipette') {
+        motif = `
+          <rect x="55" y="10" width="10" height="62" rx="2" fill="rgba(186,230,253,0.3)" stroke="#e0f2fe" stroke-width="2"/>
+          <rect x="56" y="34" width="8" height="36" fill="#38bdf8"/>
+          <line x1="57" y1="20" x2="63" y2="20" stroke="#fff" stroke-width="1.2"/><line x1="57" y1="30" x2="63" y2="30" stroke="#fff" stroke-width="1.2"/>
+          <line x1="57" y1="40" x2="63" y2="40" stroke="#fff" stroke-width="1.2"/><line x1="57" y1="50" x2="63" y2="50" stroke="#fff" stroke-width="1.2"/>
+          <rect x="49" y="64" width="22" height="5" rx="2" fill="#facc15"/>
+          <path d="M58,72 L60,82 L62,72 Z" fill="#e0f2fe"/><circle cx="60" cy="86" r="2.5" fill="#38bdf8"/>
+        `;
+      } else if (a === 'tool_volflask' || a === 'tool_conical' || a === 'tool_erlen' || a === 'tool_distill') {
+        motif = `
+          <rect x="53" y="12" width="14" height="28" fill="rgba(224,242,254,0.25)" stroke="#e0f2fe" stroke-width="2"/>
+          <line x1="51" y1="26" x2="69" y2="26" stroke="#fde047" stroke-width="2"/>
+          <path d="M53,40 L32,76 C30,80 33,82 37,82 L83,82 C87,82 90,80 88,76 L67,40 Z" fill="rgba(224,242,254,0.22)" stroke="#e0f2fe" stroke-width="2"/>
+          <path d="M40,62 L80,62 L86,78 L34,78 Z" fill="rgba(56,189,248,0.68)"/>
+        `;
+      } else if (a === 'tool_liebig') {
+        motif = `
+          <g transform="rotate(-22 60 45)">
+            <rect x="14" y="34" width="92" height="22" rx="6" fill="rgba(56,189,248,0.35)" stroke="#7dd3fc" stroke-width="2"/>
+            <line x1="6" y1="45" x2="114" y2="45" stroke="#fde047" stroke-width="4"/>
+            <line x1="28" y1="56" x2="28" y2="70" stroke="#38bdf8" stroke-width="3"/><line x1="92" y1="20" x2="92" y2="34" stroke="#38bdf8" stroke-width="3"/>
+          </g>
+        `;
+      } else if (a === 'tool_sep') {
+        motif = `
+          <path d="M46,16 C40,36 46,56 57,66 L63,66 C74,56 80,36 74,16 Z" fill="rgba(255,255,255,0.2)" stroke="#e0f2fe" stroke-width="2"/>
+          <path d="M46,38 L74,38 L71,52 L49,52 Z" fill="rgba(250,204,21,0.75)"/>
+          <path d="M49,52 L71,52 L63,65 L57,65 Z" fill="rgba(56,189,248,0.8)"/>
+          <rect x="52" y="67" width="16" height="5" rx="2" fill="#f87171"/>
+        `;
+      } else if (a === 'tool_burner') {
+        motif = `
+          <ellipse cx="60" cy="78" rx="24" ry="6" fill="#64748b"/><rect x="55" y="42" width="10" height="36" fill="#cbd5e1"/>
+          <path d="M60,8 C72,22 70,38 60,44 C50,38 48,22 60,8 Z" fill="#38bdf8"/>
+          <path d="M60,18 C66,27 65,37 60,42 C55,37 54,27 60,18 Z" fill="#fef08a"/>
+        `;
+      } else {
+        motif = `
+          <rect x="34" y="22" width="52" height="50" rx="10" fill="rgba(224,242,254,0.2)" stroke="#7dd3fc" stroke-width="2"/>
+          <path d="M36,52 L84,52 L84,64 C84,68 80,70 76,70 L44,70 C40,70 36,68 36,64 Z" fill="rgba(56,189,248,0.55)"/>
+          <circle cx="52" cy="40" r="5" fill="#fde047"/><circle cx="70" cy="36" r="4" fill="#34d399"/>
+        `;
+      }
+    } else if (card.cat === 'matter') {
+      if (a === 'mat_dia') {
+        motif = `
+          <polygon points="60,12 92,36 60,80 28,36" fill="rgba(186,230,253,0.45)" stroke="#e0f2fe" stroke-width="2.5"/>
+          <polyline points="28,36 60,42 92,36" fill="none" stroke="#fff" stroke-width="1.5"/>
+          <line x1="60" y1="12" x2="60" y2="80" stroke="#7dd3fc" stroke-width="1.5"/>
+        `;
+      } else if (a === 'mat_benz' || a === 'mat_phenol' || a === 'mat_asp' || a === 'mat_gluc') {
+        motif = `
+          <polygon points="60,14 88,30 88,60 60,76 32,60 32,30" fill="rgba(52,211,153,0.22)" stroke="#fde047" stroke-width="3"/>
+          <circle cx="60" cy="45" r="16" fill="none" stroke="#6ee7b7" stroke-width="2.5" stroke-dasharray="6 3"/>
+          <circle cx="88" cy="30" r="6" fill="#f87171"/>
+        `;
+      } else if (a === 'mat_dna') {
+        motif = `
+          <path d="M22,22 Q40,8 60,45 T98,68" fill="none" stroke="#38bdf8" stroke-width="4"/>
+          <path d="M22,68 Q40,82 60,45 T98,22" fill="none" stroke="#f472b6" stroke-width="4"/>
+          <line x1="34" y1="24" x2="34" y2="66" stroke="#fde047" stroke-width="2.5"/>
+          <line x1="86" y1="24" x2="86" y2="66" stroke="#4ade80" stroke-width="2.5"/>
+        `;
+      } else if (a === 'mat_nacl' || a === 'mat_cscl' || a === 'mat_bcc' || a === 'mat_fcc') {
+        motif = `
+          <rect x="34" y="20" width="44" height="44" fill="none" stroke="#94a3b8" stroke-width="1.8"/>
+          <rect x="44" y="28" width="44" height="44" fill="none" stroke="#cbd5e1" stroke-width="1.8"/>
+          <circle cx="34" cy="20" r="6" fill="#4ade80"/><circle cx="78" cy="20" r="6" fill="#a78bfa"/>
+          <circle cx="34" cy="64" r="6" fill="#a78bfa"/><circle cx="78" cy="64" r="6" fill="#4ade80"/>
+          <circle cx="61" cy="46" r="8" fill="#fde047"/>
+        `;
+      } else {
+        motif = `
+          <line x1="36" y1="54" x2="60" y2="30" stroke="#e2e8f0" stroke-width="3"/>
+          <line x1="84" y1="54" x2="60" y2="30" stroke="#e2e8f0" stroke-width="3"/>
+          <circle cx="60" cy="30" r="12" fill="#ef4444" stroke="#fff" stroke-width="1.5"/>
+          <circle cx="36" cy="56" r="9" fill="#38bdf8" stroke="#fff" stroke-width="1.5"/>
+          <circle cx="84" cy="56" r="9" fill="#fde047" stroke="#fff" stroke-width="1.5"/>
+        `;
+      }
+    } else {
+      if (a === 'ph_flame') {
+        const cols = ['#ef4444','#facc15','#c084fc','#10b981','#f97316','#e11d48','#a3e635'];
+        motif = cols.map((col, i) => `<path d="M${16+i*14},74 Q${16+i*14},22 ${16+i*14},18 Q${22+i*14},42 ${22+i*14},74 Z" fill="${col}"/>`).join('');
+      } else if (a === 'ph_lumi' || a === 'ph_super') {
+        motif = `
+          <circle cx="60" cy="45" r="30" fill="rgba(56,189,248,0.22)"/><circle cx="60" cy="45" r="18" fill="rgba(125,211,252,0.55)"/>
+          <polygon points="60,14 66,38 90,45 66,52 60,76 54,52 30,45 54,38" fill="#e0f2fe"/>
+        `;
+      } else if (a === 'ph_daniell' || a === 'ph_lead' || a === 'ph_fuel') {
+        motif = `
+          <rect x="20" y="34" width="34" height="44" rx="4" fill="rgba(56,189,248,0.35)" stroke="#e0f2fe" stroke-width="2"/>
+          <rect x="66" y="34" width="34" height="44" rx="4" fill="rgba(244,114,182,0.35)" stroke="#e0f2fe" stroke-width="2"/>
+          <rect x="30" y="24" width="8" height="44" fill="#94a3b8"/><rect x="82" y="24" width="8" height="44" fill="#f97316"/>
+          <path d="M34,24 L34,14 L86,14 L86,24" fill="none" stroke="#fde047" stroke-width="2.5"/>
+          <circle cx="60" cy="14" r="7" fill="#fde047"/><text x="60" y="18" text-anchor="middle" fill="#0f172a" font-size="10" font-weight="900">⚡</text>
+        `;
+      } else {
+        motif = `
+          <polygon points="48,14 72,14 82,76 38,76" fill="rgba(255,255,255,0.18)" stroke="#f8fafc" stroke-width="2"/>
+          <polygon points="43,46 77,46 81,74 39,74" fill="#facc15" opacity="0.85"/>
+          <circle cx="54" cy="36" r="4" fill="#fde047"/><circle cx="68" cy="28" r="3" fill="#fff"/>
+        `;
+      }
+    }
+    const sparkle = (card.rar === 'SSR' || card.rar === 'SEC')
+      ? '<circle cx="16" cy="16" r="2.2" fill="#fff"/><circle cx="104" cy="20" r="2.5" fill="#fde047"/><circle cx="102" cy="74" r="2" fill="#fff"/>'
+      : '';
+    return `<svg viewBox="0 0 120 90" width="100%" height="100%"><defs><linearGradient id="${gid}" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="${c1}"/><stop offset="100%" stop-color="${c2}"/></linearGradient></defs><rect width="120" height="90" fill="url(#${gid})"/>${motif}${sparkle}</svg>`;
+  }
+
+  function rollOne(forceMinSR = false) {
+    const r = Math.random() * 100;
+    let rar = 'N';
+    if (forceMinSR) {
+      if (r < 2.5) rar = 'SEC';
+      else if (r < 24) rar = 'SSR';
+      else rar = 'SR';
+    } else {
+      if (r < RAR_WEIGHTS.SEC) rar = 'SEC';
+      else if (r < RAR_WEIGHTS.SEC + RAR_WEIGHTS.SSR) rar = 'SSR';
+      else if (r < RAR_WEIGHTS.SEC + RAR_WEIGHTS.SSR + RAR_WEIGHTS.SR) rar = 'SR';
+      else if (r < RAR_WEIGHTS.SEC + RAR_WEIGHTS.SSR + RAR_WEIGHTS.SR + RAR_WEIGHTS.R) rar = 'R';
+      else rar = 'N';
+    }
+    const pool = CHEM_CARDS_80.filter(c => c.rar === rar);
+    return pool[Math.floor(Math.random() * pool.length)];
+  }
+
+  function pull(st, saveFn, updateBarFn, rerenderFn, times, isFree = false) {
+    ensureState(st);
+    if (isFree) {
+      if (!canFreePullToday(st)) {
+        SoundEngine.seWrong();
+        alert('本日の無料ガチャはすでに引き終わっています！明日また引けます。');
+        return;
+      }
+      st.gachaFreeDate = getTodayKey();
+      recordDailyProgress(st, 'freePull', 1);
+    } else {
+      const cost = times === 10 ? TEN_COST : SINGLE_COST;
+      if (st.coins < cost) {
+        SoundEngine.seWrong();
+        alert(`🪙 コインが足りません！（必要：${cost} ／ 所持：${st.coins}）\nバトルや「📅 デイリーミッション」でコインを貯めよう！`);
+        return;
+      }
+      st.coins -= cost;
+    }
+
+    const results = [];
+    let highRar = false;
+    for (let i = 0; i < times; i++) {
+      const card = rollOne(!isFree && times === 10 && i === 9);
+      const prev = st.gachaCards[card.id] || 0;
+      const isNew = prev === 0;
+      st.gachaCards[card.id] = prev + 1;
+      let dupPt = 0;
+      if (!isNew) {
+        dupPt = DUP_POINTS[card.rar] || 5;
+        st.gachaPts += dupPt;
+      }
+      if (card.rar === 'SSR' || card.rar === 'SEC') highRar = true;
+      results.push({ card, isNew, dupPt, count: st.gachaCards[card.id] });
+    }
+    lastPullResults = results;
+    if (highRar) SoundEngine.seCatchFanfare();
+    else SoundEngine.seAlchemy();
+    saveFn();
+    updateBarFn();
+    rerenderFn();
+  }
+
+  function exchangeCard(st, cardId, saveFn, rerenderFn) {
+    ensureState(st);
+    const card = NORMAL_CARDS.find(c => c.id === cardId);
+    if (!card) return;
+    const cost = EXCH_COST[card.rar] || 100;
+    if (st.gachaPts < cost) {
+      SoundEngine.seWrong();
+      alert(`🎁 交換ポイントが足りません！（必要：${cost}pt ／ 所持：${st.gachaPts}pt）`);
+      return;
+    }
+    st.gachaPts -= cost;
+    st.gachaCards[card.id] = (st.gachaCards[card.id] || 0) + 1;
+    SoundEngine.seCatchFanfare();
+    saveFn();
+    alert(`✨ カード交換成功！\n[${card.rar}] ${card.name} を手に入れました！`);
+    rerenderFn();
+  }
+
+  function showFirstTutorial(st, saveFn) {
+    const bd = document.getElementById('gacha-tut-backdrop');
+    const box = document.getElementById('gacha-tut-box');
+    if (!bd || !box) return;
+    let stepIdx = 0;
+    const steps = [
+      {
+        title: '🎴 化学カードガチャへようこそ！',
+        body: 'ここでは <b>全113種類の化学カード＋激レア「シークレット5種」（合計118種）</b> をコレクションしながら楽しく化学を学べます！<br><br>科学者・実験器具・物質や結晶・化学反応のイラスト＆入試ポイントがカードにぎっしり詰まっています！'
+      },
+      {
+        title: '🎁 毎日おトク！1日1回無料＆デイリーミッション',
+        body: '・<b>「🎁 本日無料 1回引く」</b>で、毎日タダで1枚カードがもらえます！<br>・<b>「📅 デイリーミッション」</b>を達成すると、毎日最大 <b>215 コイン</b> GET！<br>・さらにバトルで正解(+3🪙)＆勝利(+20〜40🪙)するほどコインが貯まります！'
+      },
+      {
+        title: '🃏 カードをタップして解説を読もう＆交換所も活用！',
+        body: '・手に入れたカードをタップすると <b>拡大イラスト＋詳しい解説＋テストに出るポイント</b> が読めます。<br>・かぶりカードは <b>🎁 交換ポイント</b> に変換されるので、欲しい未所持カードを交換所で直接ゲット可能！（※シークレット5種はガチャ限定！）'
+      }
+    ];
+    const draw = () => {
+      const s = steps[stepIdx];
+      box.innerHTML = `
+        <div style="font-size:15px;font-weight:900;color:#fde047;">${s.title} <span style="font-size:11px;color:#93c5fd;">(${stepIdx + 1}/${steps.length})</span></div>
+        <div style="font-size:12.5px;line-height:1.7;color:#e2e8f0;background:rgba(255,255,255,0.06);border-radius:10px;padding:10px 11px;">${s.body}</div>
+        <div style="display:flex;gap:8px;justify-content:flex-end;">
+          ${stepIdx > 0 ? '<button type="button" id="gtut-prev" class="btn-primary" style="width:auto;padding:7px 12px;font-size:11.5px;background:#64748b;">◀ 戻る</button>' : ''}
+          <button type="button" id="gtut-next" class="btn-primary" style="flex:1;padding:8px 12px;font-size:12.5px;background:linear-gradient(180deg,#f59e0b,#d97706);">${stepIdx < steps.length - 1 ? 'つぎへ ▶' : '🚀 さあ、まずは無料ガチャを引こう！'}</button>
+        </div>
+      `;
+      const prevBtn = box.querySelector('#gtut-prev');
+      if (prevBtn) prevBtn.onclick = () => { SoundEngine.seClick(); stepIdx--; draw(); };
+      box.querySelector('#gtut-next').onclick = () => {
+        SoundEngine.seClick();
+        if (stepIdx < steps.length - 1) {
+          stepIdx++;
+          draw();
+        } else {
+          st.gachaTutDone = true;
+          saveFn();
+          bd.classList.add('hidden');
+        }
+      };
+    };
+    draw();
+    bd.classList.remove('hidden');
+  }
+
+  function openDetail(card, count) {
+    SoundEngine.seClick();
+    const bd = document.getElementById('card-detail-backdrop');
+    const sheet = document.getElementById('card-detail-sheet');
+    if (!bd || !sheet) return;
+    const rarBg = card.rar === 'SEC'
+      ? 'linear-gradient(135deg,#020617 0%,#581c87 35%,#ca8a04 70%,#0f172a 100%)'
+      : card.rar === 'SSR'
+        ? 'linear-gradient(135deg,#fde047 0%,#f472b6 38%,#818cf8 72%,#38bdf8 100%)'
+        : card.rar === 'SR'
+          ? 'linear-gradient(160deg,#fef9c3 0%,#f59e0b 100%)'
+          : card.rar === 'R'
+            ? 'linear-gradient(160deg,#e0f2fe 0%,#38bdf8 100%)'
+            : 'linear-gradient(160deg,#f8fafc 0%,#cbd5e1 100%)';
+    sheet.style.background = rarBg;
+    sheet.style.border = (card.rar === 'SEC' || card.rar === 'SSR') ? '3px solid #fef08a' : '2.5px solid #0f172a';
+    sheet.innerHTML = `
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:6px;">
+        <span style="background:#0f172a;color:#fde047;padding:3px 9px;border-radius:8px;font-size:12px;font-weight:900;">${card.id} ｜ ${card.rar} ｜ ${CAT_LABELS[card.cat] || ''}</span>
+        <button type="button" onclick="CardGacha.closeDetail()" style="background:#ef4444;color:#fff;border:1.5px solid #fff;border-radius:8px;padding:3px 10px;font-size:11px;font-weight:900;cursor:pointer;">✕ 閉じる</button>
+      </div>
+      <div style="width:100%;aspect-ratio:4/3;border-radius:12px;overflow:hidden;border:2px solid rgba(15,23,42,0.55);background:#0f172a;">
+        ${renderCardSvg(card, false)}
+      </div>
+      <div style="background:rgba(15,23,42,0.9);color:#fff;border-radius:12px;padding:11px 12px;display:flex;flex-direction:column;gap:7px;">
+        <div style="display:flex;justify-content:space-between;align-items:baseline;gap:6px;flex-wrap:wrap;">
+          <b style="font-size:16.5px;color:#fde047;">${card.name}</b>
+          <span style="font-size:11px;color:#7dd3fc;font-weight:800;">所持：${count}枚</span>
+        </div>
+        <div style="font-size:12px;color:#cbd5e1;font-weight:700;">「${card.sub}」</div>
+        <div style="font-size:13px;line-height:1.65;color:#f8fafc;background:rgba(255,255,255,0.07);border-radius:8px;padding:8px 10px;">
+          <b>📖 カード解説</b><br>${card.desc}
+        </div>
+        <div style="font-size:12.5px;line-height:1.6;color:#fef3c7;background:rgba(245,158,11,0.18);border-left:4px solid #f59e0b;border-radius:7px;padding:7px 10px;">
+          <b>💡 テスト・受験に出るポイント</b><br>${card.exam}
+        </div>
+        <div style="font-size:11px;color:#93c5fd;text-align:right;font-weight:800;">📚 関連単元：${card.unit}</div>
+      </div>
+    `;
+    bd.classList.remove('hidden');
+  }
+
+  function closeDetail() {
+    const bd = document.getElementById('card-detail-backdrop');
+    if (bd) bd.classList.add('hidden');
+  }
+
+  function renderSubpage(body, titleEl, st, saveFn, updateBarFn) {
+    ensureState(st);
+    const normalOwned = NORMAL_CARDS.filter(c => (st.gachaCards[c.id] || 0) > 0).length;
+    const secOwned = SECRET_CARDS.filter(c => (st.gachaCards[c.id] || 0) > 0).length;
+    const freeReady = canFreePullToday(st);
+    const claimableDaily = countClaimableDaily(st);
+    titleEl.textContent = `🎴 化学カードガチャ (${normalOwned}/113＋SEC ${secOwned}/5)`;
+    body.innerHTML = '';
+
+    const rerender = () => renderSubpage(body, titleEl, st, saveFn, updateBarFn);
+
+    // 初回のみガチャチュートリアルを表示
+    if (!st.gachaTutDone) {
+      showFirstTutorial(st, saveFn);
+    }
+
+    // 上部ステータスバナー
+    const banner = document.createElement('div');
+    banner.className = 'gacha-banner';
+    banner.innerHTML = `
+      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px;">
+        <div>
+          <div style="font-size:10.5px;color:#fde047;font-weight:900;">${getTitleForCount(normalOwned, secOwned)}</div>
+          <div style="font-size:14px;font-weight:900;">🃏 図鑑：${normalOwned}/113種 ＋ 🌟SEC ${secOwned}/5種</div>
+        </div>
+        <div style="text-align:right;font-size:12px;font-weight:900;">
+          <div style="color:#fde047;">🪙 ${st.coins} コイン</div>
+          <div style="color:#a5f3fc;font-size:10.5px;">🎁 ${st.gachaPts}pt ｜ <button type="button" id="btn-gacha-help" style="background:rgba(255,255,255,0.16);color:#fff;border:1px solid #93c5fd;border-radius:6px;padding:1px 6px;font-size:9.5px;cursor:pointer;">？説明</button></div>
+        </div>
+      </div>
+    `;
+    body.appendChild(banner);
+    banner.querySelector('#btn-gacha-help').onclick = () => { SoundEngine.seClick(); showFirstTutorial(st, saveFn); };
+
+    // 4タブ切替
+    const tabBar = document.createElement('div');
+    tabBar.className = 'gacha-tabs';
+    [
+      ['pull',  '🎰 ガチャ' + (freeReady ? '🎁' : '')],
+      ['daily', '📅 デイリー' + (claimableDaily > 0 ? `(${claimableDaily})` : '')],
+      ['dex',   `🃏 図鑑(${normalOwned + secOwned})`],
+      ['shop',  '🎁 交換所']
+    ].forEach(([key, label]) => {
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'gacha-tab-btn' + (activeTab === key ? ' active' : '');
+      b.style.fontSize = '10.5px';
+      b.textContent = label;
+      b.onclick = () => { SoundEngine.seClick(); activeTab = key; rerender(); };
+      tabBar.appendChild(b);
+    });
+    body.appendChild(tabBar);
+
+    if (activeTab === 'pull') {
+      const pullBox = document.createElement('div');
+      pullBox.className = 'card-box';
+      pullBox.style.background = 'linear-gradient(135deg,#fffbeb 0%,#fdf2f8 100%)';
+      pullBox.innerHTML = `
+        <div style="font-size:11px;font-weight:900;color:#701a75;margin-bottom:6px;">
+          ✨ 全113種＋🌟SEC 5種（SEC 0.8% / SSR 4.2% / SR 16% / R 32% / N 47%）
+        </div>
+        <button type="button" id="btn-gacha-free" class="btn-primary" style="width:100%;padding:9px 8px;font-size:12.5px;margin-bottom:7px;background:${freeReady ? 'linear-gradient(90deg,#10b981,#059669)' : '#94a3b8'};" ${freeReady ? '' : 'disabled'}>
+          ${freeReady ? '🎁 【1日1回無料】今すぐ無料で1回引く！' : '✅ 本日の1日1回無料ガチャは受取済（明日また引けます）'}
+        </button>
+        <div style="display:flex;gap:8px;">
+          <button type="button" id="btn-gacha-1" class="btn-primary" style="flex:1;padding:9px 6px;font-size:12px;background:linear-gradient(180deg,#0ea5e9,#0284c7);">
+            🧪 1回引く<br><span style="font-size:10.5px;">🪙 ${SINGLE_COST} コイン</span>
+          </button>
+          <button type="button" id="btn-gacha-10" class="btn-primary" style="flex:1;padding:9px 6px;font-size:12px;background:linear-gradient(135deg,#f59e0b,#ec4899,#8b5cf6);">
+            🌈 10連（SR以上確定！）<br><span style="font-size:10.5px;">🪙 ${TEN_COST} コイン</span>
+          </button>
+        </div>
+        <div style="font-size:10px;color:#64748b;margin-top:6px;">※出たカードをタップすると拡大イラスト＆テストに出るポイントが読めます！</div>
+      `;
+      body.appendChild(pullBox);
+      pullBox.querySelector('#btn-gacha-free').onclick = () => pull(st, saveFn, updateBarFn, rerender, 1, true);
+      pullBox.querySelector('#btn-gacha-1').onclick = () => pull(st, saveFn, updateBarFn, rerender, 1, false);
+      pullBox.querySelector('#btn-gacha-10').onclick = () => pull(st, saveFn, updateBarFn, rerender, 10, false);
+
+      if (lastPullResults.length > 0) {
+        const resTitle = document.createElement('div');
+        resTitle.style.cssText = 'font-size:12px;font-weight:900;color:#0f172a;margin:4px 0 2px;';
+        resTitle.textContent = `🎉 最新のガチャ結果（${lastPullResults.length}枚・タップで拡大＆解説）`;
+        body.appendChild(resTitle);
+
+        const grid = document.createElement('div');
+        grid.className = 'chem-card-grid';
+        lastPullResults.forEach(({ card, isNew, dupPt, count }) => {
+          const el = document.createElement('div');
+          el.className = `chem-card rar-${card.rar}`;
+          el.innerHTML = `
+            <span class="chem-card-rar-badge">${card.rar}</span>
+            <span class="chem-card-cnt-badge">×${count}</span>
+            ${isNew ? '<span class="chem-card-new-badge">NEW!</span>' : `<span class="chem-card-new-badge" style="background:#0284c7;">+${dupPt}pt</span>`}
+            <div class="chem-card-art">${renderCardSvg(card, false)}</div>
+            <div style="font-size:10px;font-weight:900;line-height:1.25;">${card.name}</div>
+          `;
+          el.onclick = () => openDetail(card, count);
+          grid.appendChild(el);
+        });
+        body.appendChild(grid);
+      }
+    } else if (activeTab === 'daily') {
+      const head = document.createElement('div');
+      head.className = 'card-box';
+      head.style.cssText = 'background:#eff6ff;font-size:11px;color:#1e3a8a;';
+      head.innerHTML = `<b>📅 本日のデイリーミッション（${st.daily.date}）</b><br>毎日0時にリセット！クリアして報酬ボタンを押すと 🪙 コインがもらえます（全達成で合計 +215 🪙）！`;
+      body.appendChild(head);
+
+      DAILY_MISSIONS.forEach(m => {
+        const cur = Math.min(m.goal, st.daily[m.key] || 0);
+        const done = cur >= m.goal;
+        const claimed = !!st.daily.claimed[m.id];
+        const pct = Math.round((cur / m.goal) * 100);
+        const row = document.createElement('div');
+        row.className = 'card-box';
+        row.style.cssText = 'display:flex;justify-content:space-between;align-items:center;gap:8px;';
+        row.innerHTML = `
+          <div style="flex:1;">
+            <div style="font-size:12px;font-weight:900;color:#0f172a;">${m.title}</div>
+            <div style="font-size:10.5px;color:#475569;margin:2px 0;">進捗：<b>${cur} / ${m.goal}</b> ｜ 報酬：<b style="color:#d97706;">🪙 +${m.reward}</b></div>
+            <div style="height:6px;background:#e2e8f0;border-radius:999px;overflow:hidden;">
+              <div style="height:100%;width:${pct}%;background:${done ? '#22c55e' : '#0ea5e9'};"></div>
+            </div>
+          </div>
+          <button type="button" class="btn-primary btn-claim" style="width:auto;min-width:84px;padding:7px 9px;font-size:11px;background:${claimed ? '#94a3b8' : done ? 'linear-gradient(180deg,#f59e0b,#d97706)' : '#cbd5e1'};color:${claimed || done ? '#fff' : '#475569'};" ${done && !claimed ? '' : 'disabled'}>
+            ${claimed ? '✅ 受取済' : done ? '🎁 受取る！' : '挑戦中'}
+          </button>
+        `;
+        row.querySelector('.btn-claim').onclick = () => claimDaily(st, m.id, saveFn, updateBarFn, rerender);
+        body.appendChild(row);
+      });
+    } else if (activeTab === 'dex') {
+      const filtBox = document.createElement('div');
+      filtBox.className = 'card-box';
+      filtBox.style.padding = '7px 9px';
+      filtBox.innerHTML = `
+        <div style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:5px;" id="gdex-cat-row"></div>
+        <div style="display:flex;gap:4px;flex-wrap:wrap;" id="gdex-rar-row"></div>
+      `;
+      body.appendChild(filtBox);
+
+      const catRow = filtBox.querySelector('#gdex-cat-row');
+      [['all','すべて'],['scientist','🧑‍🔬科学者'],['tool','🧪器具'],['matter','💎物質'],['phenom','⚡反応'],['secret','🌟SEC']].forEach(([k, lb]) => {
+        const b = document.createElement('button');
+        b.type = 'button';
+        b.className = 'btn-primary';
+        b.style.cssText = `padding:3px 7px;font-size:10px;width:auto;background:${dexCatFilter === k ? '#0284c7' : '#94a3b8'};`;
+        b.textContent = lb;
+        b.onclick = () => { SoundEngine.seClick(); dexCatFilter = k; rerender(); };
+        catRow.appendChild(b);
+      });
+      const rarRow = filtBox.querySelector('#gdex-rar-row');
+      [['all','全レア'],['SEC','🌟SEC'],['SSR','SSR'],['SR','SR'],['R','R'],['N','N']].forEach(([k, lb]) => {
+        const b = document.createElement('button');
+        b.type = 'button';
+        b.className = 'btn-primary';
+        b.style.cssText = `padding:3px 7px;font-size:10px;width:auto;background:${dexRarFilter === k ? '#d97706' : '#94a3b8'};`;
+        b.textContent = lb;
+        b.onclick = () => { SoundEngine.seClick(); dexRarFilter = k; rerender(); };
+        rarRow.appendChild(b);
+      });
+
+      const list = CHEM_CARDS_80.filter(c =>
+        (dexCatFilter === 'all' || c.cat === dexCatFilter) &&
+        (dexRarFilter === 'all' || c.rar === dexRarFilter)
+      );
+      const grid = document.createElement('div');
+      grid.className = 'chem-card-grid';
+      list.forEach(card => {
+        const cnt = st.gachaCards[card.id] || 0;
+        const locked = cnt === 0;
+        const el = document.createElement('div');
+        el.className = `chem-card rar-${card.rar}${locked ? ' locked' : ''}`;
+        el.innerHTML = `
+          <span class="chem-card-rar-badge">${card.rar}</span>
+          ${!locked ? `<span class="chem-card-cnt-badge">×${cnt}</span>` : ''}
+          <div class="chem-card-art">${renderCardSvg(card, locked)}</div>
+          <div style="font-size:10px;font-weight:900;line-height:1.25;">${locked ? (card.rar === 'SEC' ? '🌟 SECRET ???' : (card.id + ' ???')) : card.name}</div>
+        `;
+        if (!locked) el.onclick = () => openDetail(card, cnt);
+        grid.appendChild(el);
+      });
+      body.appendChild(grid);
+    } else if (activeTab === 'shop') {
+      const info = document.createElement('div');
+      info.className = 'card-box';
+      info.style.fontSize = '11px';
+      info.innerHTML = `<b>🎁 未所持カード交換所（所持：${st.gachaPts} pt）</b><br>かぶりポイントで未所持の通常カード113種を直接交換できます！（N:30pt / R:80pt / SR:200pt / SSR:400pt ※🌟SEC 5種はガチャ限定）`;
+      body.appendChild(info);
+
+      const unowned = NORMAL_CARDS.filter(c => !(st.gachaCards[c.id] > 0));
+      if (unowned.length === 0) {
+        const done = document.createElement('div');
+        done.className = 'card-box';
+        done.style.textAlign = 'center';
+        done.innerHTML = '🌟 <b>おめでとうございます！通常113種類の化学カードをすべてコンプリートしています！</b>';
+        body.appendChild(done);
+      } else {
+        unowned.forEach(card => {
+          const cost = EXCH_COST[card.rar] || 100;
+          const canBuy = st.gachaPts >= cost;
+          const row = document.createElement('div');
+          row.className = 'card-box';
+          row.style.cssText = 'display:flex;justify-content:space-between;align-items:center;gap:8px;';
+          row.innerHTML = `
+            <div style="flex:1;">
+              <span style="font-size:10px;font-weight:900;background:#0f172a;color:#fde047;padding:1px 5px;border-radius:4px;">${card.rar}</span>
+              <b style="font-size:12.5px;"> ${card.name}</b>
+              <div style="font-size:10px;color:#475569;">${CAT_LABELS[card.cat]} ｜ ${card.sub}</div>
+            </div>
+            <button type="button" class="btn-primary btn-exch" style="width:auto;padding:6px 10px;font-size:11px;background:${canBuy ? '#10b981' : '#94a3b8'};" ${canBuy ? '' : 'disabled'}>
+              交換 (${cost}pt)
+            </button>
+          `;
+          row.querySelector('.btn-exch').onclick = () => exchangeCard(st, card.id, saveFn, rerender);
+          body.appendChild(row);
+        });
+      }
+    }
+  }
+
+  return {
+    renderSubpage, openDetail, closeDetail, ensureState, pull, exchangeCard, renderCardSvg,
+    canFreePullToday, countClaimableDaily, recordDailyProgress, claimDaily, showFirstTutorial,
+    CARDS: CHEM_CARDS_80, NORMAL_CARDS, SECRET_CARDS, DAILY_MISSIONS
+  };
+})();
+
 const Game = (() => {
   const SAVE_KEY = 'chem_mon2_save_v1';
 
@@ -10025,7 +11303,7 @@ const Game = (() => {
     showScreen('home');
     const areaList = document.getElementById('area-list');
     if (areaList) areaList.scrollTop = 0;
-    setHomeSpotlight('area-card-1', '① まずは 学習エリアを えらぼう！ 第1章の「単元1 純物質と混合物」を タップしてね！');
+    setHomeSpotlight('area-card-1', '① まずは 学習エリアを えらぼう！ 第1章の「単元1 固体の構造」を タップしてね！');
   }
 
   function startHomeFeatureTour() {
@@ -10077,8 +11355,15 @@ const Game = (() => {
       const qEl = document.getElementById('panel-quiz');
       if (qEl) qEl.classList.add('tutorial-spotlight-target');
       if (tooltip && qEl) {
-        tooltip.textContent = '🎯 さあ やってみよう！ ただしい こたえの「① 水 (H₂O)」を タップして こうげきだ！';
+        tooltip.textContent = '🎯 まずは4択クイズ！ ただしい こたえの「① 水 (H₂O)」を タップして こうげきしよう！';
         positionTutorialTooltip(screenEl, qEl, tooltip);
+      }
+    } else if (step === 'b_calc_btn') {
+      const scEl = document.getElementById('btn-battle-scratch-calc');
+      if (scEl) scEl.classList.add('tutorial-spotlight-target');
+      if (tooltip && scEl) {
+        tooltip.textContent = '🧮 つぎは 計算もんだい！ 右上の「🧮 電卓」ボタンを タップして、計算電卓を ひらいてみよう！';
+        positionTutorialTooltip(screenEl, scEl, tooltip);
       }
     } else if (step === 'b_catch') {
       const catchEl = document.getElementById('panel-catch-choice');
@@ -10098,7 +11383,7 @@ const Game = (() => {
       const fightBtn = document.getElementById('btn-cmd-fight');
       if (fightBtn) fightBtn.classList.add('tutorial-spotlight-target');
       if (tooltip && fightBtn) {
-        tooltip.textContent = '『こうげき』ボタンを タップだ！';
+        tooltip.textContent = '🎯 解答欄に 数値が入ったよ！ 「⚔️ こうげき」ボタンを タップして 勝負を決めよう！';
         positionTutorialTooltip(screenEl, fightBtn, tooltip);
       }
     }
@@ -10120,8 +11405,28 @@ const Game = (() => {
 
   function onTutorialCalcInput(bufStr) {
     if (!battle || battle.kind !== 'tutorial') return;
-    if (tutorialSpotlightStep === 'keypad' && bufStr && bufStr.length > 0) {
+    if (battle.tutorialStage === 1 && bufStr && bufStr.length > 0) {
       setTutorialSpotlight('attack');
+    }
+  }
+
+  function onTutorialScratchCalcOpen() {
+    if (!battle || battle.kind !== 'tutorial' || battle.tutorialStage !== 1) return;
+    setTutorialSpotlight(null);
+    const tb = document.getElementById('scratch-calc-tut-banner');
+    if (tb) {
+      tb.textContent = '🎓 チュートリアル：電卓で「1 × 2 ＋ 1 6 ＝」と計算し、下の「📥 この結果を解答欄に入力して閉じる」を押してみよう！';
+      tb.classList.remove('hidden');
+    }
+  }
+
+  function onTutorialScratchCalcClose() {
+    if (!battle || battle.kind !== 'tutorial' || battle.tutorialStage !== 1 || battle.locked || battle.awaitingCatchChoice) return;
+    const raw = (typeof CalcUI !== 'undefined' && CalcUI.getRaw) ? CalcUI.getRaw() : '';
+    if (raw && raw.length > 0) {
+      setTutorialSpotlight('attack');
+    } else {
+      setTutorialSpotlight('b_calc_btn');
     }
   }
 
@@ -10199,8 +11504,9 @@ const Game = (() => {
       kind: 'tutorial',
       areaId: 1,
       enemy: eMon,
-      eHp: 20,
-      eMaxHp: 20,
+      eHp: 40,
+      eMaxHp: 40,
+      tutorialStage: 0,
       atkBuff: 1.0,
       catchBonus: 0,
       locked: false
@@ -10229,6 +11535,18 @@ const Game = (() => {
     document.getElementById('home-tower-best').textContent = state.towerBest;
     const mc = document.getElementById('home-mistake-count');
     if (mc) mc.textContent = Array.isArray(state.mistakes) ? state.mistakes.length : 0;
+    CardGacha.ensureState(state);
+    const cc = document.getElementById('home-coin-count');
+    if (cc) cc.textContent = state.coins;
+    const gTile = document.getElementById('nav-tile-gacha');
+    if (gTile) {
+      const badgeN = (CardGacha.canFreePullToday(state) ? 1 : 0) + CardGacha.countClaimableDaily(state);
+      let bEl = gTile.querySelector('.gacha-badge-dot');
+      if (badgeN > 0) {
+        if (!bEl) { bEl = document.createElement('span'); bEl.className = 'gacha-badge-dot'; gTile.appendChild(bEl); }
+        bEl.textContent = badgeN;
+      } else if (bEl) { bEl.remove(); }
+    }
   }
 
   // 全21単元の「10秒要点まとめ & 重要公式」
@@ -11063,13 +12381,23 @@ const Game = (() => {
     if (battle.kind === 'tutorial') {
       areaId = 1;
       battle.areaId = 1;
-      q = {
-        type: 'quiz',
-        q: '【チュートリアル】次のうち、1種類の物質だけでできている「純物質」はどれかな？',
-        opts: ['水 (H₂O)', '空気', '海水', '食塩水'],
-        ansIdx: 0,
-        exp: '水 (H₂O) は 1しゅるいの 物質だけで できている「純物質」だよ！ 空気や海水は いろいろまざった「混合物」だよ。'
-      };
+      if ((battle.tutorialStage || 0) === 0) {
+        q = {
+          type: 'quiz',
+          q: '【チュートリアル① 4択クイズ】次のうち、1種類の物質だけでできている「純物質」はどれかな？',
+          opts: ['水 (H₂O)', '空気', '海水', '食塩水'],
+          ansIdx: 0,
+          exp: '水 (H₂O) は 1しゅるいの 物質だけで できている「純物質」だよ！ 空気や海水は いろいろまざった「混合物」だよ。'
+        };
+      } else {
+        q = {
+          type: 'calc',
+          q: '【チュートリアル② 計算＆電卓】水 (H₂O) の分子量はいくつ？\n(原子量: H＝1, O＝16 → 右上の「🧮 電卓」で 1×2＋16 を計算してみよう！)',
+          ans: 18,
+          unit: '',
+          exp: '水 (H₂O) は H が2個と O が1個なので、1×2 ＋ 16 ＝ 18 になるよ！'
+        };
+      }
     } else if (battle.kind === 'review' && Array.isArray(state.mistakes) && state.mistakes.length > 0) {
       const idx = (battle.reviewCursor || 0) % state.mistakes.length;
       const m = state.mistakes[idx];
@@ -11136,6 +12464,9 @@ const Game = (() => {
     const isCalc = q.type === 'calc';
     if (battleScreenEl) battleScreenEl.classList.toggle('calc-mode', isCalc);
     Monster3DRenderer.setCalcLayout(isCalc);
+    const scBtnEl = document.getElementById('btn-battle-scratch-calc');
+    if (scBtnEl) scBtnEl.classList.toggle('hidden', !isCalc);
+    if (!isCalc && typeof ScratchCalc !== 'undefined') ScratchCalc.close();
 
     if (q.type === 'quiz') {
       const qPanel = document.getElementById('panel-quiz');
@@ -11224,6 +12555,10 @@ const Game = (() => {
 
     if (isCorrect) {
       state.stats.correct++;
+      CardGacha.ensureState(state);
+      state.coins += 3;
+      CardGacha.recordDailyProgress(state, 'correct', 1);
+      if (answeredQ && answeredQ.type === 'calc') CardGacha.recordDailyProgress(state, 'calcCorrect', 1);
       clearMistake(answeredQ);
       let selIdx = battle.selectedMoveIdx || 0;
       if (selIdx === 2 && (battle.mp || 0) < 100) {
@@ -11257,7 +12592,7 @@ const Game = (() => {
       const rawDmg = calcAtk(activeMon) * movePowerMult * (0.92 + Math.random() * 0.22) * mult * battle.atkBuff * (battle.usedHintThisTurn ? 0.85 : 1.0);
       let dmg = Math.max(12, Math.round(rawDmg));
       if (battle.kind === 'tutorial') {
-        dmg = battle.eHp;
+        dmg = (battle.tutorialStage || 0) === 0 ? Math.min(20, Math.max(1, battle.eHp - 20)) : battle.eHp;
       }
       battle.atkBuff = 1.0;
 
@@ -11313,11 +12648,23 @@ const Game = (() => {
         spawnDamagePopup('enemy', dmg, usedUlt || mult > 1.1, usedUlt ? 'ULTRA HIT!' : (mult > 1.1 ? '効果ばつぐん！' : ''));
         updateBattleHUD();
         setBattleMsg(`💥 ${pMeta.sym} の『${selectedMove.name}』が炸裂！ ${dmg} のダメージ！${effMsg}${bonusMsg}${mpGainMsg}`);
-        if (battle.kind === 'tutorial' && battle.eHp <= 0) {
+        if (battle.kind === 'tutorial') {
+          if (battle.eHp <= 0) {
+            setTimeout(() => {
+              if (!battle) return;
+              onEnemyDefeated();
+            }, 900);
+            return;
+          }
+          // Stage 0 (4択) クリア → Stage 1 (計算＆電卓チュートリアル) へ自動移行
+          battle.tutorialStage = 1;
           setTimeout(() => {
             if (!battle) return;
-            onEnemyDefeated();
-          }, 900);
+            battle.locked = false;
+            prepareNextQuestion();
+            setBattleMsg('✨ 4択クイズ大成功！ つぎは「計算もんだい」だよ！ 右上の「🧮 電卓」ボタンをおしてみよう！');
+            setTutorialSpotlight('b_calc_btn');
+          }, 950);
           return;
         }
         // モンスターに攻撃が当たって1.5秒後に解説を表示し、タップで閉じた時 or 5秒後に自動消去された時に次へ進む
@@ -11337,8 +12684,13 @@ const Game = (() => {
       SoundEngine.seWrong();
       if (battle.kind === 'tutorial') {
         battle.locked = false;
-        setBattleMsg('おしい！ 「① 水 (H₂O)」を えらんで こうげきしてみよう！');
-        setTutorialSpotlight('b_go');
+        if ((battle.tutorialStage || 0) === 0) {
+          setBattleMsg('おしい！ 「① 水 (H₂O)」を えらんで こうげきしてみよう！');
+          setTutorialSpotlight('b_go');
+        } else {
+          setBattleMsg('おしい！ 答えは「18」だよ。「🧮 電卓」で 1×2＋16 を計算して「📥 解答欄に入力」し、「⚔️ こうげき」を押そう！');
+          setTutorialSpotlight('b_calc_btn');
+        }
         return;
       }
       recordMistake(answeredQ, battle.areaId);
@@ -11410,6 +12762,10 @@ const Game = (() => {
   function onEnemyDefeated() {
     const eMeta = getMonsterMeta(battle.enemy);
     state.stats.wins++;
+    CardGacha.ensureState(state);
+    const coinReward = battle.kind === 'review' ? 35 : battle.kind === 'tower' ? 30 : (battle.enemy && (battle.enemy.isIsotope || battle.enemy.isCompound) ? 40 : 20);
+    state.coins += coinReward;
+    CardGacha.recordDailyProgress(state, 'wins', 1);
     const dropZ = battle.enemy.z || 1;
     state.elements[dropZ] = (state.elements[dropZ] || 0) + 1;
     // 化合物錬成を進めやすくするため、化合物用の基本元素も1個おまけで獲得
@@ -12333,6 +13689,9 @@ const Game = (() => {
       document.getElementById('btn-dex-list').onclick = () => { dexViewMode = 'list'; openSubpage('dex'); };
       document.getElementById('btn-dex-ptable').onclick = () => { dexViewMode = 'ptable'; openSubpage('dex'); };
       selectElementForDex(dexSelectedZ || 1);
+    }
+    else if (tab === 'gacha') {
+      CardGacha.renderSubpage(body, titleEl, state, save, updateHomeBar);
     }
     else if (tab === 'party') {
       titleEl.textContent = `🧬 バトル編成 (最大3体) & 所持一覧 (${state.party.length}体)`;
@@ -13667,7 +15026,7 @@ const Game = (() => {
     onCommandFight, onCommandFlask, onCommandBag, onCommandSwitch, onCommandRun,
     onConfirmCatch, openSubpage, closeSubpage,
     openAreaNote, closeAreaNote, showQuestionHint,
-    advanceTutorialIntro, advanceHomeTutorial, advanceBattleTutorial, skipTutorial, onTutorialCalcInput
+    advanceTutorialIntro, advanceHomeTutorial, advanceBattleTutorial, skipTutorial, onTutorialCalcInput, onTutorialScratchCalcOpen, onTutorialScratchCalcClose
   };
 })();
 
