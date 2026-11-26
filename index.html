@@ -2121,6 +2121,130 @@
     gap: 9px;
   }
 
+
+  /* 博士のフラスコ実験ガチャ演出オーバーレイ */
+  .gacha-anim-backdrop {
+    position: absolute;
+    inset: 0;
+    z-index: 100;
+    background: radial-gradient(circle at 50% 42%, #1e293b 0%, #020617 100%);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 12px;
+    overflow: hidden;
+  }
+  .gacha-anim-backdrop.hidden { display: none !important; }
+  .gacha-anim-stage {
+    position: relative;
+    width: 100%;
+    max-width: 392px;
+    max-height: 94%;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    z-index: 2;
+  }
+  .gacha-anim-rays {
+    position: absolute;
+    width: 560px;
+    height: 560px;
+    top: 50%;
+    left: 50%;
+    margin: -280px 0 0 -280px;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    z-index: 0;
+  }
+  .gacha-anim-rays.show-SR {
+    opacity: 0.45;
+    background: repeating-conic-gradient(from 0deg, rgba(250,204,21,0.55) 0deg 12deg, transparent 12deg 24deg);
+    animation: gachaSpin 7s linear infinite;
+  }
+  .gacha-anim-rays.show-SSR {
+    opacity: 0.72;
+    background: repeating-conic-gradient(from 0deg, rgba(250,204,21,0.7) 0deg 10deg, rgba(244,114,182,0.55) 10deg 20deg, rgba(56,189,248,0.65) 20deg 30deg, transparent 30deg 40deg);
+    animation: gachaSpin 3.6s linear infinite;
+  }
+  .gacha-anim-rays.show-SEC {
+    opacity: 0.9;
+    background: repeating-conic-gradient(from 0deg, rgba(253,224,71,0.85) 0deg 8deg, rgba(168,85,247,0.75) 8deg 16deg, rgba(236,72,153,0.75) 16deg 24deg, transparent 24deg 32deg);
+    animation: gachaSpin 2.2s linear infinite;
+  }
+  .gacha-anim-flash {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 5;
+    opacity: 0;
+  }
+  .gacha-anim-flash.boom {
+    animation: gachaFlashBoom 0.75s ease-out forwards;
+  }
+  .gacha-lab-wrap {
+    width: 280px;
+    height: 215px;
+    position: relative;
+  }
+  .gacha-lab-wrap.shake-soft { animation: gachaShakeSoft 0.25s infinite; }
+  .gacha-lab-wrap.shake-hard { animation: gachaShakeHard 0.14s infinite; }
+  .gacha-cutin-strip {
+    width: 100%;
+    text-align: center;
+    padding: 6px 10px;
+    font-size: 13px;
+    font-weight: 900;
+    letter-spacing: 0.06em;
+    border-radius: 8px;
+    animation: gachaPopIn 0.32s cubic-bezier(.2,1.4,.4,1) both;
+  }
+  .gacha-reveal-card-anim {
+    animation: gachaCardPop 0.45s cubic-bezier(.18,1.35,.35,1) both;
+  }
+  .gacha-particle {
+    position: absolute;
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 1;
+    animation: gachaFloatUp 1.5s ease-out forwards;
+  }
+  @keyframes gachaSpin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+  @keyframes gachaShakeSoft {
+    0%, 100% { transform: translate(0, 0) rotate(0deg); }
+    25% { transform: translate(-2px, 1px) rotate(-1deg); }
+    75% { transform: translate(2px, -1px) rotate(1deg); }
+  }
+  @keyframes gachaShakeHard {
+    0%, 100% { transform: translate(0, 0) rotate(0deg) scale(1.03); }
+    25% { transform: translate(-5px, 3px) rotate(-2.5deg) scale(1.05); }
+    50% { transform: translate(5px, -3px) rotate(2.5deg) scale(1.06); }
+    75% { transform: translate(-4px, -2px) rotate(-1.5deg) scale(1.04); }
+  }
+  @keyframes gachaFlashBoom {
+    0% { opacity: 0.95; }
+    100% { opacity: 0; }
+  }
+  @keyframes gachaPopIn {
+    from { opacity: 0; transform: scale(0.6) translateY(-10px); }
+    to { opacity: 1; transform: scale(1) translateY(0); }
+  }
+  @keyframes gachaCardPop {
+    0% { opacity: 0; transform: scale(0.35) rotateY(140deg) translateY(30px); }
+    70% { opacity: 1; transform: scale(1.06) rotateY(-8deg) translateY(-4px); }
+    100% { opacity: 1; transform: scale(1) rotateY(0deg) translateY(0); }
+  }
+  @keyframes gachaFloatUp {
+    0% { opacity: 1; transform: translate(0, 0) scale(1); }
+    100% { opacity: 0; transform: translate(var(--dx, 0px), var(--dy, -120px)) scale(0.2); }
+  }
+
 </style>
 </head>
 <body>
@@ -2408,6 +2532,15 @@
     <div id="gacha-tut-backdrop" class="gacha-tut-backdrop hidden">
       <div id="gacha-tut-box" class="gacha-tut-box"></div>
     </div>
+
+    <!-- 博士のフラスコ実験ガチャ演出オーバーレイ -->
+    <div id="gacha-anim-backdrop" class="gacha-anim-backdrop hidden">
+      <div id="gacha-anim-rays" class="gacha-anim-rays"></div>
+      <div id="gacha-anim-flash" class="gacha-anim-flash"></div>
+      <button type="button" id="btn-gacha-skip" onclick="CardGacha.skipAnim()" style="position:absolute;top:12px;right:12px;z-index:10;background:rgba(15,23,42,0.82);color:#e2e8f0;border:1.5px solid #94a3b8;border-radius:8px;padding:4px 10px;font-size:11px;font-weight:900;cursor:pointer;">⏩ スキップ</button>
+      <div id="gacha-anim-stage" class="gacha-anim-stage"></div>
+    </div>
+
 
 
     <!-- チュートリアル導入・完了メッセージオーバーレイ（オーキド博士風） -->
@@ -10378,6 +10511,314 @@ const CardGacha = (() => {
     return pool[Math.floor(Math.random() * pool.length)];
   }
 
+
+  let animTimers = [];
+  let animFinishedCb = null;
+  let animCurrentResults = [];
+
+  function clearAnimTimers() {
+    animTimers.forEach(t => clearTimeout(t));
+    animTimers = [];
+  }
+
+  function getTopRarity(results) {
+    const order = { N: 1, R: 2, SR: 3, SSR: 4, SEC: 5 };
+    let top = 'N';
+    results.forEach(r => {
+      if ((order[r.card.rar] || 1) > (order[top] || 1)) top = r.card.rar;
+    });
+    return top;
+  }
+
+  function renderProfLabSvg(phase, topRar) {
+    const liqColors = {
+      N:   ['#94a3b8', '#e2e8f0'],
+      R:   ['#0284c7', '#38bdf8'],
+      SR:  ['#d97706', '#fde047'],
+      SSR: ['#ec4899', '#38bdf8'],
+      SEC: ['#7e22ce', '#fde047']
+    };
+    const [cA, cB] = (phase === 'pour') ? ['#38bdf8', '#7dd3fc'] : (liqColors[topRar] || ['#38bdf8', '#7dd3fc']);
+    const glowR = phase === 'pour' ? 16 : (topRar === 'SEC' ? 76 : topRar === 'SSR' ? 66 : topRar === 'SR' ? 52 : topRar === 'R' ? 38 : 24);
+    const pourStream = phase === 'pour'
+      ? '<line x1="128" y1="88" x2="188" y2="128" stroke="#67e8f9" stroke-width="4" stroke-dasharray="6 4"/>'
+      : '';
+    const reactionBeam = (phase === 'react')
+      ? `<polygon points="175,112 201,112 238,8 138,8" fill="url(#gBeam)" opacity="${topRar === 'N' ? 0.35 : topRar === 'R' ? 0.55 : 0.88}"/>`
+      : '';
+    const extraSparks = (phase === 'react' && (topRar === 'SR' || topRar === 'SSR' || topRar === 'SEC'))
+      ? `<circle cx="150" cy="70" r="5" fill="#fde047"/><circle cx="228" cy="62" r="6" fill="#f472b6"/><circle cx="188" cy="36" r="7" fill="#fff"/><circle cx="136" cy="112" r="4" fill="#38bdf8"/><circle cx="242" cy="108" r="5" fill="#fde047"/>`
+      : '';
+    const tubeTransform = phase === 'pour' ? 'rotate(48 118 82)' : 'rotate(-10 118 82)';
+    return `
+      <svg viewBox="0 0 280 215" width="100%" height="100%">
+        <defs>
+          <linearGradient id="gLiq" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stop-color="${cA}"/><stop offset="100%" stop-color="${cB}"/>
+          </linearGradient>
+          <radialGradient id="gGlow" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="${cB}" stop-opacity="0.95"/>
+            <stop offset="100%" stop-color="${cA}" stop-opacity="0"/>
+          </radialGradient>
+          <linearGradient id="gBeam" x1="0" y1="1" x2="0" y2="0">
+            <stop offset="0%" stop-color="${cB}" stop-opacity="0.9"/>
+            <stop offset="100%" stop-color="#ffffff" stop-opacity="0"/>
+          </linearGradient>
+        </defs>
+        <!-- 実験台 -->
+        <rect x="14" y="182" width="252" height="14" rx="5" fill="#334155" stroke="#64748b" stroke-width="1.5"/>
+        <!-- 反応グロー -->
+        <circle cx="188" cy="146" r="${glowR}" fill="url(#gGlow)"/>
+        ${reactionBeam}
+        <!-- ケミカル博士（白衣・丸メガネ・ヒゲ） -->
+        <g transform="translate(8, 12)">
+          <!-- 白衣 -->
+          <path d="M26,170 L36,104 C40,94 84,94 88,104 L98,170 Z" fill="#f8fafc" stroke="#cbd5e1" stroke-width="2"/>
+          <path d="M52,100 L62,134 L72,100" fill="#0284c7"/>
+          <polygon points="62,110 57,132 62,140 67,132" fill="#ef4444"/>
+          <!-- 顔・髪 -->
+          <circle cx="62" cy="68" r="24" fill="#fde68a" stroke="#f59e0b" stroke-width="1.5"/>
+          <path d="M36,64 C34,42 50,36 62,38 C74,36 90,42 88,64 C84,52 72,50 62,50 C52,50 40,52 36,64 Z" fill="#e2e8f0"/>
+          <!-- 丸メガネ -->
+          <circle cx="52" cy="68" r="7" fill="rgba(255,255,255,0.75)" stroke="#0f172a" stroke-width="2"/>
+          <circle cx="72" cy="68" r="7" fill="rgba(255,255,255,0.75)" stroke="#0f172a" stroke-width="2"/>
+          <line x1="59" y1="68" x2="65" y2="68" stroke="#0f172a" stroke-width="2"/>
+          <circle cx="53" cy="68" r="2.2" fill="#0f172a"/><circle cx="73" cy="68" r="2.2" fill="#0f172a"/>
+          <!-- 白ヒゲ＆笑顔 -->
+          <path d="M48,80 Q62,90 76,80 Q62,84 48,80 Z" fill="#ffffff"/>
+          <!-- 試験管を持つ手 -->
+          <g transform="${tubeTransform}">
+            <rect x="108" y="54" width="12" height="44" rx="5" fill="rgba(224,242,254,0.4)" stroke="#e0f2fe" stroke-width="2"/>
+            <rect x="110" y="72" width="8" height="24" rx="3" fill="#38bdf8"/>
+            <circle cx="110" cy="82" r="7" fill="#fde68a"/>
+          </g>
+        </g>
+        ${pourStream}
+        <!-- 三角フラスコ -->
+        <g>
+          <rect x="178" y="100" width="20" height="24" fill="rgba(224,242,254,0.28)" stroke="#e0f2fe" stroke-width="2.5"/>
+          <path d="M178,124 L148,176 C146,180 149,182 154,182 L222,182 C227,182 230,180 228,176 L198,124 Z" fill="rgba(224,242,254,0.22)" stroke="#e0f2fe" stroke-width="2.5"/>
+          <path d="M161,152 L215,152 L225,179 L151,179 Z" fill="url(#gLiq)"/>
+          <circle cx="176" cy="166" r="4" fill="#fff" opacity="0.8"/>
+          <circle cx="196" cy="158" r="3.5" fill="#fff" opacity="0.85"/>
+          <circle cx="188" cy="142" r="3" fill="#fde047" opacity="0.9"/>
+        </g>
+        ${extraSparks}
+      </svg>
+    `;
+  }
+
+  function spawnAnimParticles(backdrop, topRar) {
+    const count = topRar === 'SEC' ? 34 : topRar === 'SSR' ? 26 : topRar === 'SR' ? 16 : topRar === 'R' ? 9 : 4;
+    const palette = topRar === 'SEC'
+      ? ['#fde047', '#f472b6', '#a855f7', '#38bdf8', '#ffffff']
+      : topRar === 'SSR'
+        ? ['#fde047', '#f472b6', '#38bdf8', '#4ade80', '#ffffff']
+        : topRar === 'SR'
+          ? ['#fde047', '#f59e0b', '#fef08a']
+          : topRar === 'R'
+            ? ['#38bdf8', '#7dd3fc', '#e0f2fe']
+            : ['#cbd5e1', '#f8fafc'];
+    for (let i = 0; i < count; i++) {
+      const p = document.createElement('div');
+      p.className = 'gacha-particle';
+      const sz = 4 + Math.random() * (topRar === 'SEC' || topRar === 'SSR' ? 9 : 6);
+      p.style.width = sz + 'px';
+      p.style.height = sz + 'px';
+      p.style.left = (25 + Math.random() * 50) + '%';
+      p.style.top = (38 + Math.random() * 24) + '%';
+      p.style.background = palette[i % palette.length];
+      p.style.setProperty('--dx', ((Math.random() - 0.5) * 260) + 'px');
+      p.style.setProperty('--dy', (-70 - Math.random() * 190) + 'px');
+      backdrop.appendChild(p);
+      setTimeout(() => p.remove(), 1550);
+    }
+  }
+
+  function showAnimReveal() {
+    clearAnimTimers();
+    const bd = document.getElementById('gacha-anim-backdrop');
+    const stage = document.getElementById('gacha-anim-stage');
+    const rays = document.getElementById('gacha-anim-rays');
+    const flash = document.getElementById('gacha-anim-flash');
+    const skipBtn = document.getElementById('btn-gacha-skip');
+    if (!bd || !stage) {
+      if (animFinishedCb) { const cb = animFinishedCb; animFinishedCb = null; cb(); }
+      return;
+    }
+    const results = animCurrentResults;
+    const topRar = getTopRarity(results);
+    if (skipBtn) skipBtn.classList.add('hidden');
+
+    if (flash) {
+      flash.style.background = topRar === 'SEC' ? 'radial-gradient(circle,#fef08a,#a855f7)' : topRar === 'SSR' ? 'radial-gradient(circle,#ffffff,#f472b6,#38bdf8)' : topRar === 'SR' ? '#fef08a' : '#e0f2fe';
+      flash.classList.remove('boom');
+      void flash.offsetWidth;
+      flash.classList.add('boom');
+    }
+    if (rays) {
+      rays.className = 'gacha-anim-rays' + (topRar === 'SEC' ? ' show-SEC' : topRar === 'SSR' ? ' show-SSR' : topRar === 'SR' ? ' show-SR' : '');
+    }
+    spawnAnimParticles(bd, topRar);
+    if (topRar === 'SEC' || topRar === 'SSR') SoundEngine.seCatchFanfare();
+    else SoundEngine.seAlchemy();
+
+    const bannerText = topRar === 'SEC'
+      ? '🌟 歴史的大発見！！ SECRET CARD 出現！！ 🌟'
+      : topRar === 'SSR'
+        ? '🌈 超反応成功！！ SSR レアカード出現！！'
+        : topRar === 'SR'
+          ? '✨ 高純度反応！！ SR カード出現！！'
+          : topRar === 'R'
+            ? '💎 化学反応成功！ R カード出現！'
+            : '🧪 実験成功！ 化学カードをゲット！';
+    const bannerBg = topRar === 'SEC'
+      ? 'linear-gradient(90deg,#3b0764,#ca8a04,#3b0764);color:#fef08a;border:2px solid #fde047;'
+      : topRar === 'SSR'
+        ? 'linear-gradient(90deg,#ec4899,#8b5cf6,#06b6d4);color:#fff;border:2px solid #fde047;'
+        : topRar === 'SR'
+          ? 'linear-gradient(90deg,#b45309,#f59e0b);color:#fff;border:1.5px solid #fef08a;'
+          : 'rgba(15,23,42,0.85);color:#7dd3fc;border:1.5px solid #38bdf8;';
+
+    stage.innerHTML = '';
+    const cutin = document.createElement('div');
+    cutin.className = 'gacha-cutin-strip';
+    cutin.style.cssText = 'background:' + bannerBg;
+    cutin.textContent = bannerText;
+    stage.appendChild(cutin);
+
+    if (results.length === 1) {
+      const { card, isNew, dupPt, count } = results[0];
+      const big = document.createElement('div');
+      big.className = `chem-card rar-${card.rar} gacha-reveal-card-anim`;
+      big.style.cssText = 'width:236px;padding:10px;border-radius:14px;';
+      big.innerHTML = `
+        <span class="chem-card-rar-badge" style="font-size:11px;padding:2px 7px;">${card.rar}</span>
+        <span class="chem-card-cnt-badge" style="font-size:11px;padding:2px 7px;">×${count}</span>
+        ${isNew ? '<span class="chem-card-new-badge" style="bottom:auto;top:28px;right:6px;font-size:10px;">NEW!</span>' : `<span class="chem-card-new-badge" style="bottom:auto;top:28px;right:6px;font-size:10px;background:#0284c7;">+${dupPt}pt</span>`}
+        <div class="chem-card-art" style="border-radius:10px;margin-bottom:7px;">${renderCardSvg(card, false)}</div>
+        <div style="font-size:14.5px;font-weight:900;">${card.name}</div>
+        <div style="font-size:10.5px;opacity:0.9;margin-top:2px;">${card.sub}</div>
+      `;
+      big.onclick = () => openDetail(card, count);
+      stage.appendChild(big);
+    } else {
+      const grid = document.createElement('div');
+      grid.className = 'chem-card-grid';
+      grid.style.width = '100%';
+      results.forEach(({ card, isNew, dupPt, count }, idx) => {
+        const el = document.createElement('div');
+        el.className = `chem-card rar-${card.rar} gacha-reveal-card-anim`;
+        el.style.animationDelay = (idx * 0.06) + 's';
+        el.innerHTML = `
+          <span class="chem-card-rar-badge">${card.rar}</span>
+          <span class="chem-card-cnt-badge">×${count}</span>
+          ${isNew ? '<span class="chem-card-new-badge">NEW!</span>' : `<span class="chem-card-new-badge" style="background:#0284c7;">+${dupPt}pt</span>`}
+          <div class="chem-card-art">${renderCardSvg(card, false)}</div>
+          <div style="font-size:9.5px;font-weight:900;line-height:1.2;">${card.name}</div>
+        `;
+        el.onclick = () => openDetail(card, count);
+        grid.appendChild(el);
+      });
+      stage.appendChild(grid);
+    }
+
+    const hint = document.createElement('div');
+    hint.style.cssText = 'font-size:11px;color:#cbd5e1;font-weight:700;';
+    hint.textContent = '👆 カードをタップすると詳しい解説＆入試ポイントが読めます！';
+    stage.appendChild(hint);
+
+    const closeBtn = document.createElement('button');
+    closeBtn.type = 'button';
+    closeBtn.className = 'btn-primary';
+    closeBtn.style.cssText = 'width:86%;padding:10px;font-size:13px;background:linear-gradient(180deg,#0ea5e9,#0284c7);border:2px solid #7dd3fc;';
+    closeBtn.textContent = '✨ OK（ガチャ画面へ戻る）';
+    closeBtn.onclick = () => {
+      SoundEngine.seClick();
+      bd.classList.add('hidden');
+      if (animFinishedCb) { const cb = animFinishedCb; animFinishedCb = null; cb(); }
+    };
+    stage.appendChild(closeBtn);
+  }
+
+  function playPullAnim(results, onDone) {
+    const bd = document.getElementById('gacha-anim-backdrop');
+    const stage = document.getElementById('gacha-anim-stage');
+    const rays = document.getElementById('gacha-anim-rays');
+    const skipBtn = document.getElementById('btn-gacha-skip');
+    animCurrentResults = results;
+    animFinishedCb = onDone;
+    if (!bd || !stage) {
+      if (onDone) onDone();
+      return;
+    }
+    clearAnimTimers();
+    const topRar = getTopRarity(results);
+    bd.classList.remove('hidden');
+    if (skipBtn) skipBtn.classList.remove('hidden');
+    if (rays) rays.className = 'gacha-anim-rays';
+
+    // Phase 1: 博士がフラスコに試薬を注ぐ
+    SoundEngine.seClick();
+    stage.innerHTML = `
+      <div class="gacha-cutin-strip" style="background:rgba(15,23,42,0.85);color:#7dd3fc;border:1.5px solid #38bdf8;">
+        🧑‍🔬 博士「よし、フラスコに試薬を注ぐぞい…！」
+      </div>
+      <div id="gacha-lab-wrap" class="gacha-lab-wrap">
+        ${renderProfLabSvg('pour', topRar)}
+      </div>
+      <div style="font-size:12px;color:#cbd5e1;font-weight:800;">⚗️ 試薬を調合中…</div>
+    `;
+
+    // Phase 2: 化学反応スタート（レア度に応じてどんどん派手に！）
+    const t1 = setTimeout(() => {
+      const wrap = document.getElementById('gacha-lab-wrap');
+      if (!wrap) return;
+      SoundEngine.seAlchemy();
+      const reactLine = topRar === 'SEC'
+        ? '⚠️ 博士「ば、バカな…！！ 時空を超える超反応じゃあああ！！」'
+        : topRar === 'SSR'
+          ? '🌈 博士「な、なんと！？ フラスコが虹色に輝きだしたぞい！！」'
+          : topRar === 'SR'
+            ? '✨ 博士「おおっ！？ 黄金の閃光！ 高純度な反応じゃぞ！！」'
+            : topRar === 'R'
+              ? '💎 博士「おっ、鮮やかな青白い光！ いい反応じゃのう！」'
+              : '🧪 博士「おお、ブクブクと化学反応が始まったぞい！」';
+      const reactStripBg = topRar === 'SEC'
+        ? 'linear-gradient(90deg,#3b0764,#ca8a04);color:#fef08a;border:2px solid #fde047;'
+        : topRar === 'SSR'
+          ? 'linear-gradient(90deg,#ec4899,#8b5cf6,#06b6d4);color:#fff;border:2px solid #fde047;'
+          : topRar === 'SR'
+            ? 'linear-gradient(90deg,#b45309,#f59e0b);color:#fff;border:1.5px solid #fef08a;'
+            : 'rgba(2,132,199,0.85);color:#fff;border:1.5px solid #7dd3fc;';
+
+      stage.innerHTML = `
+        <div class="gacha-cutin-strip" style="background:${reactStripBg}">${reactLine}</div>
+        <div id="gacha-lab-wrap" class="gacha-lab-wrap ${(topRar === 'SSR' || topRar === 'SEC') ? 'shake-hard' : (topRar === 'SR' || topRar === 'R') ? 'shake-soft' : ''}">
+          ${renderProfLabSvg('react', topRar)}
+        </div>
+        <div style="font-size:13px;color:#fde047;font-weight:900;">⚡ 化学反応エネルギー急上昇！！</div>
+      `;
+      if (rays) {
+        rays.className = 'gacha-anim-rays' + (topRar === 'SEC' ? ' show-SEC' : topRar === 'SSR' ? ' show-SSR' : topRar === 'SR' ? ' show-SR' : '');
+      }
+      spawnAnimParticles(bd, topRar);
+    }, 850);
+    animTimers.push(t1);
+
+    // Phase 3: フラッシュ＆カード出現！
+    const reactDur = (topRar === 'SEC' || topRar === 'SSR') ? 2150 : (topRar === 'SR' ? 1900 : 1650);
+    const t2 = setTimeout(() => {
+      showAnimReveal();
+    }, reactDur);
+    animTimers.push(t2);
+  }
+
+  function skipAnim() {
+    SoundEngine.seClick();
+    showAnimReveal();
+  }
+
   function pull(st, saveFn, updateBarFn, rerenderFn, times, isFree = false) {
     ensureState(st);
     if (isFree) {
@@ -10414,11 +10855,9 @@ const CardGacha = (() => {
       results.push({ card, isNew, dupPt, count: st.gachaCards[card.id] });
     }
     lastPullResults = results;
-    if (highRar) SoundEngine.seCatchFanfare();
-    else SoundEngine.seAlchemy();
     saveFn();
     updateBarFn();
-    rerenderFn();
+    playPullAnim(results, rerenderFn);
   }
 
   function exchangeCard(st, cardId, saveFn, rerenderFn) {
@@ -10757,7 +11196,7 @@ const CardGacha = (() => {
 
   return {
     renderSubpage, openDetail, closeDetail, ensureState, pull, exchangeCard, renderCardSvg,
-    canFreePullToday, countClaimableDaily, recordDailyProgress, claimDaily, showFirstTutorial,
+    canFreePullToday, countClaimableDaily, recordDailyProgress, claimDaily, showFirstTutorial, skipAnim, playPullAnim,
     CARDS: CHEM_CARDS_80, NORMAL_CARDS, SECRET_CARDS, DAILY_MISSIONS
   };
 })();
