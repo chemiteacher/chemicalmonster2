@@ -2797,9 +2797,9 @@
     <div id="three-canvas-wrap"></div>
 
     <!-- 1. タイトル画面 -->
-    <div id="screen-title" onclick="Game.startFromTitle()" style="cursor:pointer;">
+    <div id="screen-title" onclick="Game.startFromTitle(event)" style="cursor:pointer;">
       <div class="logo-box">
-        <div class="logo-sub-top" onclick="DevMode.onLogoTap(event)">HIGH SCHOOL CHEMISTRY RPG</div>
+        <div class="logo-sub-top" style="position:relative;z-index:30;padding:6px 18px;pointer-events:auto;" onclick="event.stopPropagation(); event.preventDefault(); DevMode.onLogoTap(event);">HIGH SCHOOL CHEMISTRY RPG</div>
         <h1 class="poke-logo">ケミカルモンスターⅡ</h1>
         <div class="poke-logo-en">CheMiMon II</div>
         <p class="poke-logo-sub">〜閃光の専門化学バトル＆元素・反応マスター〜</p>
@@ -13057,7 +13057,8 @@ const Game = (() => {
     });
   }
 
-  function startFromTitle() {
+  function startFromTitle(ev) {
+    if (ev && ev.target && ev.target.closest && ev.target.closest('.logo-sub-top')) return;
     SoundEngine.init();
     SoundEngine.seClick();
     SoundEngine.playBGM('title');
