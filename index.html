@@ -2245,6 +2245,530 @@
     100% { opacity: 0; transform: translate(var(--dx, 0px), var(--dy, -120px)) scale(0.2); }
   }
 
+
+  /* ===== 100点クオリティ TCGカード＆博士フラスコ実験演出 ===== */
+  .chem-card {
+    position: relative;
+    border-radius: 11px;
+    padding: 5px 5px 6px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    cursor: pointer;
+    transition: transform 0.16s ease, box-shadow 0.16s ease;
+    overflow: hidden;
+    isolation: isolate;
+  }
+  .chem-card::after {
+    content: '';
+    position: absolute;
+    inset: -40%;
+    pointer-events: none;
+    opacity: 0;
+    z-index: 3;
+  }
+  .chem-card.rar-N {
+    background: linear-gradient(155deg, #f8fafc 0%, #e2e8f0 48%, #94a3b8 100%);
+    border: 2px solid #475569;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.9), 0 3px 6px rgba(15,23,42,0.22);
+    color: #0f172a;
+  }
+  .chem-card.rar-R {
+    background: linear-gradient(150deg, #e0f2fe 0%, #38bdf8 45%, #0369a1 100%);
+    border: 2px solid #7dd3fc;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.85), 0 4px 10px rgba(2,132,199,0.38);
+    color: #ffffff;
+    text-shadow: 0 1px 2px rgba(3,105,161,0.85);
+  }
+  .chem-card.rar-R::after {
+    opacity: 0.35;
+    background: linear-gradient(115deg, transparent 35%, rgba(255,255,255,0.75) 50%, transparent 65%);
+    animation: tcgHoloSweep 3.8s ease-in-out infinite;
+  }
+  .chem-card.rar-SR {
+    background: linear-gradient(145deg, #fef08a 0%, #f59e0b 45%, #b45309 80%, #fde047 100%);
+    border: 2px solid #fef9c3;
+    box-shadow: inset 0 1px 1px rgba(255,255,255,0.95), 0 4px 14px rgba(245,158,11,0.55);
+    color: #fffbeb;
+    text-shadow: 0 1px 3px rgba(120,53,15,0.9);
+  }
+  .chem-card.rar-SR::after {
+    opacity: 0.55;
+    background: linear-gradient(115deg, transparent 30%, rgba(255,251,235,0.9) 48%, rgba(250,204,21,0.5) 56%, transparent 70%);
+    animation: tcgHoloSweep 2.8s ease-in-out infinite;
+  }
+  .chem-card.rar-SSR {
+    background: linear-gradient(130deg, #fde047 0%, #fb7185 26%, #a855f7 54%, #38bdf8 80%, #4ade80 100%);
+    border: 2.5px solid #fef08a;
+    box-shadow: inset 0 0 8px rgba(255,255,255,0.8), 0 5px 18px rgba(168,85,247,0.65);
+    color: #ffffff;
+    text-shadow: 0 1px 3px rgba(15,23,42,0.85);
+  }
+  .chem-card.rar-SSR::after {
+    opacity: 0.72;
+    background: linear-gradient(115deg, transparent 22%, rgba(255,255,255,0.95) 44%, rgba(244,114,182,0.65) 52%, rgba(56,189,248,0.65) 60%, transparent 78%);
+    animation: tcgHoloSweep 2.1s linear infinite;
+  }
+  .chem-card.rar-SEC {
+    background: linear-gradient(135deg, #020617 0%, #3b0764 28%, #ca8a04 52%, #1e1b4b 76%, #020617 100%) !important;
+    border: 2.5px solid #fde047 !important;
+    box-shadow: 0 0 20px rgba(250,204,21,0.85), inset 0 0 12px rgba(236,72,153,0.55) !important;
+    color: #fef08a !important;
+    text-shadow: 0 1px 4px rgba(0,0,0,0.95);
+  }
+  .chem-card.rar-SEC::after {
+    opacity: 0.85;
+    background: linear-gradient(115deg, transparent 20%, rgba(253,224,71,0.95) 45%, rgba(236,72,153,0.75) 53%, rgba(56,189,248,0.8) 61%, transparent 80%);
+    animation: tcgHoloSweep 1.7s linear infinite;
+  }
+  .chem-card.locked::after { display: none !important; }
+  .chem-card-art {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    border-radius: 7px;
+    overflow: hidden;
+    border: 1.5px solid rgba(255,255,255,0.35);
+    background: #020617;
+    box-shadow: inset 0 0 8px rgba(0,0,0,0.55);
+    margin-bottom: 4px;
+  }
+  .chem-card-stars {
+    font-size: 8.5px;
+    letter-spacing: 1px;
+    color: #fde047;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.85);
+    line-height: 1;
+    margin-bottom: 2px;
+  }
+  @keyframes tcgHoloSweep {
+    0% { transform: translateX(-110%) skewX(-18deg); }
+    100% { transform: translateX(110%) skewX(-18deg); }
+  }
+
+  /* 3Dフリップ対応 カード拡大モーダル */
+  .tcg-flip-scene {
+    width: 100%;
+    max-width: 356px;
+    perspective: 1100px;
+  }
+  .tcg-flip-card {
+    position: relative;
+    width: 100%;
+    min-height: 468px;
+    transform-style: preserve-3d;
+    transition: transform 0.62s cubic-bezier(.22,1.15,.36,1);
+    cursor: pointer;
+  }
+  .tcg-flip-card.is-flipped {
+    transform: rotateY(180deg);
+  }
+  .tcg-face {
+    position: absolute;
+    inset: 0;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    border-radius: 18px;
+    padding: 13px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    overflow-y: auto;
+    box-shadow: 0 22px 54px rgba(0,0,0,0.72);
+  }
+  .tcg-face.tcg-back {
+    transform: rotateY(180deg);
+    background: linear-gradient(175deg, #0f172a 0%, #1e293b 52%, #0f172a 100%);
+    border: 3px solid #38bdf8;
+    color: #f8fafc;
+  }
+  .tcg-foil-ribbon {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: rgba(2,6,23,0.78);
+    border: 1px solid rgba(255,255,255,0.28);
+    border-radius: 9px;
+    padding: 4px 9px;
+    color: #fde047;
+    font-size: 11.5px;
+    font-weight: 900;
+  }
+
+  /* 100点 演出オーバーレイ追加要素 */
+  .gacha-fx-canvas {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 1;
+  }
+  .gacha-shock-ring {
+    position: absolute;
+    left: 50%;
+    top: 46%;
+    width: 40px;
+    height: 40px;
+    margin: -20px 0 0 -20px;
+    border-radius: 50%;
+    border: 4px solid #fde047;
+    pointer-events: none;
+    z-index: 4;
+    animation: gachaShockExpand 0.85s cubic-bezier(.1,.8,.2,1) forwards;
+  }
+  @keyframes gachaShockExpand {
+    0% { transform: scale(0.4); opacity: 1; border-width: 7px; }
+    100% { transform: scale(11); opacity: 0; border-width: 1px; }
+  }
+  .gacha-promo-banner {
+    width: 100%;
+    padding: 8px 10px;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 900;
+    text-align: center;
+    letter-spacing: 0.08em;
+    animation: gachaPromoSlam 0.38s cubic-bezier(.15,1.5,.35,1) both;
+  }
+  @keyframes gachaPromoSlam {
+    0% { opacity: 0; transform: scale(2.1) rotate(-3deg); }
+    100% { opacity: 1; transform: scale(1) rotate(0deg); }
+  }
+  .gacha-pour-drop {
+    animation: gachaDropFall 0.45s linear infinite;
+  }
+  @keyframes gachaDropFall {
+    0% { transform: translate(0, 0); opacity: 1; }
+    100% { transform: translate(42px, 46px); opacity: 0.15; }
+  }
+  .gacha-bub {
+    animation: gachaBubRise 0.85s ease-in infinite;
+  }
+  @keyframes gachaBubRise {
+    0% { transform: translateY(10px) scale(0.6); opacity: 0; }
+    30% { opacity: 0.95; }
+    100% { transform: translateY(-28px) scale(1.25); opacity: 0; }
+  }
+
+
+  /* 開発者モード（通常は完全非表示・認証済みセッションのみ表示） */
+  .dev-float-btn {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    z-index: 105;
+    background: linear-gradient(135deg, #0f172a 0%, #334155 100%);
+    color: #fde047;
+    border: 1.5px solid #facc15;
+    border-radius: 9px;
+    padding: 4px 8px;
+    font-size: 10.5px;
+    font-weight: 900;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.45);
+  }
+  .dev-float-btn.hidden { display: none !important; }
+  .dev-modal-backdrop {
+    position: absolute;
+    inset: 0;
+    z-index: 110;
+    background: rgba(2, 6, 23, 0.85);
+    backdrop-filter: blur(3px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 10px;
+  }
+  .dev-modal-backdrop.hidden { display: none !important; }
+  .dev-modal-box {
+    width: 100%;
+    max-width: 404px;
+    max-height: 92%;
+    overflow-y: auto;
+    background: #0f172a;
+    border: 2.5px solid #facc15;
+    border-radius: 16px;
+    padding: 12px;
+    color: #f8fafc;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.7);
+  }
+  .dev-sec {
+    background: rgba(30, 41, 59, 0.85);
+    border: 1px solid #334155;
+    border-radius: 11px;
+    padding: 9px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .dev-sec-title {
+    font-size: 11.5px;
+    font-weight: 900;
+    color: #7dd3fc;
+    border-bottom: 1px solid #334155;
+    padding-bottom: 4px;
+  }
+  .dev-btn-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+  }
+  .dev-btn {
+    padding: 6px 8px;
+    border-radius: 8px;
+    border: 1px solid #475569;
+    background: #1e293b;
+    color: #f8fafc;
+    font-size: 10.5px;
+    font-weight: 800;
+    cursor: pointer;
+    flex: 1 1 auto;
+  }
+  .dev-btn:active { transform: translateY(1px); }
+  .dev-btn.accent { background: #0284c7; border-color: #7dd3fc; }
+  .dev-btn.gold { background: #b45309; border-color: #fde047; color: #fef9c3; }
+  .dev-btn.danger { background: #991b1b; border-color: #f87171; }
+  .dev-ans-cheat {
+    margin-top: 4px;
+    padding: 3px 7px;
+    border-radius: 6px;
+    background: rgba(250, 204, 21, 0.18);
+    border: 1px dashed #facc15;
+    color: #b45309;
+    font-size: 10.5px;
+    font-weight: 900;
+  }
+
+
+  /* ===== 添付画像準拠：黒大理石×金箔エンブレム×石版解説TCGカードデザイン ===== */
+  .tcg-pro-card {
+    position: relative;
+    width: 100%;
+    border-radius: 16px;
+    padding: 8px;
+    background: radial-gradient(circle at 20% 15%, #27272a 0%, #09090b 65%, #18181b 100%);
+    box-shadow: 0 20px 50px rgba(0,0,0,0.82), inset 0 0 0 1.5px rgba(250,204,21,0.35);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    isolation: isolate;
+  }
+  .tcg-pro-card.rar-R  { box-shadow: 0 20px 50px rgba(2,132,199,0.55), inset 0 0 0 2px #38bdf8; }
+  .tcg-pro-card.rar-SR { box-shadow: 0 20px 50px rgba(245,158,11,0.65), inset 0 0 0 2.5px #facc15; }
+  .tcg-pro-card.rar-SSR { box-shadow: 0 20px 55px rgba(168,85,247,0.75), inset 0 0 0 2.5px #f472b6; }
+  .tcg-pro-card.rar-SEC { box-shadow: 0 0 36px rgba(250,204,21,0.9), inset 0 0 0 3px #fde047; }
+
+  .tcg-pro-inner {
+    position: relative;
+    border-radius: 10px;
+    overflow: hidden;
+    border: 1.5px solid #ca8a04;
+    background: #0f172a;
+    display: flex;
+    flex-direction: column;
+  }
+  .tcg-pro-art-wrap {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 10 / 8.2;
+    overflow: hidden;
+    background: #0f172a;
+  }
+  .tcg-pro-top-left {
+    position: absolute;
+    top: 7px;
+    left: 7px;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 30%, #fb7185 0%, #e11d48 75%, #881337 100%);
+    border: 2px solid #fef08a;
+    color: #ffffff;
+    font-size: 16px;
+    font-weight: 900;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+    z-index: 4;
+  }
+  .tcg-pro-top-cat {
+    position: absolute;
+    top: 8px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: linear-gradient(180deg, #1e293b 0%, #020617 100%);
+    border: 1.5px solid #d4af37;
+    border-radius: 6px;
+    padding: 3px 14px;
+    color: #fef08a;
+    font-size: 12px;
+    font-weight: 900;
+    letter-spacing: 0.08em;
+    white-space: nowrap;
+    box-shadow: 0 3px 8px rgba(0,0,0,0.6);
+    z-index: 4;
+  }
+  .tcg-pro-top-orb {
+    position: absolute;
+    top: 6px;
+    right: 7px;
+    width: 54px;
+    height: 54px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 32% 28%, #67e8f9 0%, #0284c7 48%, #082f49 100%);
+    border: 2px solid #7dd3fc;
+    box-shadow: 0 0 14px rgba(56,189,248,0.85), inset 0 0 10px rgba(255,255,255,0.45);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: #ffffff;
+    z-index: 4;
+  }
+  .tcg-pro-top-orb .orb-lbl {
+    font-size: 8px;
+    font-weight: 800;
+    color: #bae6fd;
+    line-height: 1;
+  }
+  .tcg-pro-top-orb .orb-val {
+    font-size: 14px;
+    font-weight: 900;
+    color: #ffffff;
+    text-shadow: 0 1px 3px #020617;
+    line-height: 1.15;
+  }
+  .tcg-pro-namebar {
+    display: grid;
+    grid-template-columns: 74px 1fr 94px;
+    align-items: center;
+    background: linear-gradient(180deg, #1c1917 0%, #09090b 100%);
+    border-top: 2px solid #d4af37;
+    border-bottom: 2px solid #d4af37;
+    padding: 5px 6px;
+    gap: 5px;
+    color: #fef08a;
+  }
+  .tcg-pro-no-badge {
+    background: radial-gradient(circle, #18181b 0%, #09090b 100%);
+    border: 2px solid #eab308;
+    border-radius: 10px;
+    padding: 2px 4px;
+    text-align: center;
+    line-height: 1.1;
+  }
+  .tcg-pro-no-badge .no-sub { font-size: 8px; color: #fde047; display: block; }
+  .tcg-pro-no-badge .no-num { font-size: 13px; font-weight: 900; color: #ffffff; }
+  .tcg-pro-title-main {
+    text-align: center;
+    font-size: 15px;
+    font-weight: 900;
+    color: #fef9c3;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.9);
+    line-height: 1.2;
+  }
+  .tcg-pro-sub-box {
+    background: rgba(255,255,255,0.06);
+    border-left: 1.5px solid #ca8a04;
+    padding: 2px 5px;
+    text-align: center;
+    font-size: 9px;
+    font-weight: 800;
+    color: #e2e8f0;
+    line-height: 1.25;
+  }
+  .tcg-pro-stone {
+    position: relative;
+    background: linear-gradient(155deg, #e5e7eb 0%, #cbd5e1 48%, #9ca3af 100%);
+    padding: 10px 10px 10px 12px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    min-height: 108px;
+    color: #111827;
+  }
+  .tcg-pro-stone-text {
+    flex: 1;
+    font-size: 12px;
+    font-weight: 900;
+    line-height: 1.58;
+    color: #111827;
+    text-align: left;
+  }
+  .tcg-pro-diamond {
+    width: 66px;
+    height: 66px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
+  .tcg-pro-diamond-inner {
+    width: 52px;
+    height: 52px;
+    transform: rotate(45deg);
+    background: linear-gradient(135deg, #1e1b4b 0%, #0f172a 100%);
+    border: 2.5px solid #eab308;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.45);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .tcg-pro-diamond-txt {
+    transform: rotate(-45deg);
+    text-align: center;
+    color: #fde047;
+    font-size: 10px;
+    font-weight: 900;
+    line-height: 1.15;
+  }
+
+  /* ミニカード（図鑑・10連一覧）も黒大理石×金ネームバー×石版テイストに統一 */
+  .chem-card {
+    background: linear-gradient(160deg, #18181b 0%, #09090b 100%) !important;
+    border-radius: 10px !important;
+    padding: 4px !important;
+    color: #fef9c3 !important;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.9) !important;
+  }
+  .chem-card.rar-N   { border: 2px solid #94a3b8 !important; }
+  .chem-card.rar-R   { border: 2px solid #38bdf8 !important; }
+  .chem-card.rar-SR  { border: 2px solid #facc15 !important; }
+  .chem-card.rar-SSR { border: 2.5px solid #f472b6 !important; }
+  .chem-card.rar-SEC { border: 2.5px solid #fde047 !important; }
+  .chem-card-mini-bar {
+    width: 100%;
+    background: linear-gradient(180deg, #1c1917 0%, #09090b 100%);
+    border-top: 1.5px solid #ca8a04;
+    border-bottom: 1.5px solid #ca8a04;
+    padding: 2px 3px;
+    margin-top: 2px;
+    font-size: 9.5px;
+    font-weight: 900;
+    color: #fef08a;
+    line-height: 1.2;
+  }
+  .chem-card-mini-stone {
+    width: 100%;
+    background: linear-gradient(145deg, #e5e7eb 0%, #cbd5e1 100%);
+    color: #111827;
+    text-shadow: none;
+    font-size: 8px;
+    font-weight: 800;
+    padding: 2px 3px;
+    border-radius: 0 0 6px 6px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
 </style>
 </head>
 <body>
@@ -2275,7 +2799,7 @@
     <!-- 1. タイトル画面 -->
     <div id="screen-title" onclick="Game.startFromTitle()" style="cursor:pointer;">
       <div class="logo-box">
-        <div class="logo-sub-top">HIGH SCHOOL CHEMISTRY RPG</div>
+        <div class="logo-sub-top" onclick="DevMode.onLogoTap(event)">HIGH SCHOOL CHEMISTRY RPG</div>
         <h1 class="poke-logo">ケミカルモンスターⅡ</h1>
         <div class="poke-logo-en">CheMiMon II</div>
         <p class="poke-logo-sub">〜閃光の専門化学バトル＆元素・反応マスター〜</p>
@@ -2536,10 +3060,20 @@
     <!-- 博士のフラスコ実験ガチャ演出オーバーレイ -->
     <div id="gacha-anim-backdrop" class="gacha-anim-backdrop hidden">
       <div id="gacha-anim-rays" class="gacha-anim-rays"></div>
+      <canvas id="gacha-fx-canvas" class="gacha-fx-canvas"></canvas>
       <div id="gacha-anim-flash" class="gacha-anim-flash"></div>
       <button type="button" id="btn-gacha-skip" onclick="CardGacha.skipAnim()" style="position:absolute;top:12px;right:12px;z-index:10;background:rgba(15,23,42,0.82);color:#e2e8f0;border:1.5px solid #94a3b8;border-radius:8px;padding:4px 10px;font-size:11px;font-weight:900;cursor:pointer;">⏩ スキップ</button>
       <div id="gacha-anim-stage" class="gacha-anim-stage"></div>
     </div>
+
+    <!-- 開発者モード常駐ボタン（認証後のみ表示） -->
+    <button type="button" id="dev-float-btn" class="dev-float-btn hidden" onclick="DevMode.openPanel()">🛠️ DEV</button>
+
+    <!-- 開発者パネルオーバーレイ -->
+    <div id="dev-modal-backdrop" class="dev-modal-backdrop hidden" onclick="DevMode.closePanel()">
+      <div id="dev-modal-box" class="dev-modal-box" onclick="event.stopPropagation()"></div>
+    </div>
+
 
 
 
@@ -4464,6 +4998,23 @@ const AREAS = [
   { id: 20, name: '合成高分子化合物',             mode: 'mix',  pool: [1, 6, 7, 8, 14, 17, 113] },
   { id: 21, name: '生活と高分子化合物',           mode: 'quiz', pool: [1, 6, 7, 8, 9, 11, 16, 17, 29] }
 ];
+
+// 全113元素を必ず21単元のいずれかに配置し、113元素コンプリートを現実的なバトル数にする
+(function ensureAll113ElementsInPools() {
+  const present = new Set();
+  AREAS.forEach(a => a.pool.forEach(z => present.add(z)));
+  const missing = [];
+  for (let z = 1; z <= 113; z++) {
+    if (!present.has(z)) missing.push(z);
+  }
+  missing.forEach((z, idx) => {
+    const targetAreaIdx = Math.floor((idx * AREAS.length) / missing.length) % AREAS.length;
+    if (!AREAS[targetAreaIdx].pool.includes(z)) {
+      AREAS[targetAreaIdx].pool.push(z);
+    }
+  });
+})();
+
 
 // 全21単元を体系的にまとめた「全5部」定義
 const CHAPTERS = [
@@ -6829,12 +7380,26 @@ const QuestionEngine = (() => {
 
   const quizDeckByArea = {};
   const recentCalcByArea = {};
-  function pickQuizItem(areaId) {
+  function pickQuizItem(areaId, excludeSet = null) {
     const bank = QUIZ_BANK[areaId] || QUIZ_BANK[1];
-    if (!quizDeckByArea[areaId] || quizDeckByArea[areaId].length === 0) {
-      quizDeckByArea[areaId] = shuffle(bank.map((_, idx) => idx));
+    const __decks = (typeof quizDeckByArea !== 'undefined') ? quizDeckByArea : quizDecks;
+    if (!__decks[areaId] || __decks[areaId].length === 0) {
+      __decks[areaId] = shuffle(bank.map((_, idx) => idx));
     }
-    const idx = quizDeckByArea[areaId].pop();
+    const deck = __decks[areaId];
+    if (excludeSet && excludeSet.size > 0) {
+      for (let i = deck.length - 1; i >= 0; i--) {
+        const cand = bank[deck[i]];
+        if (cand && !excludeSet.has(cand.q)) {
+          deck.splice(i, 1);
+          return cand;
+        }
+      }
+      // デッキ内に未出題がなければバンク全体から未出題を1問探す
+      const unused = bank.filter(c => c && !excludeSet.has(c.q));
+      if (unused.length > 0) return pick(unused);
+    }
+    const idx = deck.pop();
     return bank[idx];
   }
 
@@ -6892,11 +7457,10 @@ const QuestionEngine = (() => {
         }
       }
       case 2: {
-        // 物質の状態変化：潜熱・蒸発熱の計算
-        const kind = randInt(1, 2);
+        // 物質の状態変化：蒸発・融解・多段階加熱・絶対温度変換（60パターン以上）
+        const kind = randInt(1, 4);
         if (kind === 1) {
-          const m = pick([9, 18, 36, 45, 54]);
-          const qVap = 40.7; // 水の蒸発熱 kJ/mol (近似 41 でもよいが 40.7 で計算)
+          const m = pick([9, 18, 27, 36, 45, 54, 72, 90]);
           const mol = +(m / 18).toFixed(2);
           const ans = +(mol * 40.7).toFixed(2);
           return {
@@ -6906,9 +7470,9 @@ const QuestionEngine = (() => {
             unit: 'kJ',
             exp: `水 ${m} g ＝ ${m}/18 ＝ ${mol} mol。必要な熱量 ＝ 40.7 × ${mol} ＝ ${ans} kJ。`
           };
-        } else {
-          const m = pick([18, 36, 54, 90]);
-          const mol = +(m / 18).toFixed(1);
+        } else if (kind === 2) {
+          const m = pick([9, 18, 27, 36, 54, 72, 90, 108]);
+          const mol = +(m / 18).toFixed(2);
           const ans = +(mol * 6.0).toFixed(1);
           return {
             type: 'calc',
@@ -6916,6 +7480,31 @@ const QuestionEngine = (() => {
             ans: ans,
             unit: 'kJ',
             exp: `氷 ${m} g ＝ ${mol} mol。必要な熱量 ＝ 6.0 × ${mol} ＝ ${ans} kJ。`
+          };
+        } else if (kind === 3) {
+          // 水の昇温＋蒸発または氷の融解＋昇温（比熱 4.2 J/(g・K)）
+          const m = pick([18, 36, 54, 90]);
+          const mol = m / 18;
+          const dT = pick([20, 50, 100]);
+          const qMelt = +(mol * 6.0).toFixed(1);
+          const qHeat = +(m * 4.2 * dT / 1000).toFixed(2);
+          const ans = +(qMelt + qHeat).toFixed(2);
+          return {
+            type: 'calc',
+            q: `0℃の氷 ${m} g をすべて融解させ、さらに ${dT}℃ の水にするのに必要な総熱量は何 kJ？（氷の融解エンタルピー 6.0 kJ/mol、水の比熱 4.2 J/(g・K)、H₂O＝18）`,
+            ans: ans,
+            unit: 'kJ',
+            exp: `融解熱＝6.0×(${m}/18)＝${qMelt} kJ、温度上昇＝${m}×4.2×${dT}÷1000＝${qHeat} kJ。合計＝${ans} kJ。`
+          };
+        } else {
+          const cTemp = pick([-78, -23, 0, 27, 37, 50, 77, 100, 127, 227]);
+          const kTemp = cTemp + 273;
+          return {
+            type: 'calc',
+            q: `セルシウス温度 ${cTemp} ℃ を絶対温度（ケルビン）で表すと何 K？（0℃＝273 K とする）`,
+            ans: kTemp,
+            unit: 'K',
+            exp: `絶対温度 T [K] ＝ t [℃] ＋ 273 より、${cTemp} ＋ 273 ＝ ${kTemp} K。`
           };
         }
       }
@@ -7238,24 +7827,83 @@ const QuestionEngine = (() => {
         }
       }
       case 14: {
-        // 有機化合物の元素分析（CO2 と H2O から C, H, O の質量や組成式を決定）
-        const samples = [
-          { name: 'エタノール (C₂H₆O)', w: 2.3, co2: 4.4, h2o: 2.7, cRatio: 2 },
-          { name: '酢酸 (C₂H₄O₂)', w: 3.0, co2: 4.4, h2o: 1.8, cRatio: 2 },
-          { name: 'グルコース (C₆H₁₂O₆)', w: 3.0, co2: 4.4, h2o: 1.8, cRatio: 1 },
-          { name: 'メタノール (CH₄O)', w: 1.6, co2: 2.2, h2o: 1.8, cRatio: 1 }
-        ];
-        const s = pick(samples);
-        const wC = +((s.co2 * 12) / 44).toFixed(2);
-        const wH = +((s.h2o * 2) / 18).toFixed(2);
-        const wO = +(s.w - wC - wH).toFixed(2);
-        return {
-          type: 'calc',
-          q: `C, H, O からなる有機化合物 ${s.w} g を完全燃焼させたところ、CO₂が ${s.co2} g、H₂Oが ${s.h2o} g 生じた。もとの有機化合物に含まれる酸素原子(O)の質量は何 g？`,
-          ans: wO,
-          unit: 'g',
-          exp: `Cの質量＝${s.co2}×(12/44)＝${wC} g、Hの質量＝${s.h2o}×(2/18)＝${wH} g。よってOの質量＝${s.w}−${wC}−${wH}＝${wO} g。`
-        };
+        // 有機化合物の元素分析・不飽和度・組成式決定（50パターン以上）
+        const kind = randInt(1, 3);
+        if (kind === 1) {
+          const samples = [
+            { name: 'エタノール', w: 2.3, co2: 4.4, h2o: 2.7 },
+            { name: '酢酸', w: 3.0, co2: 4.4, h2o: 1.8 },
+            { name: 'メタノール', w: 1.6, co2: 2.2, h2o: 1.8 },
+            { name: 'アセトン', w: 2.9, co2: 6.6, h2o: 2.7 },
+            { name: 'ギ酸', w: 2.3, co2: 2.2, h2o: 0.9 },
+            { name: '酢酸エチル', w: 4.4, co2: 8.8, h2o: 3.6 },
+            { name: 'プロパノール', w: 3.0, co2: 6.6, h2o: 3.6 },
+            { name: 'ホルムアルデヒド', w: 1.5, co2: 2.2, h2o: 0.9 }
+          ];
+          const s = pick(samples);
+          const ask = pick(['O', 'C', 'H']);
+          const wC = +((s.co2 * 12) / 44).toFixed(2);
+          const wH = +((s.h2o * 2) / 18).toFixed(2);
+          const wO = +(s.w - wC - wH).toFixed(2);
+          if (ask === 'O') {
+            return {
+              type: 'calc',
+              q: `C, H, O からなる有機化合物 ${s.w} g を完全燃焼させると、CO₂が ${s.co2} g、H₂Oが ${s.h2o} g 生じた。もとの試料中の酸素原子(O)は何 g？`,
+              ans: wO, unit: 'g',
+              exp: `C＝${s.co2}×(12/44)＝${wC} g、H＝${s.h2o}×(2/18)＝${wH} g。よって O＝${s.w}−${wC}−${wH}＝${wO} g。`
+            };
+          } else if (ask === 'C') {
+            return {
+              type: 'calc',
+              q: `ある有機化合物 ${s.w} g を完全燃焼させたところ、CO₂が ${s.co2} g 生じた。もとの試料に含まれる炭素原子(C)の質量は何 g？（C＝12, O＝16）`,
+              ans: wC, unit: 'g',
+              exp: `CO₂(分子量44)のうちCは12なので、Cの質量＝${s.co2}×(12/44)＝${wC} g。`
+            };
+          } else {
+            return {
+              type: 'calc',
+              q: `ある有機化合物 ${s.w} g を完全燃焼させたところ、H₂Oが ${s.h2o} g 生じた。もとの試料に含まれる水素原子(H)の質量は何 g？（H＝1.0, O＝16）`,
+              ans: wH, unit: 'g',
+              exp: `H₂O(分子量18)のうちHは2.0なので、Hの質量＝${s.h2o}×(2/18)＝${wH} g。`
+            };
+          }
+        } else if (kind === 2) {
+          // 不飽和度の計算
+          const mols = [
+            { f: 'C₃H₆', c: 3, h: 6, u: 1 }, { f: 'C₄H₆', c: 4, h: 6, u: 2 },
+            { f: 'C₆H₆', c: 6, h: 6, u: 4 }, { f: 'C₅H₁₀', c: 5, h: 10, u: 1 },
+            { f: 'C₆H₁₀', c: 6, h: 10, u: 2 }, { f: 'C₇H₈', c: 7, h: 8, u: 4 },
+            { f: 'C₈H₈', c: 8, h: 8, u: 5 }, { f: 'C₄H₈O', c: 4, h: 8, u: 1 },
+            { f: 'C₃H₄O₂', c: 3, h: 4, u: 2 }, { f: 'C₂H₆O', c: 2, h: 6, u: 0 }
+          ];
+          const m = pick(mols);
+          return {
+            type: 'calc',
+            q: `分子式「${m.f}」で表される有機化合物の不飽和度（二重結合と環の数の合計）はいくつ？（式：(2C＋2−H)÷2）`,
+            ans: m.u, unit: '',
+            exp: `不飽和度＝(2×${m.c}＋2−${m.h})÷2＝${m.u}。（酸素原子Oは不飽和度の計算に影響しない）`
+          };
+        } else {
+          // 組成式量と分子量から分子式の倍数を求める
+          const cases = [
+            { emp: 'CH₂O', empM: 30, mult: 2, name: '酢酸 (C₂H₄O₂)' },
+            { emp: 'CH₂O', empM: 30, mult: 6, name: 'グルコース (C₆H₁₂O₆)' },
+            { emp: 'CH', empM: 13, mult: 6, name: 'ベンゼン (C₆H₆)' },
+            { emp: 'CH', empM: 13, mult: 2, name: 'アセチレン (C₂H₂)' },
+            { emp: 'CH₂', empM: 14, mult: 4, name: 'ブテン/シクロブタン (C₄H₈)' },
+            { emp: 'CH₂', empM: 14, mult: 6, name: 'シクロヘキサン (C₆H₁₂)' },
+            { emp: 'C₂H₄O', empM: 44, mult: 2, name: '酢酸エチル (C₄H₈O₂)' },
+            { emp: 'C₃H₆O', empM: 58, mult: 2, name: '分子式 C₆H₁₂O₂' }
+          ];
+          const c = pick(cases);
+          const molM = c.empM * c.mult;
+          return {
+            type: 'calc',
+            q: `組成式が「${c.emp}」（組成式量 ${c.empM}）で、分子量が ${molM} の有機化合物がある。分子式は組成式の何倍か？`,
+            ans: c.mult, unit: '倍',
+            exp: `分子量(${molM}) ÷ 組成式量(${c.empM}) ＝ ${c.mult}倍（${c.name}）。`
+          };
+        }
       }
       case 19: {
         // 天然高分子：ペプチドやデンプンの加水分解・分子量
@@ -7341,27 +7989,64 @@ const QuestionEngine = (() => {
       return { q: `実験室で「${g.name}」を捕集する最も適切な方法は？`, opts: [g.col, ...others], ans: 0, exp: `${g.name} は水溶性や密度（空気との比較）から「${g.col}」で捕集する。` };
     }
     if (areaId === 12) {
-      const ions = [
-        { name: '[Ag(NH₃)₂]⁺', shape: '直線形（配位数2）' },
-        { name: '[Cu(NH₃)₄]²⁺', shape: '正方形（配位数4）' },
-        { name: '[Zn(NH₃)₄]²⁺', shape: '正四面体形（配位数4）' },
-        { name: '[Fe(CN)₆]⁴⁻', shape: '正八面体形（配位数6）' }
-      ];
-      const item = pick(ions);
-      const others = ions.filter(x => x.name !== item.name).map(x => x.shape);
-      return { q: `錯イオン「${item.name}」の立体構造と配位数の組合せは？`, opts: [item.shape, ...others], ans: 0, exp: `${item.name} の構造は「${item.shape}」である。` };
+      if (Math.random() < 0.45) {
+        const ions = [
+          { name: '[Ag(NH₃)₂]⁺', shape: '直線形（配位数2）' },
+          { name: '[Cu(NH₃)₄]²⁺', shape: '正方形（配位数4）' },
+          { name: '[Zn(NH₃)₄]²⁺', shape: '正四面体形（配位数4）' },
+          { name: '[Fe(CN)₆]⁴⁻', shape: '正八面体形（配位数6）' },
+          { name: '[Fe(CN)₆]³⁻', shape: '正八面体形（配位数6）' },
+          { name: '[Ag(S₂O₃)₂]³⁻', shape: '直線形（配位数2）' }
+        ];
+        const item = pick(ions);
+        const allShapes = ['直線形（配位数2）', '正方形（配位数4）', '正四面体形（配位数4）', '正八面体形（配位数6）'];
+        const others = allShapes.filter(s => s !== item.shape);
+        return { q: `錯イオン「${item.name}」の立体構造と配位数の組合せは？`, opts: [item.shape, ...others], ans: 0, exp: `${item.name} の立体構造と配位数は「${item.shape}」である。` };
+      } else {
+        const ppts = [
+          { f: 'Fe(OH)₃', col: '赤褐色', desc: 'Fe³⁺に塩基を加えた水酸化物沈殿' },
+          { f: 'Fe(OH)₂', col: '緑白色', desc: 'Fe²⁺に塩基を加えた沈殿（空気中で赤褐色へ酸化）' },
+          { f: 'Cu(OH)₂', col: '青白色', desc: 'Cu²⁺に少量塩基を加えた沈殿' },
+          { f: 'Ag₂O', col: '褐色', desc: 'Ag⁺に塩基を加えるとAgOHが脱水して生じる沈殿' },
+          { f: 'CuS', col: '黒色', desc: 'Cu²⁺にH₂Sを通じて生じる硫化物沈殿' },
+          { f: 'ZnS', col: '白色', desc: '硫化物では珍しい白色沈殿（塩基性条件）' },
+          { f: 'PbCrO₄', col: '黄色', desc: 'Pb²⁺にクロム酸カリウムを加えた沈殿' },
+          { f: 'AgCl', col: '白色', desc: 'Ag⁺に塩化物イオンを加えた沈殿（NH₃水に可溶）' }
+        ];
+        const p = pick(ppts);
+        const cols = shuffle(['赤褐色', '緑白色', '青白色', '褐色', '黒色', '白色', '黄色'].filter(c => c !== p.col)).slice(0, 3);
+        return { q: `沈殿「${p.f}」の色として正しいものはどれか？`, opts: [p.col, ...cols], ans: 0, exp: `${p.f} は「${p.col}」の沈殿（${p.desc}）。` };
+      }
     }
     if (areaId === 16) {
-      const tests = [
-        { name: '銀鏡反応（アンモニア性硝酸銀水溶液）', target: 'アルデヒド類・ギ酸（還元性）' },
-        { name: 'フェーリング反応（Cu₂O赤色沈殿）', target: 'アルデヒド類・ギ酸（還元性）' },
-        { name: 'ヨードホルム反応（CHI₃黄色沈殿）', target: 'CH₃-CO- または CH₃-CH(OH)- 構造' },
-        { name: '塩化鉄(III)水溶液で紫色に呈色', target: 'フェノール性ヒドロキシ基 (-OH)' }
-      ];
-      const t = pick(tests);
-      const allTargets = ['アルデヒド類・ギ酸（還元性）', 'CH₃-CO- または CH₃-CH(OH)- 構造', 'フェノール性ヒドロキシ基 (-OH)', 'エーテル結合 (-O-)'];
-      const others = allTargets.filter(x => x !== t.target);
-      return { q: `検出反応「${t.name}」は何を検出するための反応か？`, opts: [t.target, ...others], ans: 0, exp: `${t.name} は「${t.target}」を検出する重要反応である。` };
+      if (Math.random() < 0.5) {
+        const tests = [
+          { name: '銀鏡反応（アンモニア性硝酸銀水溶液）', target: 'アルデヒド類・ギ酸（還元性）' },
+          { name: 'フェーリング反応（Cu₂O赤色沈殿）', target: 'アルデヒド類・ギ酸（還元性）' },
+          { name: 'ヨードホルム反応（CHI₃黄色沈殿）', target: 'CH₃-CO- または CH₃-CH(OH)- 構造' },
+          { name: '炭酸水素ナトリウム(NaHCO₃)水溶液でCO₂発泡', target: 'カルボキシ基 (-COOH)' },
+          { name: '金属ナトリウム(Na)でH₂発生・NaHCO₃とは不反応', target: 'ヒドロキシ基 (-OH：アルコール)' },
+          { name: '臭素水(赤褐色)の速やかな脱色', target: '炭素間の二重結合・三重結合' }
+        ];
+        const t = pick(tests);
+        const allTargets = ['アルデヒド類・ギ酸（還元性）', 'CH₃-CO- または CH₃-CH(OH)- 構造', 'カルボキシ基 (-COOH)', 'ヒドロキシ基 (-OH：アルコール)', '炭素間の二重結合・三重結合'];
+        const others = shuffle(allTargets.filter(x => x !== t.target)).slice(0, 3);
+        return { q: `検出反応「${t.name}」は何を検出するための反応か？`, opts: [t.target, ...others], ans: 0, exp: `${t.name} は「${t.target}」を検出する重要反応である。` };
+      } else {
+        const oxs = [
+          { sub: 'エタノール（第一級アルコール）を穏やかに酸化', ans: 'アセトアルデヒド (CH₃CHO)' },
+          { sub: '1-プロパノール（第一級アルコール）を完全に酸化', ans: 'プロピオン酸 (C₂H₅COOH)' },
+          { sub: '2-プロパノール（第二級アルコール）を酸化', ans: 'アセトン (CH₃COCH₃)' },
+          { sub: 'メタノール（第一級アルコール）を穏やかに酸化', ans: 'ホルムアルデヒド (HCHO)' },
+          { sub: '2-メチル-2-プロパノール（第三級アルコール）に酸化剤', ans: 'ほとんど酸化されない' },
+          { sub: 'エタノールを濃硫酸と160〜170℃で分子内脱水', ans: 'エチレン (C₂H₄)' },
+          { sub: 'エタノールを濃硫酸と130〜140℃で分子間脱水', ans: 'ジエチルエーテル (C₂H₅OC₂H₅)' }
+        ];
+        const o = pick(oxs);
+        const pool = ['アセトアルデヒド (CH₃CHO)', 'プロピオン酸 (C₂H₅COOH)', 'アセトン (CH₃COCH₃)', 'ホルムアルデヒド (HCHO)', 'ほとんど酸化されない', 'エチレン (C₂H₄)', 'ジエチルエーテル (C₂H₅OC₂H₅)'];
+        const others = shuffle(pool.filter(x => x !== o.ans)).slice(0, 3);
+        return { q: `「${o.sub}」したときの主生成物（または結果）はどれか？`, opts: [o.ans, ...others], ans: 0, exp: `${o.sub}すると「${o.ans}」が得られる。アルコールの級数と反応条件をセットで覚えよう。` };
+      }
     }
     return null;
   }
@@ -7369,34 +8054,43 @@ const QuestionEngine = (() => {
   let recentQuizByArea = {};
   let lastQuizAnsIdx = -1;
 
-  function generate(areaId) {
+  function generate(areaId, excludeSet = null) {
     const area = AREAS.find(a => a.id === areaId) || AREAS[0];
+    const isInBattle = (txt) => !!(excludeSet && txt && excludeSet.has(txt));
+
     if (area.mode === 'calc' || (area.mode === 'mix' && Math.random() < 0.55)) {
       if (!recentCalcByArea[areaId]) recentCalcByArea[areaId] = [];
       const history = recentCalcByArea[areaId];
       let cq = genCalcQuestion(areaId);
-      for (let retry = 0; retry < 12 && cq && history.includes(cq.q); retry++) {
+      for (let retry = 0; retry < 20 && cq && (isInBattle(cq.q) || history.includes(cq.q)); retry++) {
         cq = genCalcQuestion(areaId);
       }
-      if (cq) {
+      if (cq && !isInBattle(cq.q)) {
         history.push(cq.q);
         if (history.length > 10) history.shift();
         return cq;
       }
+      // 計算の再抽選上限でも同一バトル内重複なら、知識問題（別パターン）へ自動切替！
     }
+
     if (!recentQuizByArea[areaId]) recentQuizByArea[areaId] = [];
     const qHist = recentQuizByArea[areaId];
     let item = null;
     if (Math.random() < 0.40) {
       item = genDynamicBasicQuiz(areaId);
-      for (let retry = 0; retry < 6 && item && qHist.includes(item.q); retry++) {
+      for (let retry = 0; retry < 8 && item && (isInBattle(item.q) || qHist.includes(item.q)); retry++) {
         item = genDynamicBasicQuiz(areaId);
       }
+      // 動的クイズが同一バトル内重複なら通常バンク（別パターン）へ自動切替！
+      if (item && isInBattle(item.q)) item = null;
     }
     if (!item) {
-      item = pickQuizItem(areaId);
-      for (let retry = 0; retry < 8 && item && qHist.includes(item.q); retry++) {
-        item = pickQuizItem(areaId);
+      item = pickQuizItem(areaId, excludeSet);
+      for (let retry = 0; retry < 10 && item && (isInBattle(item.q) || qHist.includes(item.q)); retry++) {
+        item = pickQuizItem(areaId, excludeSet);
+      }
+      if (item && isInBattle(item.q)) {
+        item = pickQuizItem(areaId, excludeSet);
       }
     }
     if (item && item.q) {
@@ -7405,7 +8099,6 @@ const QuestionEngine = (() => {
     }
     const correctText = item.opts[item.ans];
     let shuffled = shuffle(item.opts);
-    // 直前の正解番号と連続して同じ位置に偏らないよう再シャッフル（まぐれ当たり防止）
     if (shuffled.indexOf(correctText) === lastQuizAnsIdx && Math.random() < 0.75) {
       shuffled = shuffle(item.opts);
     }
@@ -10324,174 +11017,265 @@ const CardGacha = (() => {
     return '🧪 見習いラボ生';
   }
 
+
+
+  function getStarString(rar) {
+    if (rar === 'SEC') return '★★★★★';
+    if (rar === 'SSR') return '★★★★';
+    if (rar === 'SR') return '★★★';
+    if (rar === 'R') return '★★';
+    return '★';
+  }
+
+  function getCardBadgeIcon(card) {
+    if (card.cat === 'scientist') return '人';
+    if (card.cat === 'tool') return '器';
+    if (card.cat === 'matter') return '物';
+    if (card.cat === 'phenom') return '反';
+    return '秘';
+  }
+
+  function getCatShortName(card) {
+    if (card.cat === 'scientist') return '科学者';
+    if (card.cat === 'tool') return '実験器具';
+    if (card.cat === 'matter') return '物質・結晶';
+    if (card.cat === 'phenom') return '化学反応';
+    return 'SECRET';
+  }
+
+// 全118種（C01〜C113 + S01〜S05）すべて個別デザインの専用SVGアートワーク（類似・使い回しゼロ！）
+  function renderUniqueCardArt(card, uid) {
+    const id = card.id;
+
+    // 1) 科学者28種：各科学者固有の肖像（髪・ヒゲ・眼鏡・服装・背景色）＋象徴アイテムを1枚ずつ個別描画
+    const SCI_PROFILES = {
+      C01: { bg:'#dbeafe', hair:'#e4e4e7', beard:'full', coat:'#475569', prop:'<rect x="108" y="16" width="46" height="44" rx="4" fill="#0f172a" stroke="#facc15" stroke-width="1.8"/><g fill="#38bdf8"><rect x="113" y="22" width="7" height="7"/><rect x="142" y="22" width="7" height="7"/><rect x="113" y="32" width="7" height="7"/><rect x="122" y="32" width="7" height="7"/><rect x="132" y="32" width="7" height="7"/><rect x="142" y="32" width="7" height="7"/></g><rect x="122" y="42" width="9" height="9" fill="#ef4444"/><text x="126.5" y="49.5" text-anchor="middle" fill="#fff" font-size="8" font-weight="900">?</text><text x="131" y="57" text-anchor="middle" fill="#fde047" font-size="6.5" font-weight="900">周期表</text>' },
+      C02: { bg:'#fce7f3', hair:'#57534e', female:true, coat:'#1e293b', prop:'<circle cx="132" cy="40" r="21" fill="rgba(74,222,128,0.35)"/><rect x="126" y="20" width="12" height="40" rx="5" fill="#4ade80" stroke="#18181b" stroke-width="1.8"/><text x="132" y="76" text-anchor="middle" fill="#15803d" font-size="18" font-weight="900">☢</text>' },
+      C03: { bg:'#e0f2fe', hair:'#44403c', beard:'none', coat:'#334155', prop:'<rect x="108" y="24" width="42" height="36" rx="4" fill="#0284c7" stroke="#18181b" stroke-width="1.8"/><circle cx="120" cy="36" r="3" fill="#fde047"/><circle cx="136" cy="34" r="3" fill="#fde047"/><circle cx="128" cy="48" r="3" fill="#fde047"/><text x="129" y="72" text-anchor="middle" fill="#0c4a6e" font-size="8.5" font-weight="900">6×10²³</text>' },
+      C04: { bg:'#fef3c7', hair:'#f1f5f9', beard:'none', coat:'#7c2d12', prop:'<line x1="130" y1="20" x2="130" y2="62" stroke="#18181b" stroke-width="2.2"/><line x1="110" y1="30" x2="150" y2="30" stroke="#18181b" stroke-width="2.2"/><path d="M104,48 L110,30 L116,48 Z" fill="#facc15" stroke="#18181b" stroke-width="1.4"/><path d="M144,48 L150,30 L156,48 Z" fill="#facc15" stroke="#18181b" stroke-width="1.4"/><rect x="118" y="62" width="24" height="5" fill="#18181b"/>' },
+      C05: { bg:'#ede9fe', hair:'#d4d4d8', glasses:true, beard:'none', coat:'#3f3f46', prop:'<circle cx="122" cy="32" r="10" fill="#ef4444" stroke="#18181b" stroke-width="1.8"/><circle cx="142" cy="44" r="8" fill="#38bdf8" stroke="#18181b" stroke-width="1.8"/><circle cx="124" cy="56" r="7" fill="#facc15" stroke="#18181b" stroke-width="1.8"/>' },
+      C06: { bg:'#ecfeff', hair:'#78716c', glasses:true, beard:'stache', coat:'#1e293b', prop:'<rect x="106" y="28" width="48" height="22" rx="11" fill="#0f172a" stroke="#18181b" stroke-width="1.8"/><line x1="112" y1="39" x2="148" y2="39" stroke="#4ade80" stroke-width="3.5"/><text x="130" y="64" text-anchor="middle" fill="#0369a1" font-size="11" font-weight="900">e⁻</text>' },
+      C07: { bg:'#ffedd5', hair:'#a16207', beard:'stache', coat:'#57534e', prop:'<rect x="128" y="18" width="5" height="46" fill="#facc15" stroke="#18181b" stroke-width="1.2"/><circle cx="130.5" cy="41" r="4" fill="#ef4444"/><path d="M106,30 L154,30 M106,41 L126,41 L110,58" fill="none" stroke="#dc2626" stroke-width="2"/>' },
+      C08: { bg:'#e0e7ff', hair:'#a8a29e', beard:'none', coat:'#312e81', prop:'<circle cx="131" cy="42" r="5" fill="#ef4444"/><circle cx="131" cy="42" r="13" fill="none" stroke="#1d4ed8" stroke-width="1.5"/><circle cx="131" cy="42" r="22" fill="none" stroke="#1d4ed8" stroke-width="1.5"/><circle cx="144" cy="42" r="3" fill="#38bdf8"/><circle cx="131" cy="20" r="3" fill="#38bdf8"/>' },
+      C09: { bg:'#fef9c3', hair:'#cbd5e1', beard:'none', coat:'#1e293b', prop:'<polygon points="134,16 122,42 134,42 126,66 146,36 134,36" fill="#facc15" stroke="#18181b" stroke-width="1.6"/>' },
+      C10: { bg:'#dcfce7', hair:'#71717a', beard:'stache', coat:'#334155', prop:'<polygon points="130,58 122,68 138,68" fill="#18181b"/><line x1="108" y1="48" x2="152" y2="58" stroke="#0f172a" stroke-width="3"/><text x="130" y="34" text-anchor="middle" fill="#15803d" font-size="18" font-weight="900">⇄</text>' },
+      C11: { bg:'#fee2e2', hair:'#52525b', beard:'full', coat:'#44403c', prop:'<polyline points="110,60 124,60 124,42 138,42 138,24 152,24" fill="none" stroke="#dc2626" stroke-width="3"/><text x="130" y="75" text-anchor="middle" fill="#991b1b" font-size="11" font-weight="900">ΔH</text>' },
+      C12: { bg:'#cffafe', hair:'#94a3b8', beard:'none', coat:'#0f172a', prop:'<rect x="114" y="24" width="32" height="40" fill="#bae6fd" stroke="#18181b" stroke-width="2"/><rect x="114" y="34" width="32" height="7" fill="#64748b" stroke="#18181b" stroke-width="1.5"/><line x1="130" y1="14" x2="130" y2="34" stroke="#18181b" stroke-width="3"/><text x="130" y="57" text-anchor="middle" fill="#0369a1" font-size="9" font-weight="900">PV/T</text>' },
+      C13: { bg:'#f3e8ff', hair:'#a16207', beard:'stache', coat:'#3f3f46', prop:'<circle cx="118" cy="34" r="11" fill="#ef4444" stroke="#18181b" stroke-width="1.6"/><text x="118" y="38" text-anchor="middle" fill="#fff" font-size="9" font-weight="900">H⁺</text><circle cx="142" cy="54" r="11" fill="#3b82f6" stroke="#18181b" stroke-width="1.6"/><text x="142" y="58" text-anchor="middle" fill="#fff" font-size="8.5" font-weight="900">OH⁻</text>' },
+      C14: { bg:'#fce7f3', hair:'#64748b', glasses:true, beard:'none', coat:'#1e3a8a', prop:'<circle cx="130" cy="36" r="11" fill="#f43f5e" stroke="#18181b" stroke-width="1.6"/><text x="130" y="40" text-anchor="middle" fill="#fff" font-size="9" font-weight="900">H⁺</text><path d="M110,56 Q130,44 150,56" fill="none" stroke="#18181b" stroke-width="2.5" marker-end="none"/><polygon points="152,56 144,51 146,60" fill="#18181b"/>' },
+      C15: { bg:'#fef3c7', hair:'#e4e4e7', beard:'full', coat:'#334155', prop:'<rect x="112" y="24" width="36" height="30" fill="#f97316" stroke="#18181b" stroke-width="1.8"/><g stroke="#fde047" stroke-width="1.5"><line x1="112" y1="34" x2="148" y2="34"/><line x1="112" y1="44" x2="148" y2="44"/><line x1="124" y1="24" x2="124" y2="54"/><line x1="136" y1="24" x2="136" y2="54"/></g><text x="130" y="68" text-anchor="middle" fill="#9a3412" font-size="9" font-weight="900">Pt網</text>' },
+      C16: { bg:'#ecfccb', hair:'#52525b', glasses:true, beard:'none', coat:'#1e293b', prop:'<path d="M130,66 L130,22" stroke="#ca8a04" stroke-width="2.5"/><ellipse cx="124" cy="32" rx="5" ry="3" fill="#eab308"/><ellipse cx="136" cy="38" rx="5" ry="3" fill="#eab308"/><ellipse cx="124" cy="46" rx="5" ry="3" fill="#eab308"/><text x="130" y="78" text-anchor="middle" fill="#365314" font-size="9" font-weight="900">NH₃</text>' },
+      C17: { bg:'#e0f2fe', hair:'#cbd5e1', glasses:true, beard:'none', coat:'#f8fafc', prop:'<rect x="110" y="24" width="40" height="32" rx="4" fill="#94a3b8" stroke="#18181b" stroke-width="1.8"/><polyline points="114,44 124,32 132,44 146,28" fill="none" stroke="#fde047" stroke-width="3"/><text x="130" y="69" text-anchor="middle" fill="#0369a1" font-size="8" font-weight="900">導電高分子</text>' },
+      C18: { bg:'#fef9c3', hair:'#78716c', beard:'full', coat:'#292524', prop:'<polygon points="130,18 148,29 148,51 130,62 112,51 112,29" fill="none" stroke="#15803d" stroke-width="5"/><circle cx="130" cy="40" r="9" fill="none" stroke="#facc15" stroke-width="2"/><circle cx="130" cy="18" r="3.5" fill="#ef4444"/>' },
+      C19: { bg:'#cffafe', hair:'#71717a', beard:'stache', coat:'#334155', prop:'<path d="M114,22 L114,54 Q114,66 130,66 Q146,66 146,54 L146,22" fill="none" stroke="#18181b" stroke-width="7"/><path d="M114,36 L114,54 Q114,66 130,66 Q146,66 146,54 L146,24" fill="none" stroke="#38bdf8" stroke-width="4"/><line x1="130" y1="58" x2="130" y2="70" stroke="#ef4444" stroke-width="2.5"/>' },
+      C20: { bg:'#f5f3ff', hair:'#a1a1aa', beard:'full', coat:'#1e293b', prop:'<line x1="130" y1="18" x2="130" y2="66" stroke="#38bdf8" stroke-width="2" stroke-dasharray="3 2"/><polygon points="110,48 122,26 124,52" fill="#f472b6" stroke="#18181b" stroke-width="1.5"/><polygon points="150,48 138,26 136,52" fill="#60a5fa" stroke="#18181b" stroke-width="1.5"/>' },
+      C81: { bg:'#dbeafe', hair:'#57534e', beard:'none', coat:'#3f6212', prop:'<line x1="110" y1="62" x2="152" y2="62" stroke="#18181b" stroke-width="2"/><line x1="110" y1="62" x2="110" y2="20" stroke="#18181b" stroke-width="2"/><line x1="112" y1="58" x2="150" y2="22" stroke="#ef4444" stroke-width="2.5"/><text x="134" y="74" text-anchor="middle" fill="#1e3a8a" font-size="8.5" font-weight="900">X線 Z順</text>' },
+      C82: { bg:'#fce7f3', hair:'#f4f4f5', beard:'none', coat:'#1e293b', prop:'<circle cx="136" cy="36" r="14" fill="#ef4444" stroke="#18181b" stroke-width="1.8"/><text x="136" y="40" text-anchor="middle" fill="#fff" font-size="11" font-weight="900">F 4.0</text><circle cx="112" cy="54" r="6" fill="#38bdf8" stroke="#18181b" stroke-width="1.5"/>' },
+      C83: { bg:'#ffedd5', hair:'#78716c', beard:'full', coat:'#18181b', prop:'<line x1="108" y1="26" x2="152" y2="62" stroke="#18181b" stroke-width="2.5"/><circle cx="126" cy="36" r="7" fill="#f97316" stroke="#18181b" stroke-width="1.6"/><text x="130" y="75" text-anchor="middle" fill="#9a3412" font-size="9" font-weight="900">ΔG&lt;0</text>' },
+      C84: { bg:'#e2e8f0', hair:'#52525b', beard:'stache', coat:'#334155', prop:'<rect x="112" y="26" width="14" height="40" fill="#64748b" stroke="#18181b" stroke-width="1.6"/><rect x="132" y="18" width="16" height="48" fill="#475569" stroke="#18181b" stroke-width="1.6"/><circle cx="140" cy="14" r="5" fill="#cbd5e1"/>' },
+      C85: { bg:'#fef9c3', hair:'#57534e', beard:'full', coat:'#292524', prop:'<circle cx="122" cy="38" r="12" fill="#f59e0b" stroke="#18181b" stroke-width="1.8"/><rect x="130" y="34" width="22" height="8" fill="#f59e0b" stroke="#18181b" stroke-width="1.6"/><rect x="142" y="42" width="5" height="7" fill="#f59e0b" stroke="#18181b" stroke-width="1.4"/>' },
+      C86: { bg:'#fef3c7', hair:'#52525b', beard:'full', coat:'#18181b', prop:'<circle cx="130" cy="40" r="18" fill="#facc15" stroke="#92400e" stroke-width="2.5"/><text x="130" y="44" text-anchor="middle" fill="#78350f" font-size="9" font-weight="900">NOBEL</text>' },
+      C87: { bg:'#dbeafe', hair:'#94a3b8', glasses:true, beard:'none', coat:'#1e3a8a', prop:'<polygon points="116,52 128,24 134,52" fill="#facc15" stroke="#18181b" stroke-width="1.8"/><polygon points="148,52 138,32 134,52" fill="#cbd5e1" stroke="#64748b" stroke-width="1.2" opacity="0.5"/>' },
+      C88: { bg:'#dcfce7', hair:'#cbd5e1', glasses:true, beard:'none', coat:'#f8fafc', prop:'<rect x="114" y="24" width="32" height="42" rx="5" fill="#22c55e" stroke="#18181b" stroke-width="2"/><rect x="123" y="19" width="14" height="5" fill="#64748b" stroke="#18181b" stroke-width="1.4"/><text x="130" y="49" text-anchor="middle" fill="#fff" font-size="11" font-weight="900">Li⁺⚡</text>' }
+    };
+    if (SCI_PROFILES[id]) {
+      const p = SCI_PROFILES[id];
+      const hBack = p.female
+        ? `<path d="M30,72 C24,32 92,32 86,72 C82,48 70,26 58,26 C46,26 34,48 30,72 Z" fill="${p.hair}" stroke="#18181b" stroke-width="2"/><circle cx="58" cy="24" r="11" fill="${p.hair}" stroke="#18181b" stroke-width="1.8"/>`
+        : p.beard === 'full'
+          ? `<path d="M22,94 C16,62 24,26 58,24 C92,26 100,62 94,94 C88,82 82,56 80,44 C70,34 46,34 36,44 C34,56 28,82 22,94 Z" fill="${p.hair}" stroke="#18181b" stroke-width="2"/>`
+          : `<path d="M30,68 C26,34 90,34 86,68 C80,44 70,35 58,35 C46,35 36,44 30,68 Z" fill="${p.hair}" stroke="#18181b" stroke-width="2"/>`;
+      const bSvg = p.beard === 'full'
+        ? `<path d="M34,74 C30,96 38,116 58,120 C78,116 86,96 82,74 C74,84 68,85 58,83 C48,85 42,84 34,74 Z" fill="${p.hair}" stroke="#18181b" stroke-width="2"/><path d="M44,85 Q58,78 72,85 Q66,93 58,90 Q50,93 44,85 Z" fill="#f4f4f5" stroke="#18181b" stroke-width="1.5"/>`
+        : p.beard === 'stache'
+          ? `<path d="M45,84 Q58,78 71,84 Q65,89 58,87 Q51,89 45,84 Z" fill="${p.hair}" stroke="#18181b" stroke-width="1.5"/>`
+          : `<path d="M50,89 Q58,94 66,89" fill="none" stroke="#7c2d12" stroke-width="1.8" stroke-linecap="round"/>`;
+      const gSvg = p.glasses
+        ? '<rect x="39" y="60" width="14" height="10" rx="3" fill="rgba(255,255,255,0.3)" stroke="#18181b" stroke-width="1.7"/><rect x="63" y="60" width="14" height="10" rx="3" fill="rgba(255,255,255,0.3)" stroke="#18181b" stroke-width="1.7"/><line x1="53" y1="65" x2="63" y2="65" stroke="#18181b" stroke-width="1.7"/>'
+        : '';
+      return `<svg viewBox="0 0 160 132" width="100%" height="100%">
+        <rect width="160" height="132" fill="${p.bg}"/>
+        <polygon points="80,66 0,0 38,0" fill="#fff" opacity="0.45"/><polygon points="80,66 160,0 160,42" fill="#fff" opacity="0.35"/>
+        <path d="M8,132 C12,102 30,96 44,94 L72,94 C86,96 104,102 108,132 Z" fill="${p.coat}" stroke="#18181b" stroke-width="2"/>
+        <polygon points="48,94 58,126 68,94" fill="#fff" stroke="#18181b" stroke-width="1.5"/>
+        ${hBack}
+        <path d="M36,52 C36,34 80,34 80,52 L79,76 C78,94 69,102 58,102 C47,102 38,94 37,76 Z" fill="#fed7aa" stroke="#18181b" stroke-width="2"/>
+        <path d="M41,59 Q47,55 53,59 M63,59 Q69,55 75,59" fill="none" stroke="#18181b" stroke-width="2" stroke-linecap="round"/>
+        <ellipse cx="47" cy="65" rx="4" ry="2.6" fill="#fff" stroke="#18181b" stroke-width="1.2"/><circle cx="47.5" cy="65" r="1.8" fill="#1d4ed8"/>
+        <ellipse cx="69" cy="65" rx="4" ry="2.6" fill="#fff" stroke="#18181b" stroke-width="1.2"/><circle cx="68.5" cy="65" r="1.8" fill="#1d4ed8"/>
+        <path d="M58,63 L56,75 Q58,78 60,75" fill="none" stroke="#7c2d12" stroke-width="1.6"/>
+        ${gSvg}${bSvg}${p.prop}
+      </svg>`;
+    }
+
+    // 2) 実験器具28種 + 物質・結晶33種 + 化学反応24種 + シークレット5種：全90枚を1枚ずつ固有アート定義！
+    const ART_MAP = {
+      // 実験器具 (28)
+      C21: ['#0c4a6e','#bae6fd','<rect x="72" y="10" width="16" height="84" rx="2" fill="#e0f2fe" stroke="#18181b" stroke-width="2.2"/><rect x="74" y="42" width="12" height="50" fill="#0ea5e9"/><g stroke="#18181b" stroke-width="1.4"><line x1="74" y1="22" x2="84" y2="22"/><line x1="74" y1="34" x2="82" y2="34"/><line x1="74" y1="54" x2="84" y2="54"/><line x1="74" y1="68" x2="82" y2="68"/></g><rect x="64" y="88" width="32" height="7" rx="3" fill="#facc15" stroke="#18181b" stroke-width="1.8"/><polygon points="77,95 83,95 80,114" fill="#fff" stroke="#18181b" stroke-width="1.4"/><circle cx="80" cy="122" r="4" fill="#38bdf8" stroke="#18181b" stroke-width="1.2"/>'],
+      C22: ['#075985','#e0f2fe','<rect x="76" y="10" width="8" height="32" fill="#f0f9ff" stroke="#18181b" stroke-width="1.8"/><line x1="72" y1="24" x2="88" y2="24" stroke="#ef4444" stroke-width="2.5"/><ellipse cx="80" cy="64" rx="18" ry="24" fill="#38bdf8" stroke="#18181b" stroke-width="2.2"/><rect x="76" y="88" width="8" height="28" fill="#38bdf8" stroke="#18181b" stroke-width="1.8"/><polygon points="76,116 84,116 80,126" fill="#0284c7"/>'],
+      C23: ['#1e3a8a','#dbeafe','<rect x="73" y="12" width="14" height="48" fill="#eff6ff" stroke="#18181b" stroke-width="2"/><line x1="69" y1="34" x2="91" y2="34" stroke="#ef4444" stroke-width="2.6"/><path d="M73,60 C46,66 42,102 52,118 L108,118 C118,102 114,66 87,60 Z" fill="#60a5fa" stroke="#18181b" stroke-width="2.2"/><path d="M56,92 L104,92" stroke="#fff" stroke-width="2"/>'],
+      C24: ['#155e75','#cffafe','<path d="M56,28 L104,28 L118,116 L42,116 Z" fill="#ecfeff" stroke="#18181b" stroke-width="2.4"/><path d="M47,76 L113,76 L117,114 L43,114 Z" fill="#f472b6" opacity="0.82"/><line x1="60" y1="54" x2="74" y2="54" stroke="#18181b" stroke-width="1.6"/><line x1="60" y1="68" x2="70" y2="68" stroke="#18181b" stroke-width="1.6"/>'],
+      C25: ['#0c4a6e','#7dd3fc','<g transform="rotate(-18 80 66)"><rect x="20" y="50" width="120" height="32" rx="8" fill="rgba(56,189,248,0.5)" stroke="#18181b" stroke-width="2.2"/><line x1="6" y1="66" x2="154" y2="66" stroke="#fde047" stroke-width="5"/><line x1="40" y1="82" x2="40" y2="104" stroke="#0284c7" stroke-width="5"/><line x1="120" y1="28" x2="120" y2="50" stroke="#0284c7" stroke-width="5"/></g><text x="36" y="118" fill="#fff" font-size="10" font-weight="900">水IN▲</text><text x="108" y="24" fill="#fff" font-size="10" font-weight="900">OUT▲</text>'],
+      C26: ['#1e1b4b','#e0e7ff','<path d="M60,16 C48,48 56,74 75,90 L85,90 C104,74 112,48 100,16 Z" fill="#fff" stroke="#18181b" stroke-width="2.4"/><path d="M56,44 L104,44 L100,64 L60,64 Z" fill="#facc15"/><path d="M60,64 L100,64 L85,89 L75,89 Z" fill="#38bdf8"/><rect x="68" y="92" width="24" height="6" rx="2" fill="#ef4444" stroke="#18181b" stroke-width="1.5"/><rect x="77" y="98" width="6" height="22" fill="#e2e8f0" stroke="#18181b" stroke-width="1.5"/>'],
+      C27: ['#0f172a','#cbd5e1','<rect x="68" y="18" width="20" height="36" fill="#f8fafc" stroke="#18181b" stroke-width="2"/><line x1="88" y1="36" x2="138" y2="54" stroke="#18181b" stroke-width="6"/><line x1="88" y1="36" x2="138" y2="54" stroke="#e2e8f0" stroke-width="3"/><circle cx="78" cy="84" r="32" fill="#38bdf8" stroke="#18181b" stroke-width="2.4"/><line x1="78" y1="8" x2="78" y2="38" stroke="#ef4444" stroke-width="3"/><circle cx="78" cy="38" r="4" fill="#ef4444"/><circle cx="70" cy="108" r="3" fill="#475569"/><circle cx="86" cy="108" r="3" fill="#475569"/>'],
+      C28: ['#7c2d12','#fed7aa','<path d="M30,68 Q80,104 130,68 Z" fill="#ffffff" stroke="#18181b" stroke-width="2.4"/><ellipse cx="80" cy="68" rx="50" ry="10" fill="#e2e8f0" stroke="#18181b" stroke-width="2"/><polygon points="62,68 74,56 84,68 94,58 102,68" fill="#f8fafc" stroke="#94a3b8" stroke-width="1.5"/><path d="M70,116 Q80,86 90,116 Z" fill="#f97316"/>'],
+      C29: ['#450a0a','#fecaca','<path d="M52,44 L108,44 L98,96 L62,96 Z" fill="#f8fafc" stroke="#18181b" stroke-width="2.4"/><path d="M46,44 Q80,26 114,44 Z" fill="#e2e8f0" stroke="#18181b" stroke-width="2"/><circle cx="80" cy="30" r="5" fill="#cbd5e1" stroke="#18181b" stroke-width="1.8"/><path d="M62,122 Q80,92 98,122 Z" fill="#ef4444"/><path d="M70,122 Q80,102 90,122 Z" fill="#fde047"/>'],
+      C30: ['#1e3a8a','#bfdbfe','<path d="M36,52 C36,24 124,24 124,52 Z" fill="#e0f2fe" stroke="#18181b" stroke-width="2.4"/><circle cx="80" cy="24" r="7" fill="#bae6fd" stroke="#18181b" stroke-width="2"/><rect x="34" y="52" width="92" height="58" rx="6" fill="#f0f9ff" stroke="#18181b" stroke-width="2.4"/><line x1="36" y1="84" x2="124" y2="84" stroke="#64748b" stroke-width="3" stroke-dasharray="6 4"/><circle cx="54" cy="98" r="5" fill="#2563eb"/><circle cx="72" cy="100" r="5" fill="#2563eb"/><circle cx="92" cy="97" r="5" fill="#2563eb"/><circle cx="108" cy="100" r="5" fill="#2563eb"/>'],
+      C31: ['#064e3b','#a7f3d0','<circle cx="80" cy="28" r="16" fill="#e0f2fe" stroke="#18181b" stroke-width="2"/><circle cx="80" cy="64" r="22" fill="#dcfce7" stroke="#18181b" stroke-width="2.2"/><circle cx="80" cy="104" r="20" fill="#38bdf8" stroke="#18181b" stroke-width="2.2"/><rect x="100" y="60" width="24" height="7" fill="#facc15" stroke="#18181b" stroke-width="1.6"/><circle cx="74" cy="64" r="5" fill="#475569"/><circle cx="86" cy="66" r="5" fill="#475569"/>'],
+      C32: ['#0f766e','#99f6e4','<rect x="48" y="34" width="64" height="82" rx="8" fill="#f0fdfa" stroke="#18181b" stroke-width="2.4"/><rect x="50" y="70" width="60" height="44" rx="4" fill="#2dd4bf"/><path d="M22,22 L66,22 L66,104" fill="none" stroke="#18181b" stroke-width="4"/><path d="M94,54 L94,22 L138,22" fill="none" stroke="#18181b" stroke-width="4"/><circle cx="66" cy="94" r="4" fill="#fff"/><circle cx="74" cy="82" r="3" fill="#fff"/>'],
+      C33: ['#14532d','#bbf7d0','<rect x="69" y="16" width="22" height="28" fill="#f0fdf4" stroke="#18181b" stroke-width="2.2"/><path d="M69,44 L36,112 C34,116 38,118 44,118 L116,118 C122,118 126,116 124,112 L91,44 Z" fill="#f0fdf4" stroke="#18181b" stroke-width="2.4"/><path d="M48,84 L112,84 L122,114 L38,114 Z" fill="#22c55e" opacity="0.85"/>'],
+      C34: ['#3f3f46','#e4e4e7','<g transform="rotate(24 80 66)"><rect x="68" y="14" width="22" height="94" rx="11" fill="#e0f2fe" stroke="#18181b" stroke-width="2.4"/><rect x="70" y="64" width="18" height="42" rx="9" fill="#f43f5e"/></g><rect x="18" y="54" width="68" height="10" rx="3" fill="#d97706" stroke="#18181b" stroke-width="1.8"/>'],
+      C35: ['#1e293b','#94a3b8','<ellipse cx="80" cy="116" rx="38" ry="8" fill="#475569" stroke="#18181b" stroke-width="2"/><rect x="72" y="64" width="16" height="52" fill="#cbd5e1" stroke="#18181b" stroke-width="2"/><rect x="64" y="88" width="32" height="7" rx="2" fill="#94a3b8" stroke="#18181b" stroke-width="1.5"/><rect x="64" y="100" width="32" height="7" rx="2" fill="#64748b" stroke="#18181b" stroke-width="1.5"/><path d="M80,10 C102,34 98,58 80,66 C62,58 58,34 80,10 Z" fill="#0ea5e9" stroke="#18181b" stroke-width="1.8"/><path d="M80,28 C90,40 88,56 80,63 C72,56 70,40 80,28 Z" fill="#fef08a"/>'],
+      C36: ['#0369a1','#e0f2fe','<polygon points="44,24 116,24 86,74 74,74" fill="#fff" stroke="#18181b" stroke-width="2.4"/><rect x="75" y="74" width="10" height="42" fill="#e0f2fe" stroke="#18181b" stroke-width="2"/><line x1="34" y1="10" x2="72" y2="48" stroke="#38bdf8" stroke-width="4"/><polygon points="52,24 108,24 80,66" fill="#f8fafc" stroke="#94a3b8" stroke-width="1.5"/>'],
+      C37: ['#7f1d1d','#fee2e2','<ellipse cx="80" cy="26" rx="14" ry="18" fill="#dc2626" stroke="#18181b" stroke-width="2.2"/><rect x="74" y="42" width="12" height="62" fill="#f8fafc" stroke="#18181b" stroke-width="2"/><rect x="76" y="70" width="8" height="32" fill="#38bdf8"/><polygon points="75,104 85,104 80,120" fill="#38bdf8" stroke="#18181b" stroke-width="1.4"/>'],
+      C38: ['#1e293b','#e2e8f0','<ellipse cx="80" cy="44" rx="44" ry="10" fill="#cbd5e1" stroke="#18181b" stroke-width="2.2"/><rect x="26" y="54" width="108" height="58" rx="8" fill="#f8fafc" stroke="#18181b" stroke-width="2.4"/><rect x="40" y="66" width="80" height="24" rx="4" fill="#0f172a"/><text x="80" y="83" text-anchor="middle" fill="#4ade80" font-size="14" font-weight="900">12.34 g</text><rect x="62" y="96" width="36" height="10" rx="4" fill="#0284c7"/>'],
+      C39: ['#0f172a','#bae6fd','<rect x="22" y="28" width="66" height="82" rx="8" fill="#1e293b" stroke="#18181b" stroke-width="2.2"/><rect x="30" y="38" width="50" height="26" rx="4" fill="#020617"/><text x="55" y="56" text-anchor="middle" fill="#fde047" font-size="13" font-weight="900">pH 7.0</text><path d="M88,48 Q122,22 122,56" fill="none" stroke="#18181b" stroke-width="3"/><rect x="116" y="56" width="12" height="52" rx="4" fill="#38bdf8" stroke="#18181b" stroke-width="1.8"/>'],
+      C40: ['#881337','#ffe4e6','<circle cx="80" cy="48" r="24" fill="#e11d48" stroke="#18181b" stroke-width="2.4"/><circle cx="80" cy="18" r="8" fill="#be123c" stroke="#18181b" stroke-width="1.8"/><text x="80" y="21" text-anchor="middle" fill="#fff" font-size="9" font-weight="900">A</text><circle cx="80" cy="78" r="8" fill="#be123c" stroke="#18181b" stroke-width="1.8"/><text x="80" y="81" text-anchor="middle" fill="#fff" font-size="9" font-weight="900">S</text><circle cx="108" cy="78" r="8" fill="#be123c" stroke="#18181b" stroke-width="1.8"/><text x="108" y="81" text-anchor="middle" fill="#fff" font-size="9" font-weight="900">E</text><rect x="76" y="86" width="8" height="36" fill="#e0f2fe" stroke="#18181b" stroke-width="1.8"/>'],
+      C89: ['#334155','#f1f5f9','<polygon points="80,58 64,114 96,114" fill="#cbd5e1" stroke="#18181b" stroke-width="2.2"/><line x1="26" y1="62" x2="134" y2="62" stroke="#18181b" stroke-width="4"/><ellipse cx="38" cy="52" rx="24" ry="7" fill="#f8fafc" stroke="#18181b" stroke-width="2"/><ellipse cx="122" cy="52" rx="24" ry="7" fill="#f8fafc" stroke="#18181b" stroke-width="2"/><rect x="114" y="34" width="16" height="16" fill="#facc15" stroke="#18181b" stroke-width="1.8"/>'],
+      C90: ['#0c4a6e','#e0f2fe','<rect x="66" y="12" width="28" height="98" fill="#f0f9ff" stroke="#18181b" stroke-width="2.4"/><rect x="68" y="54" width="24" height="54" fill="#38bdf8"/><path d="M68,54 Q80,62 92,54" fill="none" stroke="#fff" stroke-width="2"/><polygon points="50,110 110,110 116,120 44,120" fill="#94a3b8" stroke="#18181b" stroke-width="2"/><g stroke="#18181b" stroke-width="1.5"><line x1="68" y1="26" x2="80" y2="26"/><line x1="68" y1="40" x2="76" y2="40"/><line x1="68" y1="68" x2="80" y2="68"/><line x1="68" y1="84" x2="76" y2="84"/></g>'],
+      C91: ['#451a03','#fde68a','<rect x="66" y="16" width="28" height="16" rx="3" fill="#18181b"/><rect x="46" y="32" width="68" height="86" rx="10" fill="#92400e" stroke="#18181b" stroke-width="2.4"/><rect x="56" y="54" width="48" height="34" rx="4" fill="#fef3c7" stroke="#18181b" stroke-width="1.6"/><text x="80" y="75" text-anchor="middle" fill="#78350f" font-size="11" font-weight="900">AgNO₃</text><text x="24" y="48" fill="#a855f7" font-size="11" font-weight="900">UV✕</text>'],
+      C92: ['#0369a1','#e0f2fe','<rect x="34" y="44" width="44" height="72" rx="10" fill="#ffffff" stroke="#18181b" stroke-width="2.2"/><path d="M56,44 L56,22 Q56,16 90,26" fill="none" stroke="#18181b" stroke-width="4"/><path d="M92,28 Q112,38 118,64" fill="none" stroke="#38bdf8" stroke-width="3" stroke-dasharray="5 3"/><line x1="126" y1="18" x2="108" y2="116" stroke="#cbd5e1" stroke-width="6"/><line x1="126" y1="18" x2="108" y2="116" stroke="#18181b" stroke-width="1.8"/>'],
+      C93: ['#1e3a8a','#dbeafe','<path d="M44,18 L44,82 C44,114 116,114 116,82 L116,18" fill="none" stroke="#18181b" stroke-width="24" stroke-linecap="round"/><path d="M44,18 L44,82 C44,114 116,114 116,82 L116,18" fill="none" stroke="#e0f2fe" stroke-width="18" stroke-linecap="round"/><circle cx="44" cy="70" r="5" fill="#facc15"/><circle cx="56" cy="96" r="5" fill="#facc15"/><circle cx="80" cy="106" r="5" fill="#facc15"/><circle cx="104" cy="96" r="5" fill="#facc15"/><circle cx="116" cy="70" r="5" fill="#facc15"/>'],
+      C94: ['#7f1d1d','#fee2e2','<rect x="72" y="10" width="16" height="86" rx="8" fill="#ffffff" stroke="#18181b" stroke-width="2.2"/><circle cx="80" cy="106" r="14" fill="#ef4444" stroke="#18181b" stroke-width="2.2"/><rect x="77" y="34" width="6" height="68" fill="#ef4444"/><g stroke="#18181b" stroke-width="1.5"><line x1="90" y1="24" x2="100" y2="24"/><line x1="90" y1="42" x2="102" y2="42"/><line x1="90" y1="60" x2="100" y2="60"/><line x1="90" y1="78" x2="102" y2="78"/></g>'],
+      C95: ['#1e293b','#cbd5e1','<rect x="26" y="88" width="108" height="30" rx="6" fill="#334155" stroke="#18181b" stroke-width="2.2"/><circle cx="48" cy="103" r="7" fill="#38bdf8" stroke="#18181b" stroke-width="1.5"/><rect x="46" y="26" width="68" height="62" rx="4" fill="#e0f2fe" stroke="#18181b" stroke-width="2.2"/><rect x="48" y="48" width="64" height="38" fill="#38bdf8" opacity="0.7"/><rect x="66" y="76" width="28" height="8" rx="4" fill="#ffffff" stroke="#18181b" stroke-width="1.6"/>'],
+      C96: ['#312e81','#e0e7ff','<circle cx="80" cy="66" r="46" fill="#1e293b" stroke="#18181b" stroke-width="2.6"/><circle cx="80" cy="66" r="36" fill="none" stroke="#38bdf8" stroke-width="2" stroke-dasharray="10 6"/><rect x="74" y="24" width="12" height="24" rx="5" fill="#fde047" stroke="#18181b" stroke-width="1.6"/><rect x="74" y="84" width="12" height="24" rx="5" fill="#fde047" stroke="#18181b" stroke-width="1.6"/><rect x="38" y="60" width="24" height="12" rx="5" fill="#f472b6" stroke="#18181b" stroke-width="1.6"/><rect x="98" y="60" width="24" height="12" rx="5" fill="#f472b6" stroke="#18181b" stroke-width="1.6"/>'],
+
+      // 物質・分子・結晶 (33)
+      C41: ['#0c4a6e','#bae6fd','<polygon points="80,12 132,48 80,120 28,48" fill="#e0f2fe" stroke="#18181b" stroke-width="2.6"/><polygon points="80,12 106,48 80,120 54,48" fill="#ffffff" opacity="0.7"/><polyline points="28,48 80,60 132,48" fill="none" stroke="#18181b" stroke-width="2"/>'],
+      C42: ['#18181b','#94a3b8','<g stroke="#18181b" stroke-width="2" fill="#334155"><polygon points="30,36 60,26 100,26 130,36 100,46 60,46"/><polygon points="30,68 60,58 100,58 130,68 100,78 60,78"/><polygon points="30,100 60,90 100,90 130,100 100,110 60,110"/></g><g stroke="#facc15" stroke-width="2" stroke-dasharray="3 3"><line x1="60" y1="46" x2="60" y2="58"/><line x1="100" y1="78" x2="100" y2="90"/></g>'],
+      C43: ['#0f172a','#cbd5e1','<circle cx="80" cy="66" r="44" fill="#334155" stroke="#18181b" stroke-width="2.6"/><polygon points="80,46 98,58 92,80 68,80 62,58" fill="#0f172a" stroke="#fde047" stroke-width="2"/><g stroke="#f8fafc" stroke-width="1.8"><line x1="80" y1="46" x2="80" y2="22"/><line x1="98" y1="58" x2="120" y2="48"/><line x1="62" y1="58" x2="40" y2="48"/><line x1="92" y1="80" x2="108" y2="100"/><line x1="68" y1="80" x2="52" y2="100"/></g>'],
+      C44: ['#1e1b4b','#a5b4fc','<g transform="rotate(-22 80 66)"><rect x="24" y="42" width="112" height="48" rx="18" fill="#1e293b" stroke="#18181b" stroke-width="2.4"/><g stroke="#38bdf8" stroke-width="1.6" fill="none"><polygon points="48,54 60,48 72,54 72,68 60,74 48,68"/><polygon points="72,54 84,48 96,54 96,68 84,74 72,68"/><polygon points="96,54 108,48 120,54 120,68 108,74 96,68"/></g></g>'],
+      C45: ['#0284c7','#e0f2fe','<g stroke="#ffffff" stroke-width="4" stroke-linecap="round"><line x1="80" y1="16" x2="80" y2="116"/><line x1="36" y1="41" x2="124" y2="91"/><line x1="36" y1="91" x2="124" y2="41"/></g><polygon points="80,38 104,52 104,80 80,94 56,80 56,52" fill="rgba(255,255,255,0.45)" stroke="#0369a1" stroke-width="2"/>'],
+      C46: ['#334155','#f1f5f9','<rect x="44" y="70" width="72" height="40" rx="6" fill="#ffffff" stroke="#18181b" stroke-width="2.4"/><path d="M54,66 Q44,44 64,34 Q74,18 92,32 Q112,38 104,66" fill="#e2e8f0" opacity="0.88"/><text x="80" y="95" text-anchor="middle" fill="#0f172a" font-size="14" font-weight="900">CO₂</text>'],
+      C47: ['#064e3b','#d1fae5','<rect x="42" y="28" width="76" height="76" fill="none" stroke="#18181b" stroke-width="2.2"/><line x1="80" y1="28" x2="80" y2="104" stroke="#18181b" stroke-width="1.6"/><line x1="42" y1="66" x2="118" y2="66" stroke="#18181b" stroke-width="1.6"/><circle cx="42" cy="28" r="10" fill="#22c55e" stroke="#18181b" stroke-width="1.8"/><circle cx="80" cy="28" r="7" fill="#a855f7" stroke="#18181b" stroke-width="1.8"/><circle cx="118" cy="28" r="10" fill="#22c55e" stroke="#18181b" stroke-width="1.8"/><circle cx="42" cy="66" r="7" fill="#a855f7" stroke="#18181b" stroke-width="1.8"/><circle cx="80" cy="66" r="10" fill="#22c55e" stroke="#18181b" stroke-width="1.8"/><circle cx="118" cy="66" r="7" fill="#a855f7" stroke="#18181b" stroke-width="1.8"/><circle cx="42" cy="104" r="10" fill="#22c55e" stroke="#18181b" stroke-width="1.8"/><circle cx="80" cy="104" r="7" fill="#a855f7" stroke="#18181b" stroke-width="1.8"/><circle cx="118" cy="104" r="10" fill="#22c55e" stroke="#18181b" stroke-width="1.8"/>'],
+      C48: ['#3b0764','#f3e8ff','<rect x="42" y="26" width="76" height="76" fill="none" stroke="#18181b" stroke-width="2.4"/><circle cx="42" cy="26" r="10" fill="#4ade80" stroke="#18181b" stroke-width="1.8"/><circle cx="118" cy="26" r="10" fill="#4ade80" stroke="#18181b" stroke-width="1.8"/><circle cx="42" cy="102" r="10" fill="#4ade80" stroke="#18181b" stroke-width="1.8"/><circle cx="118" cy="102" r="10" fill="#4ade80" stroke="#18181b" stroke-width="1.8"/><circle cx="80" cy="64" r="18" fill="#facc15" stroke="#18181b" stroke-width="2.2"/><text x="80" y="68" text-anchor="middle" fill="#18181b" font-size="11" font-weight="900">Cs⁺</text>'],
+      C49: ['#451a03','#fef3c7','<rect x="42" y="26" width="76" height="76" fill="none" stroke="#18181b" stroke-width="2.2"/><line x1="42" y1="26" x2="118" y2="102" stroke="#ef4444" stroke-width="2.5" stroke-dasharray="5 3"/><circle cx="42" cy="26" r="9" fill="#94a3b8" stroke="#18181b" stroke-width="1.8"/><circle cx="118" cy="26" r="9" fill="#94a3b8" stroke="#18181b" stroke-width="1.8"/><circle cx="42" cy="102" r="9" fill="#94a3b8" stroke="#18181b" stroke-width="1.8"/><circle cx="118" cy="102" r="9" fill="#94a3b8" stroke="#18181b" stroke-width="1.8"/><circle cx="80" cy="64" r="13" fill="#f97316" stroke="#18181b" stroke-width="2"/>'],
+      C50: ['#713f12','#fef08a','<rect x="42" y="26" width="76" height="76" fill="none" stroke="#18181b" stroke-width="2.2"/><circle cx="42" cy="26" r="9" fill="#facc15" stroke="#18181b" stroke-width="1.8"/><circle cx="118" cy="26" r="9" fill="#facc15" stroke="#18181b" stroke-width="1.8"/><circle cx="42" cy="102" r="9" fill="#facc15" stroke="#18181b" stroke-width="1.8"/><circle cx="118" cy="102" r="9" fill="#facc15" stroke="#18181b" stroke-width="1.8"/><circle cx="80" cy="26" r="9" fill="#fb923c" stroke="#18181b" stroke-width="1.8"/><circle cx="80" cy="102" r="9" fill="#fb923c" stroke="#18181b" stroke-width="1.8"/><circle cx="42" cy="64" r="9" fill="#fb923c" stroke="#18181b" stroke-width="1.8"/><circle cx="118" cy="64" r="9" fill="#fb923c" stroke="#18181b" stroke-width="1.8"/><circle cx="80" cy="64" r="11" fill="#fde047" stroke="#18181b" stroke-width="2"/>'],
+      C51: ['#0369a1','#bae6fd','<line x1="44" y1="86" x2="80" y2="44" stroke="#18181b" stroke-width="6"/><line x1="116" y1="86" x2="80" y2="44" stroke="#18181b" stroke-width="6"/><circle cx="80" cy="44" r="17" fill="#38bdf8" stroke="#18181b" stroke-width="2.2"/><circle cx="44" cy="86" r="17" fill="#0ea5e9" stroke="#18181b" stroke-width="2.2"/><circle cx="116" cy="86" r="17" fill="#0ea5e9" stroke="#18181b" stroke-width="2.2"/><text x="80" y="49" text-anchor="middle" fill="#fff" font-size="13" font-weight="900">O</text>'],
+      C52: ['#713f12','#fef9c3','<polygon points="80,22 104,34 120,56 108,82 80,96 52,82 40,56 56,34" fill="none" stroke="#18181b" stroke-width="4"/><g fill="#facc15" stroke="#18181b" stroke-width="1.8"><circle cx="80" cy="22" r="8"/><circle cx="104" cy="34" r="8"/><circle cx="120" cy="56" r="8"/><circle cx="108" cy="82" r="8"/><circle cx="80" cy="96" r="8"/><circle cx="52" cy="82" r="8"/><circle cx="40" cy="56" r="8"/><circle cx="56" cy="34" r="8"/></g>'],
+      C53: ['#1e3a8a','#93c5fd','<rect x="20" y="52" width="120" height="72" fill="#0284c7" opacity="0.5"/><polygon points="80,26 116,96 44,96" fill="none" stroke="#18181b" stroke-width="3"/><line x1="80" y1="26" x2="80" y2="76" stroke="#18181b" stroke-width="2.5"/><g fill="#fde047" stroke="#18181b" stroke-width="2"><circle cx="80" cy="26" r="10"/><circle cx="44" cy="96" r="10"/><circle cx="116" cy="96" r="10"/><circle cx="80" cy="76" r="10"/></g>'],
+      C54: ['#7c2d12','#fde047','<path d="M40,34 L120,34 L112,114 L48,114 Z" fill="#fef3c7" stroke="#18181b" stroke-width="2.4"/><path d="M44,64 L116,64 L111,112 L49,112 Z" fill="#f97316"/><polygon points="62,102 72,82 96,82 102,102" fill="#facc15" stroke="#18181b" stroke-width="2"/><text x="80" y="54" text-anchor="middle" fill="#9a3412" font-size="11" font-weight="900">HCl 3 : 1 HNO₃</text>'],
+      C55: ['#1e3a8a','#dbeafe','<line x1="80" y1="42" x2="48" y2="86" stroke="#18181b" stroke-width="4"/><line x1="80" y1="42" x2="80" y2="94" stroke="#18181b" stroke-width="4"/><line x1="80" y1="42" x2="112" y2="86" stroke="#18181b" stroke-width="4"/><circle cx="80" cy="42" r="18" fill="#2563eb" stroke="#18181b" stroke-width="2.2"/><text x="80" y="47" text-anchor="middle" fill="#fff" font-size="13" font-weight="900">N</text><circle cx="48" cy="86" r="11" fill="#fff" stroke="#18181b" stroke-width="2"/><circle cx="80" cy="94" r="11" fill="#fff" stroke="#18181b" stroke-width="2"/><circle cx="112" cy="86" r="11" fill="#fff" stroke="#18181b" stroke-width="2"/>'],
+      C56: ['#18181b','#fde047','<path d="M44,44 L116,44 L110,116 L50,116 Z" fill="#f8fafc" stroke="#18181b" stroke-width="2.4"/><path d="M50,74 Q80,50 110,74 L108,114 L52,114 Z" fill="#18181b"/><text x="80" y="98" text-anchor="middle" fill="#fde047" font-size="12" font-weight="900">脱水炭化</text>'],
+      C57: ['#365314','#ecfccb','<ellipse cx="80" cy="96" rx="44" ry="18" fill="#ffffff" stroke="#18181b" stroke-width="2.2"/><circle cx="62" cy="56" r="14" fill="#bef264" opacity="0.8"/><circle cx="92" cy="44" r="18" fill="#a3e635" opacity="0.75"/><text x="80" y="52" text-anchor="middle" fill="#1a2e05" font-size="13" font-weight="900">Cl₂↑</text>'],
+      C58: ['#451a03','#fef08a','<polygon points="80,18 122,42 122,90 80,114 38,90 38,42" fill="rgba(250,204,21,0.22)" stroke="#18181b" stroke-width="5"/><polygon points="80,18 122,42 122,90 80,114 38,90 38,42" fill="none" stroke="#facc15" stroke-width="2.5"/><circle cx="80" cy="66" r="24" fill="none" stroke="#18181b" stroke-width="3.5" stroke-dasharray="9 4"/>'],
+      C59: ['#581c87','#f3e8ff','<polygon points="62,28 92,45 92,80 62,97 32,80 32,45" fill="none" stroke="#18181b" stroke-width="3.5"/><circle cx="62" cy="62" r="16" fill="none" stroke="#18181b" stroke-width="2"/><line x1="92" y1="45" x2="112" y2="38" stroke="#18181b" stroke-width="3.5"/><circle cx="122" cy="36" r="13" fill="#ef4444" stroke="#18181b" stroke-width="2"/><text x="122" y="40" text-anchor="middle" fill="#fff" font-size="10" font-weight="900">OH</text><rect x="114" y="64" width="20" height="48" rx="10" fill="#9333ea" stroke="#18181b" stroke-width="2"/>'],
+      C60: ['#0f766e','#ccfbf1','<ellipse cx="56" cy="66" rx="28" ry="28" fill="#ffffff" stroke="#18181b" stroke-width="2.6"/><line x1="34" y1="66" x2="78" y2="66" stroke="#94a3b8" stroke-width="2.5"/><rect x="92" y="46" width="44" height="22" rx="11" fill="#ef4444" stroke="#18181b" stroke-width="2"/><rect x="114" y="46" width="22" height="22" rx="11" fill="#fff" stroke="#18181b" stroke-width="2"/>'],
+      C61: ['#7c2d12','#ffedd5','<polygon points="80,24 118,46 118,86 80,108 42,86 42,46" fill="#fef3c7" stroke="#18181b" stroke-width="3.5"/><circle cx="118" cy="46" r="11" fill="#ef4444" stroke="#18181b" stroke-width="2"/><text x="118" y="50" text-anchor="middle" fill="#fff" font-size="10" font-weight="900">O</text><text x="80" y="72" text-anchor="middle" fill="#9a3412" font-size="13" font-weight="900">C₆H₁₂O₆</text>'],
+      C62: ['#1e1b4b','#e0e7ff','<path d="M18,28 Q50,6 80,66 T142,104" fill="none" stroke="#18181b" stroke-width="8"/><path d="M18,28 Q50,6 80,66 T142,104" fill="none" stroke="#38bdf8" stroke-width="4.5"/><path d="M18,104 Q50,126 80,66 T142,28" fill="none" stroke="#18181b" stroke-width="8"/><path d="M18,104 Q50,126 80,66 T142,28" fill="none" stroke="#f472b6" stroke-width="4.5"/><line x1="42" y1="30" x2="42" y2="102" stroke="#facc15" stroke-width="3.5"/><line x1="118" y1="30" x2="118" y2="102" stroke="#4ade80" stroke-width="3.5"/>'],
+      C63: ['#701a75','#fae8ff','<rect x="52" y="24" width="56" height="84" rx="8" fill="#e879f9" stroke="#18181b" stroke-width="2.4"/><rect x="40" y="18" width="80" height="12" rx="4" fill="#cbd5e1" stroke="#18181b" stroke-width="2"/><rect x="40" y="102" width="80" height="12" rx="4" fill="#cbd5e1" stroke="#18181b" stroke-width="2"/><line x1="52" y1="46" x2="108" y2="46" stroke="#a21caf" stroke-width="2"/><line x1="52" y1="66" x2="108" y2="66" stroke="#a21caf" stroke-width="2"/><line x1="52" y1="86" x2="108" y2="86" stroke="#a21caf" stroke-width="2"/>'],
+      C64: ['#0369a1','#e0f2fe','<rect x="68" y="14" width="24" height="12" rx="2" fill="#0284c7" stroke="#18181b" stroke-width="2"/><path d="M68,26 L52,46 L52,114 C52,118 56,120 62,120 L98,120 C104,120 108,118 108,114 L108,46 L92,26 Z" fill="#bae6fd" stroke="#18181b" stroke-width="2.4"/><rect x="52" y="64" width="56" height="26" fill="#0284c7"/><text x="80" y="82" text-anchor="middle" fill="#fff" font-size="13" font-weight="900">PET</text>'],
+      C97: ['#0f172a','#38bdf8','<g stroke="#38bdf8" stroke-width="2.4" fill="rgba(56,189,248,0.18)"><polygon points="40,46 58,36 76,46 76,66 58,76 40,66"/><polygon points="76,46 94,36 112,46 112,66 94,76 76,66"/><polygon points="58,76 76,66 94,76 94,96 76,106 58,96"/></g>'],
+      C98: ['#7c2d12','#fed7aa','<path d="M50,62 L110,62 L118,114 L42,114 Z" fill="#e0f2fe" stroke="#18181b" stroke-width="2.4"/><rect x="70" y="48" width="20" height="14" fill="#cbd5e1" stroke="#18181b" stroke-width="2"/><path d="M80,14 C94,30 92,46 80,50 C68,46 66,30 80,14 Z" fill="#f97316" stroke="#18181b" stroke-width="1.6"/><text x="80" y="94" text-anchor="middle" fill="#0c4a6e" font-size="11" font-weight="900">C₂H₅OH</text>'],
+      C99: ['#1e3a8a','#dbeafe','<polygon points="80,18 118,52 104,108 56,108 42,52" fill="#bae6fd" stroke="#18181b" stroke-width="2.4"/><text x="80" y="72" text-anchor="middle" fill="#1e3a8a" font-size="12" font-weight="900">CH₃COOH</text>'],
+      C100: ['#4c1d95','#ede9fe','<circle cx="80" cy="40" r="15" fill="#ef4444" stroke="#18181b" stroke-width="2"/><text x="80" y="45" text-anchor="middle" fill="#fff" font-size="12" font-weight="900">O</text><line x1="76" y1="55" x2="76" y2="74" stroke="#18181b" stroke-width="3"/><line x1="84" y1="55" x2="84" y2="74" stroke="#18181b" stroke-width="3"/><circle cx="80" cy="84" r="14" fill="#334155" stroke="#18181b" stroke-width="2"/><text x="80" y="88" text-anchor="middle" fill="#fff" font-size="11" font-weight="900">C</text><circle cx="40" cy="100" r="12" fill="#facc15" stroke="#18181b" stroke-width="2"/><circle cx="120" cy="100" r="12" fill="#facc15" stroke="#18181b" stroke-width="2"/>'],
+      C101: ['#9a3412','#ffedd5','<polygon points="48,38 72,52 72,80 48,94 24,80 24,52" fill="#fef3c7" stroke="#18181b" stroke-width="2.4"/><polygon points="114,42 136,60 128,90 100,90 92,60" fill="#fde68a" stroke="#18181b" stroke-width="2.4"/><circle cx="82" cy="66" r="8" fill="#ef4444" stroke="#18181b" stroke-width="1.8"/>'],
+      C102: ['#14532d','#bbf7d0','<path d="M26,96 C32,34 88,18 134,32 C128,94 72,110 26,96 Z" fill="#22c55e" stroke="#18181b" stroke-width="2.4"/><line x1="28" y1="94" x2="128" y2="36" stroke="#14532d" stroke-width="2.5"/>'],
+      C103: ['#18181b','#cbd5e1','<circle cx="80" cy="66" r="44" fill="#27272a" stroke="#18181b" stroke-width="3"/><circle cx="80" cy="66" r="22" fill="#e2e8f0" stroke="#18181b" stroke-width="2.2"/><text x="80" y="70" text-anchor="middle" fill="#18181b" font-size="10" font-weight="900">加硫S</text>'],
+      C104: ['#1e293b','#e2e8f0','<ellipse cx="68" cy="70" rx="44" ry="26" fill="#334155" stroke="#18181b" stroke-width="2.6"/><rect x="110" y="64" width="38" height="12" rx="5" fill="#18181b"/><circle cx="58" cy="64" r="7" fill="#38bdf8"/><circle cx="78" cy="72" r="5" fill="#7dd3fc"/>'],
+      C105: ['#0f766e','#ccfbf1','<circle cx="34" cy="66" r="14" fill="#38bdf8" stroke="#18181b" stroke-width="2"/><text x="34" y="70" text-anchor="middle" fill="#fff" font-size="10" font-weight="900">Si</text><circle cx="66" cy="54" r="11" fill="#ef4444" stroke="#18181b" stroke-width="2"/><text x="66" y="58" text-anchor="middle" fill="#fff" font-size="10" font-weight="900">O</text><circle cx="98" cy="66" r="14" fill="#38bdf8" stroke="#18181b" stroke-width="2"/><text x="98" y="70" text-anchor="middle" fill="#fff" font-size="10" font-weight="900">Si</text><circle cx="130" cy="54" r="11" fill="#ef4444" stroke="#18181b" stroke-width="2"/><text x="130" y="58" text-anchor="middle" fill="#fff" font-size="10" font-weight="900">O</text>'],
+
+      // 化学反応・現象 (24)
+      C65: ['#09090b','#1e293b',['#ef4444','#facc15','#c084fc','#10b981','#f97316','#e11d48','#a3e635'].map((c,i)=>`<path d="M${18+i*19},116 Q${12+i*19},54 ${22+i*19},18 Q${32+i*19},54 ${26+i*19},116 Z" fill="${c}" stroke="#18181b" stroke-width="1.4"/>`).join('')],
+      C66: ['#1e293b','#e2e8f0','<rect x="58" y="16" width="44" height="98" rx="22" fill="linear-gradient(90deg,#94a3b8,#fff,#64748b)" stroke="#18181b" stroke-width="2.6"/><rect x="64" y="24" width="12" height="80" rx="6" fill="#ffffff" opacity="0.85"/><text x="80" y="74" text-anchor="middle" fill="#0f172a" font-size="13" font-weight="900">Ag鏡</text>'],
+      C67: ['#1e3a8a','#93c5fd','<rect x="58" y="16" width="44" height="98" rx="22" fill="#2563eb" stroke="#18181b" stroke-width="2.4"/><path d="M60,82 L100,82 L100,94 C100,106 90,114 80,114 C70,114 60,106 60,94 Z" fill="#dc2626"/><text x="80" y="102" text-anchor="middle" fill="#fff" font-size="10" font-weight="900">Cu₂O↓</text>'],
+      C68: ['#713f12','#fef9c3','<rect x="58" y="16" width="44" height="98" rx="22" fill="#e0f2fe" stroke="#18181b" stroke-width="2.4"/><path d="M60,80 L100,80 L100,94 C100,106 90,114 80,114 C70,114 60,106 60,94 Z" fill="#facc15"/><text x="80" y="102" text-anchor="middle" fill="#451a03" font-size="10" font-weight="900">CHI₃↓</text>'],
+      C69: ['#450a0a','#fed7aa','<polygon points="80,14 92,48 128,42 100,66 122,102 80,82 38,102 60,66 32,42 68,48" fill="#f97316" stroke="#18181b" stroke-width="2"/><polygon points="80,30 88,54 110,54 92,68 100,92 80,78 60,92 68,68 50,54 72,54" fill="#fef08a"/>'],
+      C70: ['#0c4a6e','#bae6fd','<rect x="20" y="46" width="52" height="66" fill="#e0f2fe" stroke="#18181b" stroke-width="2.2"/><rect x="88" y="46" width="52" height="66" fill="#38bdf8" stroke="#18181b" stroke-width="2.2"/><rect x="72" y="46" width="16" height="66" fill="#d97706" stroke="#18181b" stroke-width="2"/><rect x="34" y="34" width="10" height="58" fill="#94a3b8" stroke="#18181b" stroke-width="1.6"/><rect x="116" y="34" width="10" height="58" fill="#ea580c" stroke="#18181b" stroke-width="1.6"/><path d="M39,34 L39,18 L121,18 L121,34" fill="none" stroke="#18181b" stroke-width="2.5"/><circle cx="80" cy="18" r="10" fill="#fde047" stroke="#18181b" stroke-width="1.8"/>'],
+      C71: ['#1e293b','#cbd5e1','<rect x="26" y="38" width="108" height="72" rx="6" fill="#334155" stroke="#18181b" stroke-width="2.6"/><rect x="40" y="26" width="18" height="12" fill="#94a3b8" stroke="#18181b" stroke-width="1.8"/><rect x="102" y="26" width="18" height="12" fill="#ef4444" stroke="#18181b" stroke-width="1.8"/><text x="80" y="80" text-anchor="middle" fill="#fde047" font-size="14" font-weight="900">PbSO₄ ⚡</text>'],
+      C72: ['#065f46','#a7f3d0','<rect x="36" y="30" width="88" height="68" rx="10" fill="#ecfdf5" stroke="#18181b" stroke-width="2.4"/><text x="58" y="60" text-anchor="middle" fill="#0284c7" font-size="12" font-weight="900">H₂→</text><text x="102" y="60" text-anchor="middle" fill="#ef4444" font-size="12" font-weight="900">←O₂</text><path d="M80,82 Q92,104 80,118 Q68,104 80,82 Z" fill="#38bdf8" stroke="#18181b" stroke-width="1.8"/>'],
+      C73: ['#581c87','#f3e8ff','<polygon points="36,42 54,52 54,72 36,82 18,72 18,52" fill="#fde047" stroke="#18181b" stroke-width="2"/><path d="M62,62 L92,42 M62,62 L92,86" stroke="#18181b" stroke-width="3"/><rect x="94" y="26" width="54" height="26" rx="6" fill="#c084fc" stroke="#18181b" stroke-width="1.8"/><text x="121" y="43" text-anchor="middle" fill="#fff" font-size="9.5" font-weight="900">フェノール</text><rect x="94" y="72" width="54" height="26" rx="6" fill="#38bdf8" stroke="#18181b" stroke-width="1.8"/><text x="121" y="89" text-anchor="middle" fill="#fff" font-size="9.5" font-weight="900">アセトン</text>'],
+      C74: ['#713f12','#fef08a','<rect x="30" y="26" width="38" height="84" rx="4" fill="#f59e0b" stroke="#18181b" stroke-width="2.2"/><text x="49" y="72" text-anchor="middle" fill="#fff" font-size="11" font-weight="900">V₂O₅</text><path d="M70,66 L94,66" stroke="#18181b" stroke-width="3"/><rect x="96" y="26" width="42" height="84" rx="4" fill="#ef4444" stroke="#18181b" stroke-width="2.2"/><text x="117" y="72" text-anchor="middle" fill="#fff" font-size="11" font-weight="900">H₂SO₄</text>'],
+      C75: ['#9a3412','#fed7aa','<rect x="32" y="34" width="96" height="64" rx="8" fill="#ea580c" stroke="#18181b" stroke-width="2.4"/><g stroke="#fef08a" stroke-width="2"><line x1="32" y1="54" x2="128" y2="54"/><line x1="32" y1="76" x2="128" y2="76"/><line x1="64" y1="34" x2="64" y2="98"/><line x1="96" y1="34" x2="96" y2="98"/></g><text x="80" y="116" text-anchor="middle" fill="#fff" font-size="11" font-weight="900">Pt網 → HNO₃</text>'],
+      C76: ['#0f766e','#ccfbf1','<circle cx="80" cy="66" r="36" fill="none" stroke="#0d9488" stroke-width="8" stroke-dasharray="14 6"/><text x="80" y="64" text-anchor="middle" fill="#134e4a" font-size="11" font-weight="900">NH₃循環</text><text x="80" y="79" text-anchor="middle" fill="#134e4a" font-size="11" font-weight="900">Na₂CO₃</text>'],
+      C77: ['#9a3412','#ffedd5','<rect x="44" y="28" width="72" height="84" rx="8" fill="#f97316" stroke="#18181b" stroke-width="2.4"/><rect x="52" y="36" width="16" height="16" fill="#bae6fd" stroke="#18181b" stroke-width="1.5"/><rect x="92" y="38" width="16" height="16" fill="#bae6fd" stroke="#18181b" stroke-width="1.5"/><text x="80" y="88" text-anchor="middle" fill="#fff" font-size="13" font-weight="900">-N=N-</text>'],
+      C78: ['#0f172a','#334155','<rect x="52" y="24" width="66" height="84" rx="6" fill="rgba(224,242,254,0.22)" stroke="#f8fafc" stroke-width="2.2"/><polygon points="10,60 152,50 152,78 10,68" fill="#fde047" opacity="0.72"/><circle cx="72" cy="64" r="3" fill="#fff"/><circle cx="96" cy="62" r="3.5" fill="#fff"/>'],
+      C79: ['#020617','#0c4a6e','<circle cx="80" cy="68" r="46" fill="rgba(56,189,248,0.4)"/><path d="M70,22 L90,22 L114,108 L46,108 Z" fill="#38bdf8" stroke="#e0f2fe" stroke-width="2.4"/><circle cx="80" cy="78" r="18" fill="#ffffff" opacity="0.8"/>'],
+      C80: ['#020617','#1e1b4b','<ellipse cx="80" cy="96" rx="46" ry="12" fill="#334155" stroke="#94a3b8" stroke-width="2"/><rect x="56" y="40" width="48" height="22" rx="4" fill="#ef4444" stroke="#18181b" stroke-width="2"/><rect x="80" y="40" width="24" height="22" rx="4" fill="#3b82f6" stroke="#18181b" stroke-width="2"/><path d="M36,76 Q80,60 124,76" fill="none" stroke="#38bdf8" stroke-width="2.5" stroke-dasharray="5 3"/>'],
+      C106: ['#1e3a8a','#bfdbfe','<rect x="44" y="24" width="72" height="84" rx="22" fill="#475569" stroke="#18181b" stroke-width="2.6"/><text x="80" y="58" text-anchor="middle" fill="#fde047" font-size="11" font-weight="900">200 atm</text><text x="80" y="78" text-anchor="middle" fill="#fff" font-size="12" font-weight="900">N₂→NH₃</text>'],
+      C107: ['#451a03','#fed7aa','<rect x="24" y="48" width="112" height="64" fill="#f97316" stroke="#18181b" stroke-width="2.4"/><rect x="44" y="20" width="16" height="48" fill="#18181b"/><rect x="100" y="20" width="16" height="48" fill="#18181b"/><rect x="26" y="92" width="108" height="18" fill="#e2e8f0"/><text x="80" y="105" text-anchor="middle" fill="#0f172a" font-size="11" font-weight="900">溶融 Al</text>'],
+      C108: ['#0c4a6e','#bae6fd','<rect x="24" y="28" width="112" height="80" fill="#e0f2fe" stroke="#18181b" stroke-width="2.4"/><line x1="80" y1="28" x2="80" y2="108" stroke="#ef4444" stroke-width="4" stroke-dasharray="6 3"/><text x="50" y="72" text-anchor="middle" fill="#15803d" font-size="11" font-weight="900">Cl₂↑</text><text x="110" y="72" text-anchor="middle" fill="#0369a1" font-size="11" font-weight="900">NaOH</text><text x="80" y="54" text-anchor="middle" fill="#ef4444" font-size="10" font-weight="900">Na⁺→</text>'],
+      C109: ['#14532d','#dcfce7','<text x="80" y="52" text-anchor="middle" fill="#14532d" font-size="13" font-weight="900">CH₃-CH=CH₂</text><text x="80" y="78" text-anchor="middle" fill="#dc2626" font-size="12" font-weight="900">↓ +HBr</text><text x="80" y="102" text-anchor="middle" fill="#0369a1" font-size="12" font-weight="900">CH₃-CHBr-CH₃</text>'],
+      C110: ['#881337','#ffe4e6','<circle cx="48" cy="68" r="24" fill="#ef4444" stroke="#18181b" stroke-width="2"/><path d="M48,44 Q56,30 64,42" fill="#22c55e"/><text x="80" y="72" text-anchor="middle" fill="#18181b" font-size="16" font-weight="900">⇄</text><rect x="96" y="48" width="44" height="38" rx="10" fill="#fef08a" stroke="#18181b" stroke-width="2"/><text x="118" y="71" text-anchor="middle" fill="#713f12" font-size="10" font-weight="900">石けん</text>'],
+      C111: ['#1e1b4b','#e0e7ff','<rect x="28" y="24" width="24" height="84" rx="12" fill="#6366f1" stroke="#18181b" stroke-width="2"/><rect x="68" y="24" width="24" height="84" rx="12" fill="#c026d3" stroke="#18181b" stroke-width="2"/><rect x="108" y="24" width="24" height="84" rx="12" fill="#facc15" stroke="#18181b" stroke-width="2"/>'],
+      C112: ['#0369a1','#e0f2fe','<circle cx="34" cy="30" r="16" fill="#fde047" stroke="#f59e0b" stroke-width="2"/><line x1="48" y1="44" x2="86" y2="82" stroke="#facc15" stroke-width="4"/><rect x="24" y="88" width="112" height="24" rx="4" fill="#ffffff" stroke="#18181b" stroke-width="2.2"/><text x="80" y="104" text-anchor="middle" fill="#0369a1" font-size="11" font-weight="900">TiO₂ 光触媒</text>'],
+      C113: ['#1e293b','#e2e8f0','<polyline points="30,96 54,46 86,88 106,36 132,74" fill="none" stroke="#f43f5e" stroke-width="3.5"/><circle cx="30" cy="96" r="6" fill="#38bdf8" stroke="#18181b" stroke-width="1.5"/><circle cx="86" cy="88" r="6" fill="#38bdf8" stroke="#18181b" stroke-width="1.5"/><circle cx="132" cy="74" r="9" fill="#fde047" stroke="#18181b" stroke-width="2"/>'],
+
+      // 🌟 シークレット5種（完全個別アート）
+      S01: ['#09090b','#7f1d1d','<circle cx="80" cy="66" r="34" fill="#dc2626" stroke="#fde047" stroke-width="3"/><ellipse cx="80" cy="66" rx="56" ry="20" fill="none" stroke="#fde047" stroke-width="2" transform="rotate(-24 80 66)"/><ellipse cx="80" cy="66" rx="56" ry="20" fill="none" stroke="#f8fafc" stroke-width="2" transform="rotate(24 80 66)"/><text x="80" y="72" text-anchor="middle" fill="#fff" font-size="20" font-weight="900">113 Nh</text>'],
+      S02: ['#1c0726','#581c87','<circle cx="80" cy="66" r="46" fill="none" stroke="#fde047" stroke-width="2" stroke-dasharray="5 3"/><polygon points="80,18 118,90 42,90" fill="none" stroke="#facc15" stroke-width="2"/><polygon points="80,114 118,42 42,42" fill="none" stroke="#facc15" stroke-width="2"/><polygon points="80,34 104,66 80,98 56,66" fill="#dc2626" stroke="#fef08a" stroke-width="2.5"/>'],
+      S03: ['#020617','#312e81','<circle cx="80" cy="66" r="48" fill="rgba(168,85,247,0.35)"/><circle cx="80" cy="66" r="22" fill="#fef08a"/><g stroke="#38bdf8" stroke-width="2"><line x1="80" y1="10" x2="80" y2="122"/><line x1="16" y1="66" x2="144" y2="66"/><line x1="34" y1="20" x2="126" y2="112"/><line x1="126" y1="20" x2="34" y2="112"/></g><text x="80" y="71" text-anchor="middle" fill="#0f172a" font-size="11" font-weight="900">H→Au</text>'],
+      S04: ['#451a03','#ca8a04','<circle cx="80" cy="66" r="40" fill="#facc15" stroke="#fef08a" stroke-width="3"/><circle cx="80" cy="66" r="32" fill="none" stroke="#92400e" stroke-width="2"/><text x="80" y="64" text-anchor="middle" fill="#78350f" font-size="13" font-weight="900">NOBEL</text><text x="80" y="80" text-anchor="middle" fill="#78350f" font-size="10" font-weight="900">JAPAN ★8</text>'],
+      S05: ['#020617','#0f172a','<polygon points="36,52 52,24 68,46 80,18 92,46 108,24 124,52 114,96 46,96" fill="#facc15" stroke="#fef08a" stroke-width="2.5"/><text x="80" y="80" text-anchor="middle" fill="#0f172a" font-size="13" font-weight="900">113 MASTER</text>']
+    };
+
+    const entry = ART_MAP[id];
+    const [c1, c2, body] = entry || ['#0f172a', '#38bdf8', `<text x="80" y="70" text-anchor="middle" fill="#fff" font-size="14" font-weight="900">${id}</text>`];
+    return `<svg viewBox="0 0 160 132" width="100%" height="100%">
+      <defs>
+        <radialGradient id="u_${uid}" cx="50%" cy="48%" r="65%">
+          <stop offset="0%" stop-color="${c2}"/><stop offset="100%" stop-color="${c1}"/>
+        </radialGradient>
+      </defs>
+      <rect width="160" height="132" fill="url(#u_${uid})"/>
+      <g opacity="0.22" fill="#ffffff">
+        <polygon points="80,66 0,0 26,0"/><polygon points="80,66 134,0 160,0"/>
+        <polygon points="80,66 160,94 160,132"/><polygon points="80,66 0,94 0,132"/>
+      </g>
+      ${body}
+    </svg>`;
+  }
+
   function renderCardSvg(card, locked = false) {
     if (locked) {
       const isSec = card.rar === 'SEC';
-      return `<svg viewBox="0 0 120 90" width="100%" height="100%"><rect width="120" height="90" fill="${isSec ? '#1e1033' : '#0f172a'}"/><circle cx="60" cy="42" r="22" fill="#1e293b" stroke="${isSec ? '#facc15' : '#475569'}" stroke-width="2" stroke-dasharray="4 3"/><text x="60" y="50" text-anchor="middle" fill="${isSec ? '#fde047' : '#64748b'}" font-size="24" font-weight="900">?</text><text x="60" y="78" text-anchor="middle" fill="${isSec ? '#facc15' : '#475569'}" font-size="9" font-weight="900">${isSec ? 'SECRET' : '未所持'}</text></svg>`;
+      return `<svg viewBox="0 0 160 132" width="100%" height="100%">
+        <rect width="160" height="132" fill="${isSec ? '#1e1033' : '#09090b'}"/>
+        <circle cx="80" cy="62" r="32" fill="#18181b" stroke="${isSec ? '#facc15' : '#52525b'}" stroke-width="2" stroke-dasharray="5 3"/>
+        <text x="80" y="73" text-anchor="middle" fill="${isSec ? '#fde047' : '#71717a'}" font-size="32" font-weight="900">?</text>
+        <text x="80" y="114" text-anchor="middle" fill="${isSec ? '#facc15' : '#71717a'}" font-size="11" font-weight="900" letter-spacing="1.5">${isSec ? 'SECRET' : 'LOCKED'}</text>
+      </svg>`;
     }
-    const bgMap = {
-      scientist: ['#1e1b4b', '#312e81', '#818cf8'],
-      tool:      ['#082f49', '#0369a1', '#38bdf8'],
-      matter:    ['#064e3b', '#047857', '#34d399'],
-      phenom:    ['#4c0519', '#9d174d', '#f472b6'],
-      secret:    ['#020617', '#581c87', '#fde047']
-    };
-    const [c1, c2, acc] = bgMap[card.cat] || ['#0f172a', '#1e293b', '#38bdf8'];
-    const gid = 'g_' + card.id + '_' + Math.floor(Math.random() * 9999);
-    let motif = '';
-    const a = card.art || '';
-
-    if (card.cat === 'secret') {
-      let badge = 'SEC';
-      if (a === 'sec_nh') badge = '113 Nh';
-      else if (a === 'sec_stone') badge = '賢者の石';
-      else if (a === 'sec_bigbang') badge = 'BIG BANG';
-      else if (a === 'sec_nobel') badge = 'NOBEL';
-      else if (a === 'sec_master') badge = 'MASTER';
-      motif = `
-        <circle cx="60" cy="45" r="34" fill="none" stroke="#fde047" stroke-width="2" stroke-dasharray="5 3"/>
-        <polygon points="60,10 68,36 96,45 68,54 60,80 52,54 24,45 52,36" fill="rgba(250,204,21,0.35)" stroke="#fef08a" stroke-width="2"/>
-        <circle cx="60" cy="45" r="18" fill="rgba(15,23,42,0.85)" stroke="#f472b6" stroke-width="2"/>
-        <text x="60" y="49" text-anchor="middle" fill="#fde047" font-size="${badge.length > 5 ? 8.5 : 10.5}" font-weight="900">${badge}</text>
-      `;
-    } else if (card.cat === 'scientist') {
-      let sym = '⚛';
-      if (a === 'sci_table') sym = '周期表';
-      else if (a === 'sci_rad') sym = '☢';
-      else if (a === 'sci_mol') sym = '6×10²³';
-      else if (a === 'sci_scale') sym = '⚖';
-      else if (a === 'sci_bolt') sym = '⚡Li+';
-      else if (a === 'sci_eq') sym = '⇄';
-      else if (a === 'sci_heat') sym = 'ΔG/ΔH';
-      else if (a === 'sci_benz') sym = '⬡';
-      else if (a === 'sci_poly') sym = '⚡Poly';
-      else if (a === 'sci_nh3') sym = 'NH₃';
-      else if (a === 'sci_gas') sym = 'PV/T';
-      else if (a === 'sci_osm') sym = 'Π=cRT';
-      else if (a === 'sci_acid') sym = 'H⁺';
-      else if (a === 'sci_chiral') sym = '鏡像';
-      motif = `
-        <circle cx="42" cy="46" r="24" fill="rgba(255,255,255,0.12)" stroke="${acc}" stroke-width="2"/>
-        <circle cx="42" cy="37" r="10" fill="#fde68a"/>
-        <path d="M25,65 C25,52 59,52 59,65" fill="#e2e8f0"/>
-        <path d="M36,52 L42,63 L48,52" fill="#38bdf8"/>
-        <rect x="68" y="18" width="44" height="32" rx="7" fill="rgba(15,23,42,0.72)" stroke="#fde047" stroke-width="1.5"/>
-        <text x="90" y="39" text-anchor="middle" fill="#fde047" font-size="${sym.length > 3 ? 9.5 : 13.5}" font-weight="900">${sym}</text>
-        <circle cx="96" cy="68" r="10" fill="rgba(250,204,21,0.2)" stroke="#facc15" stroke-width="1.2"/>
-        <text x="96" y="72" text-anchor="middle" fill="#fef08a" font-size="10">★</text>
-      `;
-    } else if (card.cat === 'tool') {
-      if (a === 'tool_burette' || a === 'tool_pipette') {
-        motif = `
-          <rect x="55" y="10" width="10" height="62" rx="2" fill="rgba(186,230,253,0.3)" stroke="#e0f2fe" stroke-width="2"/>
-          <rect x="56" y="34" width="8" height="36" fill="#38bdf8"/>
-          <line x1="57" y1="20" x2="63" y2="20" stroke="#fff" stroke-width="1.2"/><line x1="57" y1="30" x2="63" y2="30" stroke="#fff" stroke-width="1.2"/>
-          <line x1="57" y1="40" x2="63" y2="40" stroke="#fff" stroke-width="1.2"/><line x1="57" y1="50" x2="63" y2="50" stroke="#fff" stroke-width="1.2"/>
-          <rect x="49" y="64" width="22" height="5" rx="2" fill="#facc15"/>
-          <path d="M58,72 L60,82 L62,72 Z" fill="#e0f2fe"/><circle cx="60" cy="86" r="2.5" fill="#38bdf8"/>
-        `;
-      } else if (a === 'tool_volflask' || a === 'tool_conical' || a === 'tool_erlen' || a === 'tool_distill') {
-        motif = `
-          <rect x="53" y="12" width="14" height="28" fill="rgba(224,242,254,0.25)" stroke="#e0f2fe" stroke-width="2"/>
-          <line x1="51" y1="26" x2="69" y2="26" stroke="#fde047" stroke-width="2"/>
-          <path d="M53,40 L32,76 C30,80 33,82 37,82 L83,82 C87,82 90,80 88,76 L67,40 Z" fill="rgba(224,242,254,0.22)" stroke="#e0f2fe" stroke-width="2"/>
-          <path d="M40,62 L80,62 L86,78 L34,78 Z" fill="rgba(56,189,248,0.68)"/>
-        `;
-      } else if (a === 'tool_liebig') {
-        motif = `
-          <g transform="rotate(-22 60 45)">
-            <rect x="14" y="34" width="92" height="22" rx="6" fill="rgba(56,189,248,0.35)" stroke="#7dd3fc" stroke-width="2"/>
-            <line x1="6" y1="45" x2="114" y2="45" stroke="#fde047" stroke-width="4"/>
-            <line x1="28" y1="56" x2="28" y2="70" stroke="#38bdf8" stroke-width="3"/><line x1="92" y1="20" x2="92" y2="34" stroke="#38bdf8" stroke-width="3"/>
-          </g>
-        `;
-      } else if (a === 'tool_sep') {
-        motif = `
-          <path d="M46,16 C40,36 46,56 57,66 L63,66 C74,56 80,36 74,16 Z" fill="rgba(255,255,255,0.2)" stroke="#e0f2fe" stroke-width="2"/>
-          <path d="M46,38 L74,38 L71,52 L49,52 Z" fill="rgba(250,204,21,0.75)"/>
-          <path d="M49,52 L71,52 L63,65 L57,65 Z" fill="rgba(56,189,248,0.8)"/>
-          <rect x="52" y="67" width="16" height="5" rx="2" fill="#f87171"/>
-        `;
-      } else if (a === 'tool_burner') {
-        motif = `
-          <ellipse cx="60" cy="78" rx="24" ry="6" fill="#64748b"/><rect x="55" y="42" width="10" height="36" fill="#cbd5e1"/>
-          <path d="M60,8 C72,22 70,38 60,44 C50,38 48,22 60,8 Z" fill="#38bdf8"/>
-          <path d="M60,18 C66,27 65,37 60,42 C55,37 54,27 60,18 Z" fill="#fef08a"/>
-        `;
-      } else {
-        motif = `
-          <rect x="34" y="22" width="52" height="50" rx="10" fill="rgba(224,242,254,0.2)" stroke="#7dd3fc" stroke-width="2"/>
-          <path d="M36,52 L84,52 L84,64 C84,68 80,70 76,70 L44,70 C40,70 36,68 36,64 Z" fill="rgba(56,189,248,0.55)"/>
-          <circle cx="52" cy="40" r="5" fill="#fde047"/><circle cx="70" cy="36" r="4" fill="#34d399"/>
-        `;
-      }
-    } else if (card.cat === 'matter') {
-      if (a === 'mat_dia') {
-        motif = `
-          <polygon points="60,12 92,36 60,80 28,36" fill="rgba(186,230,253,0.45)" stroke="#e0f2fe" stroke-width="2.5"/>
-          <polyline points="28,36 60,42 92,36" fill="none" stroke="#fff" stroke-width="1.5"/>
-          <line x1="60" y1="12" x2="60" y2="80" stroke="#7dd3fc" stroke-width="1.5"/>
-        `;
-      } else if (a === 'mat_benz' || a === 'mat_phenol' || a === 'mat_asp' || a === 'mat_gluc') {
-        motif = `
-          <polygon points="60,14 88,30 88,60 60,76 32,60 32,30" fill="rgba(52,211,153,0.22)" stroke="#fde047" stroke-width="3"/>
-          <circle cx="60" cy="45" r="16" fill="none" stroke="#6ee7b7" stroke-width="2.5" stroke-dasharray="6 3"/>
-          <circle cx="88" cy="30" r="6" fill="#f87171"/>
-        `;
-      } else if (a === 'mat_dna') {
-        motif = `
-          <path d="M22,22 Q40,8 60,45 T98,68" fill="none" stroke="#38bdf8" stroke-width="4"/>
-          <path d="M22,68 Q40,82 60,45 T98,22" fill="none" stroke="#f472b6" stroke-width="4"/>
-          <line x1="34" y1="24" x2="34" y2="66" stroke="#fde047" stroke-width="2.5"/>
-          <line x1="86" y1="24" x2="86" y2="66" stroke="#4ade80" stroke-width="2.5"/>
-        `;
-      } else if (a === 'mat_nacl' || a === 'mat_cscl' || a === 'mat_bcc' || a === 'mat_fcc') {
-        motif = `
-          <rect x="34" y="20" width="44" height="44" fill="none" stroke="#94a3b8" stroke-width="1.8"/>
-          <rect x="44" y="28" width="44" height="44" fill="none" stroke="#cbd5e1" stroke-width="1.8"/>
-          <circle cx="34" cy="20" r="6" fill="#4ade80"/><circle cx="78" cy="20" r="6" fill="#a78bfa"/>
-          <circle cx="34" cy="64" r="6" fill="#a78bfa"/><circle cx="78" cy="64" r="6" fill="#4ade80"/>
-          <circle cx="61" cy="46" r="8" fill="#fde047"/>
-        `;
-      } else {
-        motif = `
-          <line x1="36" y1="54" x2="60" y2="30" stroke="#e2e8f0" stroke-width="3"/>
-          <line x1="84" y1="54" x2="60" y2="30" stroke="#e2e8f0" stroke-width="3"/>
-          <circle cx="60" cy="30" r="12" fill="#ef4444" stroke="#fff" stroke-width="1.5"/>
-          <circle cx="36" cy="56" r="9" fill="#38bdf8" stroke="#fff" stroke-width="1.5"/>
-          <circle cx="84" cy="56" r="9" fill="#fde047" stroke="#fff" stroke-width="1.5"/>
-        `;
-      }
-    } else {
-      if (a === 'ph_flame') {
-        const cols = ['#ef4444','#facc15','#c084fc','#10b981','#f97316','#e11d48','#a3e635'];
-        motif = cols.map((col, i) => `<path d="M${16+i*14},74 Q${16+i*14},22 ${16+i*14},18 Q${22+i*14},42 ${22+i*14},74 Z" fill="${col}"/>`).join('');
-      } else if (a === 'ph_lumi' || a === 'ph_super') {
-        motif = `
-          <circle cx="60" cy="45" r="30" fill="rgba(56,189,248,0.22)"/><circle cx="60" cy="45" r="18" fill="rgba(125,211,252,0.55)"/>
-          <polygon points="60,14 66,38 90,45 66,52 60,76 54,52 30,45 54,38" fill="#e0f2fe"/>
-        `;
-      } else if (a === 'ph_daniell' || a === 'ph_lead' || a === 'ph_fuel') {
-        motif = `
-          <rect x="20" y="34" width="34" height="44" rx="4" fill="rgba(56,189,248,0.35)" stroke="#e0f2fe" stroke-width="2"/>
-          <rect x="66" y="34" width="34" height="44" rx="4" fill="rgba(244,114,182,0.35)" stroke="#e0f2fe" stroke-width="2"/>
-          <rect x="30" y="24" width="8" height="44" fill="#94a3b8"/><rect x="82" y="24" width="8" height="44" fill="#f97316"/>
-          <path d="M34,24 L34,14 L86,14 L86,24" fill="none" stroke="#fde047" stroke-width="2.5"/>
-          <circle cx="60" cy="14" r="7" fill="#fde047"/><text x="60" y="18" text-anchor="middle" fill="#0f172a" font-size="10" font-weight="900">⚡</text>
-        `;
-      } else {
-        motif = `
-          <polygon points="48,14 72,14 82,76 38,76" fill="rgba(255,255,255,0.18)" stroke="#f8fafc" stroke-width="2"/>
-          <polygon points="43,46 77,46 81,74 39,74" fill="#facc15" opacity="0.85"/>
-          <circle cx="54" cy="36" r="4" fill="#fde047"/><circle cx="68" cy="28" r="3" fill="#fff"/>
-        `;
-      }
-    }
-    const sparkle = (card.rar === 'SSR' || card.rar === 'SEC')
-      ? '<circle cx="16" cy="16" r="2.2" fill="#fff"/><circle cx="104" cy="20" r="2.5" fill="#fde047"/><circle cx="102" cy="74" r="2" fill="#fff"/>'
-      : '';
-    return `<svg viewBox="0 0 120 90" width="100%" height="100%"><defs><linearGradient id="${gid}" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="${c1}"/><stop offset="100%" stop-color="${c2}"/></linearGradient></defs><rect width="120" height="90" fill="url(#${gid})"/>${motif}${sparkle}</svg>`;
+    const uid = card.id + '_' + Math.floor(Math.random() * 99999);
+    return renderUniqueCardArt(card, uid);
   }
+
+  // 添付画像1枚目準拠の大型TCGカードHTML生成（詳細モーダル＆1連リビール共通）
+  function buildProTcgFrontHtml(card, count, showCloseBtn = true) {
+    return `
+      <div class="tcg-pro-card rar-${card.rar}">
+        <div class="tcg-pro-inner">
+          <div class="tcg-pro-art-wrap">
+            ${renderCardSvg(card, false)}
+            <div class="tcg-pro-top-left">${getCardBadgeIcon(card)}</div>
+            <div class="tcg-pro-top-cat">${getCatShortName(card)}</div>
+            <div class="tcg-pro-top-orb">
+              <span class="orb-lbl">RANK</span>
+              <span class="orb-val">${card.rar}</span>
+            </div>
+            ${showCloseBtn ? '<button type="button" class="btn-tcg-close" style="position:absolute;bottom:6px;right:6px;z-index:6;background:rgba(239,68,68,0.92);color:#fff;border:1.5px solid #fff;border-radius:7px;padding:2px 8px;font-size:11px;font-weight:900;cursor:pointer;">✕</button>' : ''}
+          </div>
+          <div class="tcg-pro-namebar">
+            <div class="tcg-pro-no-badge">
+              <span class="no-sub">カードNo.</span>
+              <span class="no-num">${card.id}</span>
+            </div>
+            <div class="tcg-pro-title-main">${card.name}</div>
+            <div class="tcg-pro-sub-box">${card.sub}</div>
+          </div>
+          <div class="tcg-pro-stone">
+            <div class="tcg-pro-stone-text">${card.desc}</div>
+            <div class="tcg-pro-diamond">
+              <div class="tcg-pro-diamond-inner">
+                <div class="tcg-pro-diamond-txt">${getStarString(card.rar)}<br>×${count}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
 
   function rollOne(forceMinSR = false) {
     const r = Math.random() * 100;
@@ -10512,9 +11296,90 @@ const CardGacha = (() => {
   }
 
 
-  let animTimers = [];
+let animTimers = [];
   let animFinishedCb = null;
   let animCurrentResults = [];
+  let fxRafId = null;
+  let fxParticles = [];
+
+  function stopFxCanvas() {
+    if (fxRafId) { cancelAnimationFrame(fxRafId); fxRafId = null; }
+    fxParticles = [];
+    const cv = document.getElementById('gacha-fx-canvas');
+    if (cv && cv.getContext) {
+      const ctx = cv.getContext('2d');
+      if (ctx && ctx.clearRect) ctx.clearRect(0, 0, cv.width || 420, cv.height || 760);
+    }
+  }
+
+  function burstFxCanvas(topRar, mult = 1) {
+    const cv = document.getElementById('gacha-fx-canvas');
+    if (!cv || !cv.getContext) return;
+    cv.width = cv.clientWidth || 420;
+    cv.height = cv.clientHeight || 760;
+    const ctx = cv.getContext('2d');
+    if (!ctx) return;
+
+    const cx = cv.width * 0.5;
+    const cy = cv.height * 0.45;
+    const palettes = {
+      N:   ['#e2e8f0', '#94a3b8'],
+      R:   ['#38bdf8', '#7dd3fc', '#ffffff'],
+      SR:  ['#fde047', '#f59e0b', '#fef9c3', '#ffffff'],
+      SSR: ['#fde047', '#f472b6', '#a855f7', '#38bdf8', '#4ade80', '#ffffff'],
+      SEC: ['#fde047', '#facc15', '#f472b6', '#a855f7', '#38bdf8', '#ffffff']
+    };
+    const pal = palettes[topRar] || palettes.R;
+    const baseCount = topRar === 'SEC' ? 85 : topRar === 'SSR' ? 68 : topRar === 'SR' ? 45 : topRar === 'R' ? 24 : 12;
+    const count = Math.round(baseCount * mult);
+    for (let i = 0; i < count; i++) {
+      const ang = Math.random() * Math.PI * 2;
+      const spd = (1.6 + Math.random() * (topRar === 'SEC' || topRar === 'SSR' ? 7.8 : 4.8));
+      fxParticles.push({
+        x: cx + (Math.random() - 0.5) * 40,
+        y: cy + (Math.random() - 0.5) * 30,
+        vx: Math.cos(ang) * spd,
+        vy: Math.sin(ang) * spd - 1.5,
+        r: 2 + Math.random() * (topRar === 'SEC' || topRar === 'SSR' ? 5.2 : 3.5),
+        col: pal[i % pal.length],
+        life: 1.0,
+        decay: 0.012 + Math.random() * 0.018,
+        star: (i % 3 === 0)
+      });
+    }
+    if (!fxRafId) {
+      const loop = () => {
+        ctx.clearRect(0, 0, cv.width, cv.height);
+        for (let i = fxParticles.length - 1; i >= 0; i--) {
+          const p = fxParticles[i];
+          p.x += p.vx;
+          p.y += p.vy;
+          p.vy += 0.06;
+          p.life -= p.decay;
+          if (p.life <= 0) { fxParticles.splice(i, 1); continue; }
+          ctx.save();
+          ctx.globalAlpha = Math.max(0, p.life);
+          ctx.fillStyle = p.col;
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.restore();
+        }
+        if (fxParticles.length > 0) fxRafId = requestAnimationFrame(loop);
+        else fxRafId = null;
+      };
+      fxRafId = requestAnimationFrame(loop);
+    }
+  }
+
+  function spawnShockwave(backdrop, color) {
+    if (!backdrop) return;
+    const ring = document.createElement('div');
+    ring.className = 'gacha-shock-ring';
+    ring.style.borderColor = color;
+    backdrop.appendChild(ring);
+    setTimeout(() => ring.remove(), 900);
+  }
 
   function clearAnimTimers() {
     animTimers.forEach(t => clearTimeout(t));
@@ -10530,109 +11395,73 @@ const CardGacha = (() => {
     return top;
   }
 
-  function renderProfLabSvg(phase, topRar) {
+  function renderProfLabSvg(phase, visualRar) {
     const liqColors = {
-      N:   ['#94a3b8', '#e2e8f0'],
+      N:   ['#94a3b8', '#f1f5f9'],
       R:   ['#0284c7', '#38bdf8'],
       SR:  ['#d97706', '#fde047'],
       SSR: ['#ec4899', '#38bdf8'],
-      SEC: ['#7e22ce', '#fde047']
+      SEC: ['#6b21a8', '#fde047']
     };
-    const [cA, cB] = (phase === 'pour') ? ['#38bdf8', '#7dd3fc'] : (liqColors[topRar] || ['#38bdf8', '#7dd3fc']);
-    const glowR = phase === 'pour' ? 16 : (topRar === 'SEC' ? 76 : topRar === 'SSR' ? 66 : topRar === 'SR' ? 52 : topRar === 'R' ? 38 : 24);
-    const pourStream = phase === 'pour'
-      ? '<line x1="128" y1="88" x2="188" y2="128" stroke="#67e8f9" stroke-width="4" stroke-dasharray="6 4"/>'
+    const [cA, cB] = (phase === 'pour') ? ['#0ea5e9', '#7dd3fc'] : (liqColors[visualRar] || ['#38bdf8', '#7dd3fc']);
+    const glowR = phase === 'pour' ? 18 : (visualRar === 'SEC' ? 88 : visualRar === 'SSR' ? 76 : visualRar === 'SR' ? 58 : visualRar === 'R' ? 42 : 26);
+    const pourDrops = phase === 'pour'
+      ? '<circle class="gacha-pour-drop" cx="126" cy="86" r="4" fill="#67e8f9"/><circle class="gacha-pour-drop" style="animation-delay:0.22s" cx="126" cy="86" r="3.2" fill="#e0f2fe"/><line x1="126" y1="86" x2="188" y2="132" stroke="#67e8f9" stroke-width="3.5" stroke-dasharray="7 5" opacity="0.8"/>'
       : '';
     const reactionBeam = (phase === 'react')
-      ? `<polygon points="175,112 201,112 238,8 138,8" fill="url(#gBeam)" opacity="${topRar === 'N' ? 0.35 : topRar === 'R' ? 0.55 : 0.88}"/>`
+      ? `<polygon points="172,110 204,110 256,0 120,0" fill="url(#gBeam2)" opacity="${visualRar === 'N' ? 0.35 : visualRar === 'R' ? 0.58 : 0.92}"/>`
       : '';
-    const extraSparks = (phase === 'react' && (topRar === 'SR' || topRar === 'SSR' || topRar === 'SEC'))
-      ? `<circle cx="150" cy="70" r="5" fill="#fde047"/><circle cx="228" cy="62" r="6" fill="#f472b6"/><circle cx="188" cy="36" r="7" fill="#fff"/><circle cx="136" cy="112" r="4" fill="#38bdf8"/><circle cx="242" cy="108" r="5" fill="#fde047"/>`
+    const lightning = (phase === 'react' && (visualRar === 'SSR' || visualRar === 'SEC'))
+      ? '<polyline points="188,124 156,92 174,84 142,42" fill="none" stroke="#fef08a" stroke-width="2.5"/><polyline points="188,124 224,90 206,80 238,38" fill="none" stroke="#f472b6" stroke-width="2.5"/>'
       : '';
-    const tubeTransform = phase === 'pour' ? 'rotate(48 118 82)' : 'rotate(-10 118 82)';
+    const tubeTransform = phase === 'pour' ? 'rotate(50 118 82)' : 'rotate(-14 118 82)';
     return `
       <svg viewBox="0 0 280 215" width="100%" height="100%">
         <defs>
-          <linearGradient id="gLiq" x1="0" y1="0" x2="1" y2="1">
+          <linearGradient id="gLiq2" x1="0" y1="0" x2="1" y2="1">
             <stop offset="0%" stop-color="${cA}"/><stop offset="100%" stop-color="${cB}"/>
           </linearGradient>
-          <radialGradient id="gGlow" cx="50%" cy="50%" r="50%">
-            <stop offset="0%" stop-color="${cB}" stop-opacity="0.95"/>
+          <radialGradient id="gGlow2" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="${cB}" stop-opacity="0.98"/>
             <stop offset="100%" stop-color="${cA}" stop-opacity="0"/>
           </radialGradient>
-          <linearGradient id="gBeam" x1="0" y1="1" x2="0" y2="0">
-            <stop offset="0%" stop-color="${cB}" stop-opacity="0.9"/>
+          <linearGradient id="gBeam2" x1="0" y1="1" x2="0" y2="0">
+            <stop offset="0%" stop-color="${cB}" stop-opacity="0.95"/>
             <stop offset="100%" stop-color="#ffffff" stop-opacity="0"/>
           </linearGradient>
         </defs>
-        <!-- 実験台 -->
-        <rect x="14" y="182" width="252" height="14" rx="5" fill="#334155" stroke="#64748b" stroke-width="1.5"/>
-        <!-- 反応グロー -->
-        <circle cx="188" cy="146" r="${glowR}" fill="url(#gGlow)"/>
+        <rect x="10" y="182" width="260" height="16" rx="6" fill="#1e293b" stroke="#64748b" stroke-width="1.5"/>
+        <circle cx="188" cy="146" r="${glowR}" fill="url(#gGlow2)"/>
         ${reactionBeam}
-        <!-- ケミカル博士（白衣・丸メガネ・ヒゲ） -->
+        ${lightning}
         <g transform="translate(8, 12)">
-          <!-- 白衣 -->
           <path d="M26,170 L36,104 C40,94 84,94 88,104 L98,170 Z" fill="#f8fafc" stroke="#cbd5e1" stroke-width="2"/>
           <path d="M52,100 L62,134 L72,100" fill="#0284c7"/>
           <polygon points="62,110 57,132 62,140 67,132" fill="#ef4444"/>
-          <!-- 顔・髪 -->
           <circle cx="62" cy="68" r="24" fill="#fde68a" stroke="#f59e0b" stroke-width="1.5"/>
           <path d="M36,64 C34,42 50,36 62,38 C74,36 90,42 88,64 C84,52 72,50 62,50 C52,50 40,52 36,64 Z" fill="#e2e8f0"/>
-          <!-- 丸メガネ -->
-          <circle cx="52" cy="68" r="7" fill="rgba(255,255,255,0.75)" stroke="#0f172a" stroke-width="2"/>
-          <circle cx="72" cy="68" r="7" fill="rgba(255,255,255,0.75)" stroke="#0f172a" stroke-width="2"/>
+          <circle cx="52" cy="68" r="7" fill="rgba(255,255,255,0.8)" stroke="#0f172a" stroke-width="2"/>
+          <circle cx="72" cy="68" r="7" fill="rgba(255,255,255,0.8)" stroke="#0f172a" stroke-width="2"/>
           <line x1="59" y1="68" x2="65" y2="68" stroke="#0f172a" stroke-width="2"/>
           <circle cx="53" cy="68" r="2.2" fill="#0f172a"/><circle cx="73" cy="68" r="2.2" fill="#0f172a"/>
-          <!-- 白ヒゲ＆笑顔 -->
           <path d="M48,80 Q62,90 76,80 Q62,84 48,80 Z" fill="#ffffff"/>
-          <!-- 試験管を持つ手 -->
           <g transform="${tubeTransform}">
             <rect x="108" y="54" width="12" height="44" rx="5" fill="rgba(224,242,254,0.4)" stroke="#e0f2fe" stroke-width="2"/>
-            <rect x="110" y="72" width="8" height="24" rx="3" fill="#38bdf8"/>
+            <rect x="110" y="70" width="8" height="26" rx="3" fill="#38bdf8"/>
             <circle cx="110" cy="82" r="7" fill="#fde68a"/>
           </g>
         </g>
-        ${pourStream}
-        <!-- 三角フラスコ -->
+        ${pourDrops}
         <g>
-          <rect x="178" y="100" width="20" height="24" fill="rgba(224,242,254,0.28)" stroke="#e0f2fe" stroke-width="2.5"/>
-          <path d="M178,124 L148,176 C146,180 149,182 154,182 L222,182 C227,182 230,180 228,176 L198,124 Z" fill="rgba(224,242,254,0.22)" stroke="#e0f2fe" stroke-width="2.5"/>
-          <path d="M161,152 L215,152 L225,179 L151,179 Z" fill="url(#gLiq)"/>
-          <circle cx="176" cy="166" r="4" fill="#fff" opacity="0.8"/>
-          <circle cx="196" cy="158" r="3.5" fill="#fff" opacity="0.85"/>
-          <circle cx="188" cy="142" r="3" fill="#fde047" opacity="0.9"/>
+          <rect x="178" y="98" width="20" height="26" fill="rgba(224,242,254,0.28)" stroke="#e0f2fe" stroke-width="2.5"/>
+          <path d="M178,124 L148,176 C146,180 149,182 154,182 L222,182 C227,182 230,180 228,176 L198,124 Z" fill="rgba(224,242,254,0.2)" stroke="#e0f2fe" stroke-width="2.5"/>
+          <path d="M161,150 L215,150 L225,179 L151,179 Z" fill="url(#gLiq2)"/>
+          <circle class="gacha-bub" cx="176" cy="164" r="4" fill="#ffffff"/>
+          <circle class="gacha-bub" style="animation-delay:0.28s" cx="196" cy="160" r="3.5" fill="#fde047"/>
+          <circle class="gacha-bub" style="animation-delay:0.55s" cx="186" cy="154" r="3" fill="#ffffff"/>
         </g>
-        ${extraSparks}
       </svg>
     `;
-  }
-
-  function spawnAnimParticles(backdrop, topRar) {
-    const count = topRar === 'SEC' ? 34 : topRar === 'SSR' ? 26 : topRar === 'SR' ? 16 : topRar === 'R' ? 9 : 4;
-    const palette = topRar === 'SEC'
-      ? ['#fde047', '#f472b6', '#a855f7', '#38bdf8', '#ffffff']
-      : topRar === 'SSR'
-        ? ['#fde047', '#f472b6', '#38bdf8', '#4ade80', '#ffffff']
-        : topRar === 'SR'
-          ? ['#fde047', '#f59e0b', '#fef08a']
-          : topRar === 'R'
-            ? ['#38bdf8', '#7dd3fc', '#e0f2fe']
-            : ['#cbd5e1', '#f8fafc'];
-    for (let i = 0; i < count; i++) {
-      const p = document.createElement('div');
-      p.className = 'gacha-particle';
-      const sz = 4 + Math.random() * (topRar === 'SEC' || topRar === 'SSR' ? 9 : 6);
-      p.style.width = sz + 'px';
-      p.style.height = sz + 'px';
-      p.style.left = (25 + Math.random() * 50) + '%';
-      p.style.top = (38 + Math.random() * 24) + '%';
-      p.style.background = palette[i % palette.length];
-      p.style.setProperty('--dx', ((Math.random() - 0.5) * 260) + 'px');
-      p.style.setProperty('--dy', (-70 - Math.random() * 190) + 'px');
-      backdrop.appendChild(p);
-      setTimeout(() => p.remove(), 1550);
-    }
   }
 
   function showAnimReveal() {
@@ -10651,7 +11480,7 @@ const CardGacha = (() => {
     if (skipBtn) skipBtn.classList.add('hidden');
 
     if (flash) {
-      flash.style.background = topRar === 'SEC' ? 'radial-gradient(circle,#fef08a,#a855f7)' : topRar === 'SSR' ? 'radial-gradient(circle,#ffffff,#f472b6,#38bdf8)' : topRar === 'SR' ? '#fef08a' : '#e0f2fe';
+      flash.style.background = topRar === 'SEC' ? 'radial-gradient(circle,#fef08a,#a855f7,#020617)' : topRar === 'SSR' ? 'radial-gradient(circle,#ffffff,#f472b6,#38bdf8)' : topRar === 'SR' ? '#fef08a' : '#e0f2fe';
       flash.classList.remove('boom');
       void flash.offsetWidth;
       flash.classList.add('boom');
@@ -10659,14 +11488,15 @@ const CardGacha = (() => {
     if (rays) {
       rays.className = 'gacha-anim-rays' + (topRar === 'SEC' ? ' show-SEC' : topRar === 'SSR' ? ' show-SSR' : topRar === 'SR' ? ' show-SR' : '');
     }
-    spawnAnimParticles(bd, topRar);
+    spawnShockwave(bd, topRar === 'SEC' ? '#fde047' : topRar === 'SSR' ? '#f472b6' : topRar === 'SR' ? '#facc15' : '#38bdf8');
+    burstFxCanvas(topRar, 1.35);
     if (topRar === 'SEC' || topRar === 'SSR') SoundEngine.seCatchFanfare();
     else SoundEngine.seAlchemy();
 
     const bannerText = topRar === 'SEC'
-      ? '🌟 歴史的大発見！！ SECRET CARD 出現！！ 🌟'
+      ? '🌟 歴史的大発見！！ SECRET CARD 降臨！！ 🌟'
       : topRar === 'SSR'
-        ? '🌈 超反応成功！！ SSR レアカード出現！！'
+        ? '🌈 超臨界反応！！ SSR レアカード出現！！'
         : topRar === 'SR'
           ? '✨ 高純度反応！！ SR カード出現！！'
           : topRar === 'R'
@@ -10678,11 +11508,11 @@ const CardGacha = (() => {
         ? 'linear-gradient(90deg,#ec4899,#8b5cf6,#06b6d4);color:#fff;border:2px solid #fde047;'
         : topRar === 'SR'
           ? 'linear-gradient(90deg,#b45309,#f59e0b);color:#fff;border:1.5px solid #fef08a;'
-          : 'rgba(15,23,42,0.85);color:#7dd3fc;border:1.5px solid #38bdf8;';
+          : 'rgba(15,23,42,0.88);color:#7dd3fc;border:1.5px solid #38bdf8;';
 
     stage.innerHTML = '';
     const cutin = document.createElement('div');
-    cutin.className = 'gacha-cutin-strip';
+    cutin.className = 'gacha-promo-banner';
     cutin.style.cssText = 'background:' + bannerBg;
     cutin.textContent = bannerText;
     stage.appendChild(cutin);
@@ -10690,16 +11520,11 @@ const CardGacha = (() => {
     if (results.length === 1) {
       const { card, isNew, dupPt, count } = results[0];
       const big = document.createElement('div');
-      big.className = `chem-card rar-${card.rar} gacha-reveal-card-anim`;
-      big.style.cssText = 'width:236px;padding:10px;border-radius:14px;';
-      big.innerHTML = `
-        <span class="chem-card-rar-badge" style="font-size:11px;padding:2px 7px;">${card.rar}</span>
-        <span class="chem-card-cnt-badge" style="font-size:11px;padding:2px 7px;">×${count}</span>
-        ${isNew ? '<span class="chem-card-new-badge" style="bottom:auto;top:28px;right:6px;font-size:10px;">NEW!</span>' : `<span class="chem-card-new-badge" style="bottom:auto;top:28px;right:6px;font-size:10px;background:#0284c7;">+${dupPt}pt</span>`}
-        <div class="chem-card-art" style="border-radius:10px;margin-bottom:7px;">${renderCardSvg(card, false)}</div>
-        <div style="font-size:14.5px;font-weight:900;">${card.name}</div>
-        <div style="font-size:10.5px;opacity:0.9;margin-top:2px;">${card.sub}</div>
-      `;
+      big.className = 'gacha-reveal-card-anim';
+      big.style.cssText = 'width:292px;cursor:pointer;';
+      big.innerHTML = buildProTcgFrontHtml(card, count, false) + (isNew
+        ? '<div style="text-align:center;margin-top:4px;"><span style="background:#ef4444;color:#fff;font-size:10.5px;font-weight:900;padding:2px 10px;border-radius:999px;">✨ NEW CARD!</span></div>'
+        : `<div style="text-align:center;margin-top:4px;"><span style="background:#0284c7;color:#fff;font-size:10.5px;font-weight:900;padding:2px 10px;border-radius:999px;">かぶりボーナス +${dupPt}pt</span></div>`);
       big.onclick = () => openDetail(card, count);
       stage.appendChild(big);
     } else {
@@ -10709,12 +11534,13 @@ const CardGacha = (() => {
       results.forEach(({ card, isNew, dupPt, count }, idx) => {
         const el = document.createElement('div');
         el.className = `chem-card rar-${card.rar} gacha-reveal-card-anim`;
-        el.style.animationDelay = (idx * 0.06) + 's';
+        el.style.animationDelay = (idx * 0.065) + 's';
         el.innerHTML = `
           <span class="chem-card-rar-badge">${card.rar}</span>
           <span class="chem-card-cnt-badge">×${count}</span>
           ${isNew ? '<span class="chem-card-new-badge">NEW!</span>' : `<span class="chem-card-new-badge" style="background:#0284c7;">+${dupPt}pt</span>`}
           <div class="chem-card-art">${renderCardSvg(card, false)}</div>
+          <div class="chem-card-stars">${getStarString(card.rar)}</div>
           <div style="font-size:9.5px;font-weight:900;line-height:1.2;">${card.name}</div>
         `;
         el.onclick = () => openDetail(card, count);
@@ -10724,8 +11550,8 @@ const CardGacha = (() => {
     }
 
     const hint = document.createElement('div');
-    hint.style.cssText = 'font-size:11px;color:#cbd5e1;font-weight:700;';
-    hint.textContent = '👆 カードをタップすると詳しい解説＆入試ポイントが読めます！';
+    hint.style.cssText = 'font-size:11px;color:#e2e8f0;font-weight:800;';
+    hint.textContent = '👆 カードをタップすると3Dフリップで解説＆入試ポイントが読めます！';
     stage.appendChild(hint);
 
     const closeBtn = document.createElement('button');
@@ -10735,6 +11561,7 @@ const CardGacha = (() => {
     closeBtn.textContent = '✨ OK（ガチャ画面へ戻る）';
     closeBtn.onclick = () => {
       SoundEngine.seClick();
+      stopFxCanvas();
       bd.classList.add('hidden');
       if (animFinishedCb) { const cb = animFinishedCb; animFinishedCb = null; cb(); }
     };
@@ -10753,65 +11580,80 @@ const CardGacha = (() => {
       return;
     }
     clearAnimTimers();
+    stopFxCanvas();
     const topRar = getTopRarity(results);
     bd.classList.remove('hidden');
     if (skipBtn) skipBtn.classList.remove('hidden');
     if (rays) rays.className = 'gacha-anim-rays';
 
-    // Phase 1: 博士がフラスコに試薬を注ぐ
+    // Phase 1: 博士が試薬を注ぐ（リアルタイム滴下＆泡アニメ）
     SoundEngine.seClick();
     stage.innerHTML = `
-      <div class="gacha-cutin-strip" style="background:rgba(15,23,42,0.85);color:#7dd3fc;border:1.5px solid #38bdf8;">
-        🧑‍🔬 博士「よし、フラスコに試薬を注ぐぞい…！」
+      <div class="gacha-cutin-strip" style="background:rgba(15,23,42,0.88);color:#7dd3fc;border:1.5px solid #38bdf8;">
+        🧑‍🔬 博士「よし、フラスコに試薬を注いで実験開始じゃ！」
       </div>
       <div id="gacha-lab-wrap" class="gacha-lab-wrap">
-        ${renderProfLabSvg('pour', topRar)}
+        ${renderProfLabSvg('pour', 'R')}
       </div>
-      <div style="font-size:12px;color:#cbd5e1;font-weight:800;">⚗️ 試薬を調合中…</div>
+      <div style="font-size:12px;color:#cbd5e1;font-weight:800;">⚗️ 試薬を精密調合中…</div>
     `;
 
-    // Phase 2: 化学反応スタート（レア度に応じてどんどん派手に！）
-    const t1 = setTimeout(() => {
-      const wrap = document.getElementById('gacha-lab-wrap');
-      if (!wrap) return;
-      SoundEngine.seAlchemy();
-      const reactLine = topRar === 'SEC'
-        ? '⚠️ 博士「ば、バカな…！！ 時空を超える超反応じゃあああ！！」'
-        : topRar === 'SSR'
-          ? '🌈 博士「な、なんと！？ フラスコが虹色に輝きだしたぞい！！」'
-          : topRar === 'SR'
-            ? '✨ 博士「おおっ！？ 黄金の閃光！ 高純度な反応じゃぞ！！」'
-            : topRar === 'R'
-              ? '💎 博士「おっ、鮮やかな青白い光！ いい反応じゃのう！」'
-              : '🧪 博士「おお、ブクブクと化学反応が始まったぞい！」';
-      const reactStripBg = topRar === 'SEC'
-        ? 'linear-gradient(90deg,#3b0764,#ca8a04);color:#fef08a;border:2px solid #fde047;'
-        : topRar === 'SSR'
-          ? 'linear-gradient(90deg,#ec4899,#8b5cf6,#06b6d4);color:#fff;border:2px solid #fde047;'
-          : topRar === 'SR'
-            ? 'linear-gradient(90deg,#b45309,#f59e0b);color:#fff;border:1.5px solid #fef08a;'
-            : 'rgba(2,132,199,0.85);color:#fff;border:1.5px solid #7dd3fc;';
+    // Phase 2: 化学反応スタート（SR以上はまずR/SR色で沸騰→直後に昇格サプライズ！）
+    const willPromote = (topRar === 'SR' || topRar === 'SSR' || topRar === 'SEC');
+    const midRar = topRar === 'SEC' ? 'SSR' : (topRar === 'SSR' ? 'SR' : (topRar === 'SR' ? 'R' : topRar));
 
+    const t1 = setTimeout(() => {
+      SoundEngine.seAlchemy();
+      spawnShockwave(bd, midRar === 'SSR' ? '#f472b6' : midRar === 'SR' ? '#facc15' : '#38bdf8');
+      burstFxCanvas(midRar, 0.7);
       stage.innerHTML = `
-        <div class="gacha-cutin-strip" style="background:${reactStripBg}">${reactLine}</div>
-        <div id="gacha-lab-wrap" class="gacha-lab-wrap ${(topRar === 'SSR' || topRar === 'SEC') ? 'shake-hard' : (topRar === 'SR' || topRar === 'R') ? 'shake-soft' : ''}">
-          ${renderProfLabSvg('react', topRar)}
+        <div class="gacha-cutin-strip" style="background:rgba(2,132,199,0.88);color:#fff;border:1.5px solid #7dd3fc;">
+          🧪 博士「おおっ！ 液の色が変わって激しい化学反応が始まったぞい！」
         </div>
-        <div style="font-size:13px;color:#fde047;font-weight:900;">⚡ 化学反応エネルギー急上昇！！</div>
+        <div id="gacha-lab-wrap" class="gacha-lab-wrap shake-soft">
+          ${renderProfLabSvg('react', midRar)}
+        </div>
+        <div style="font-size:12.5px;color:#fde047;font-weight:900;">⚡ 反応エネルギー計測中…</div>
       `;
-      if (rays) {
-        rays.className = 'gacha-anim-rays' + (topRar === 'SEC' ? ' show-SEC' : topRar === 'SSR' ? ' show-SSR' : topRar === 'SR' ? ' show-SR' : '');
+      if (rays && (midRar === 'SR' || midRar === 'SSR')) {
+        rays.className = 'gacha-anim-rays show-' + midRar;
       }
-      spawnAnimParticles(bd, topRar);
-    }, 850);
+    }, 820);
     animTimers.push(t1);
 
-    // Phase 3: フラッシュ＆カード出現！
-    const reactDur = (topRar === 'SEC' || topRar === 'SSR') ? 2150 : (topRar === 'SR' ? 1900 : 1650);
-    const t2 = setTimeout(() => {
-      showAnimReveal();
-    }, reactDur);
-    animTimers.push(t2);
+    if (willPromote) {
+      // Phase 2.5: ドキドキ昇格サプライズ！！（青→金／金→虹／虹→漆黒黄金SEC！）
+      const tPromo = setTimeout(() => {
+        SoundEngine.seCatchFanfare();
+        spawnShockwave(bd, topRar === 'SEC' ? '#fde047' : topRar === 'SSR' ? '#f472b6' : '#facc15');
+        burstFxCanvas(topRar, 1.15);
+        const promoText = topRar === 'SEC'
+          ? '⚠️ 臨界突破！！ 博士「ば、バカな… SECRET 級の超反応じゃああ！！」'
+          : topRar === 'SSR'
+            ? '🌈 昇格フラッシュ！！ 博士「フラスコが虹色に輝きだしたぞい！！」'
+            : '✨ 昇格！！ 博士「おおっ！ 黄金の閃光！ 高純度 SR 反応じゃ！！」';
+        const promoBg = topRar === 'SEC'
+          ? 'linear-gradient(90deg,#3b0764,#ca8a04,#3b0764);color:#fef08a;border:2px solid #fde047;'
+          : topRar === 'SSR'
+            ? 'linear-gradient(90deg,#ec4899,#8b5cf6,#06b6d4);color:#fff;border:2px solid #fde047;'
+            : 'linear-gradient(90deg,#b45309,#f59e0b);color:#fff;border:2px solid #fef08a;';
+        stage.innerHTML = `
+          <div class="gacha-promo-banner" style="background:${promoBg}">${promoText}</div>
+          <div id="gacha-lab-wrap" class="gacha-lab-wrap ${(topRar === 'SSR' || topRar === 'SEC') ? 'shake-hard' : 'shake-soft'}">
+            ${renderProfLabSvg('react', topRar)}
+          </div>
+          <div style="font-size:13.5px;color:#fef08a;font-weight:900;">💥 エネルギー最大！！ カード結晶化！！</div>
+        `;
+        if (rays) rays.className = 'gacha-anim-rays show-' + topRar;
+      }, 1580);
+      animTimers.push(tPromo);
+
+      const tReveal = setTimeout(() => showAnimReveal(), 2550);
+      animTimers.push(tReveal);
+    } else {
+      const tReveal = setTimeout(() => showAnimReveal(), 1680);
+      animTimers.push(tReveal);
+    }
   }
 
   function skipAnim() {
@@ -10925,45 +11767,59 @@ const CardGacha = (() => {
     bd.classList.remove('hidden');
   }
 
+  // 100点 3Dフリップ対応 カード詳細モーダル（表面：ホログラム鑑賞 ⇄ 裏面：詳細解説＆入試ポイント）
+  // 100点 3Dフリップ対応 カード詳細モーダル（表面：添付画像準拠TCG ⇄ 裏面：受験ポイント詳細）
   function openDetail(card, count) {
     SoundEngine.seClick();
     const bd = document.getElementById('card-detail-backdrop');
     const sheet = document.getElementById('card-detail-sheet');
     if (!bd || !sheet) return;
-    const rarBg = card.rar === 'SEC'
-      ? 'linear-gradient(135deg,#020617 0%,#581c87 35%,#ca8a04 70%,#0f172a 100%)'
-      : card.rar === 'SSR'
-        ? 'linear-gradient(135deg,#fde047 0%,#f472b6 38%,#818cf8 72%,#38bdf8 100%)'
-        : card.rar === 'SR'
-          ? 'linear-gradient(160deg,#fef9c3 0%,#f59e0b 100%)'
-          : card.rar === 'R'
-            ? 'linear-gradient(160deg,#e0f2fe 0%,#38bdf8 100%)'
-            : 'linear-gradient(160deg,#f8fafc 0%,#cbd5e1 100%)';
-    sheet.style.background = rarBg;
-    sheet.style.border = (card.rar === 'SEC' || card.rar === 'SSR') ? '3px solid #fef08a' : '2.5px solid #0f172a';
+    sheet.style.background = 'transparent';
+    sheet.style.border = 'none';
+    sheet.style.padding = '0';
+    sheet.style.boxShadow = 'none';
     sheet.innerHTML = `
-      <div style="display:flex;justify-content:space-between;align-items:center;gap:6px;">
-        <span style="background:#0f172a;color:#fde047;padding:3px 9px;border-radius:8px;font-size:12px;font-weight:900;">${card.id} ｜ ${card.rar} ｜ ${CAT_LABELS[card.cat] || ''}</span>
-        <button type="button" onclick="CardGacha.closeDetail()" style="background:#ef4444;color:#fff;border:1.5px solid #fff;border-radius:8px;padding:3px 10px;font-size:11px;font-weight:900;cursor:pointer;">✕ 閉じる</button>
-      </div>
-      <div style="width:100%;aspect-ratio:4/3;border-radius:12px;overflow:hidden;border:2px solid rgba(15,23,42,0.55);background:#0f172a;">
-        ${renderCardSvg(card, false)}
-      </div>
-      <div style="background:rgba(15,23,42,0.9);color:#fff;border-radius:12px;padding:11px 12px;display:flex;flex-direction:column;gap:7px;">
-        <div style="display:flex;justify-content:space-between;align-items:baseline;gap:6px;flex-wrap:wrap;">
-          <b style="font-size:16.5px;color:#fde047;">${card.name}</b>
-          <span style="font-size:11px;color:#7dd3fc;font-weight:800;">所持：${count}枚</span>
+      <div class="tcg-flip-scene">
+        <div id="tcg-flip-card" class="tcg-flip-card" style="min-height:476px;">
+          <!-- 表面：黒大理石×金箔×石版TCGカード -->
+          <div class="tcg-face" style="padding:0;background:transparent;box-shadow:none;overflow:visible;">
+            ${buildProTcgFrontHtml(card, count, true)}
+            <button type="button" class="btn-tcg-flip" style="margin-top:8px;width:100%;padding:9px;border-radius:10px;border:2px solid #fde047;background:linear-gradient(90deg,#0f172a,#1e3a8a,#0f172a);color:#fef08a;font-size:12px;font-weight:900;cursor:pointer;">
+              🔄 タップして裏面（💡テスト・受験ポイント）を見る ▶
+            </button>
+          </div>
+          <!-- 裏面：学習＆入試ポイント詳細面 -->
+          <div class="tcg-face tcg-back">
+            <div class="tcg-foil-ribbon">
+              <span>📖 カード裏面データ（${card.id} ｜ ${card.rar}）</span>
+              <button type="button" class="btn-tcg-close" style="background:#ef4444;color:#fff;border:1.5px solid #fff;border-radius:7px;padding:2px 9px;font-size:11px;font-weight:900;cursor:pointer;">✕</button>
+            </div>
+            <div style="font-size:17px;font-weight:900;color:#fde047;">${card.name}</div>
+            <div style="font-size:11.5px;color:#93c5fd;font-weight:800;">${CAT_LABELS[card.cat] || ''} ｜ ${getStarString(card.rar)} ｜ 所持：${count}枚</div>
+            <div style="font-size:13px;line-height:1.7;color:#f8fafc;background:rgba(255,255,255,0.07);border-radius:10px;padding:10px 12px;">
+              <b>📘 くわしい解説</b><br>${card.desc}
+            </div>
+            <div style="font-size:13px;line-height:1.68;color:#fef3c7;background:rgba(245,158,11,0.18);border-left:4px solid #f59e0b;border-radius:9px;padding:10px 12px;">
+              <b>💡 テスト・大学受験に出るポイント</b><br>${card.exam}
+            </div>
+            <div style="font-size:12px;color:#bae6fd;background:rgba(2,132,199,0.2);border-radius:8px;padding:7px 10px;font-weight:800;">
+              📚 関連する単元：${card.unit}
+            </div>
+            <button type="button" class="btn-tcg-flip" style="margin-top:auto;width:100%;padding:9px;border-radius:10px;border:1.5px solid #fde047;background:linear-gradient(90deg,#b45309,#f59e0b);color:#fff;font-size:12px;font-weight:900;cursor:pointer;">
+              🔄 表面（TCGカード）へ戻す
+            </button>
+          </div>
         </div>
-        <div style="font-size:12px;color:#cbd5e1;font-weight:700;">「${card.sub}」</div>
-        <div style="font-size:13px;line-height:1.65;color:#f8fafc;background:rgba(255,255,255,0.07);border-radius:8px;padding:8px 10px;">
-          <b>📖 カード解説</b><br>${card.desc}
-        </div>
-        <div style="font-size:12.5px;line-height:1.6;color:#fef3c7;background:rgba(245,158,11,0.18);border-left:4px solid #f59e0b;border-radius:7px;padding:7px 10px;">
-          <b>💡 テスト・受験に出るポイント</b><br>${card.exam}
-        </div>
-        <div style="font-size:11px;color:#93c5fd;text-align:right;font-weight:800;">📚 関連単元：${card.unit}</div>
       </div>
     `;
+    const flipEl = sheet.querySelector('#tcg-flip-card');
+    sheet.querySelectorAll('.btn-tcg-flip').forEach(btn => {
+      btn.onclick = (ev) => { ev.stopPropagation(); SoundEngine.seClick(); flipEl.classList.toggle('is-flipped'); };
+    });
+    sheet.querySelectorAll('.btn-tcg-close').forEach(btn => {
+      btn.onclick = (ev) => { ev.stopPropagation(); SoundEngine.seClick(); closeDetail(); };
+    });
+    flipEl.onclick = () => { SoundEngine.seClick(); flipEl.classList.toggle('is-flipped'); };
     bd.classList.remove('hidden');
   }
 
@@ -11067,7 +11923,8 @@ const CardGacha = (() => {
             <span class="chem-card-cnt-badge">×${count}</span>
             ${isNew ? '<span class="chem-card-new-badge">NEW!</span>' : `<span class="chem-card-new-badge" style="background:#0284c7;">+${dupPt}pt</span>`}
             <div class="chem-card-art">${renderCardSvg(card, false)}</div>
-            <div style="font-size:10px;font-weight:900;line-height:1.25;">${card.name}</div>
+            <div class="chem-card-mini-bar">${card.name}</div>
+            <div class="chem-card-mini-stone">${card.id} ${getStarString(card.rar)}</div>
           `;
           el.onclick = () => openDetail(card, count);
           grid.appendChild(el);
@@ -11150,7 +12007,8 @@ const CardGacha = (() => {
           <span class="chem-card-rar-badge">${card.rar}</span>
           ${!locked ? `<span class="chem-card-cnt-badge">×${cnt}</span>` : ''}
           <div class="chem-card-art">${renderCardSvg(card, locked)}</div>
-          <div style="font-size:10px;font-weight:900;line-height:1.25;">${locked ? (card.rar === 'SEC' ? '🌟 SECRET ???' : (card.id + ' ???')) : card.name}</div>
+          <div class="chem-card-mini-bar">${locked ? (card.rar === 'SEC' ? '🌟 SECRET' : (card.id + ' ???')) : card.name}</div>
+          <div class="chem-card-mini-stone">${locked ? '未所持' : (card.id + ' ' + getStarString(card.rar))}</div>
         `;
         if (!locked) el.onclick = () => openDetail(card, cnt);
         grid.appendChild(el);
@@ -11200,6 +12058,253 @@ const CardGacha = (() => {
     CARDS: CHEM_CARDS_80, NORMAL_CARDS, SECRET_CARDS, DAILY_MISSIONS
   };
 })();
+
+
+// ======================== 🛠️ 開発者モード（タイトル上部7連タップ＋合言葉認証） ========================
+const DevMode = (() => {
+  const PASS_HASH = 'cb79c9c';
+  let unlocked = false;
+  let showAnsCheat = false;
+  let tapCount = 0;
+  let lastTapAt = 0;
+
+  function hashStr(s) {
+    let h = 0x811c9dc5;
+    for (let i = 0; i < s.length; i++) {
+      h ^= s.charCodeAt(i);
+      h = Math.imul(h, 0x01000193);
+    }
+    return (h >>> 0).toString(16);
+  }
+
+  function onLogoTap(ev) {
+    if (ev && ev.stopPropagation) ev.stopPropagation();
+    const now = Date.now();
+    if (now - lastTapAt > 2500) tapCount = 0;
+    lastTapAt = now;
+    tapCount++;
+    if (tapCount >= 7) {
+      tapCount = 0;
+      if (unlocked) {
+        openPanel();
+        return;
+      }
+      const input = prompt('🛠️ 開発者モードの合言葉を入力してください：');
+      if (input !== null && hashStr(input.trim()) === PASS_HASH) {
+        unlocked = true;
+        const btn = document.getElementById('dev-float-btn');
+        if (btn) btn.classList.remove('hidden');
+        SoundEngine.seCatchFanfare();
+        openPanel();
+      } else if (input !== null) {
+        SoundEngine.seWrong();
+        alert('合言葉が違います。');
+      }
+    }
+  }
+
+  function unlockWithPassword(pass) {
+    if (hashStr(String(pass || '').trim()) === PASS_HASH) {
+      unlocked = true;
+      const btn = document.getElementById('dev-float-btn');
+      if (btn) btn.classList.remove('hidden');
+      return true;
+    }
+    return false;
+  }
+
+  function isAnswerCheatOn() { return unlocked && showAnsCheat; }
+
+  function closePanel() {
+    const bd = document.getElementById('dev-modal-backdrop');
+    if (bd) bd.classList.add('hidden');
+  }
+
+  function lockOut() {
+    unlocked = false;
+    showAnsCheat = false;
+    const btn = document.getElementById('dev-float-btn');
+    if (btn) btn.classList.add('hidden');
+    closePanel();
+  }
+
+  function testGachaAnim(rar) {
+    const card = (CardGacha.CARDS || []).find(c => c.rar === rar) || CardGacha.CARDS[0];
+    if (!card) return;
+    closePanel();
+    CardGacha.playPullAnim([{ card, isNew: true, dupPt: 0, count: 1 }], () => {});
+  }
+
+  function openPanel() {
+    if (!unlocked) return;
+    const bd = document.getElementById('dev-modal-backdrop');
+    const box = document.getElementById('dev-modal-box');
+    if (!bd || !box) return;
+    const api = (typeof Game !== 'undefined' && Game._devApi) ? Game._devApi() : null;
+    if (!api) return;
+    const st = api.getState();
+    const btl = api.getBattle();
+    CardGacha.ensureState(st);
+
+    const areaOpts = AREAS.map(a => `<option value="${a.id}">単元${a.id}: ${a.name}</option>`).join('');
+    const elemOpts = ELEMENTS.map(e => `<option value="${e.z}">No.${e.z} ${e.sym} (${e.name})</option>`).join('');
+
+    box.innerHTML = `
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:6px;">
+        <b style="font-size:15px;color:#fde047;">🛠️ 開発者モード（デバッグ＆デモ）</b>
+        <button type="button" id="dev-close-btn" style="background:#ef4444;color:#fff;border:1.5px solid #fff;border-radius:8px;padding:3px 10px;font-size:11px;font-weight:900;cursor:pointer;">✕ 閉じる</button>
+      </div>
+
+      <div class="dev-sec">
+        <div class="dev-sec-title">🎴 ガチャ＆演出テスト（所持: 🪙${st.coins} / 🎁${st.gachaPts}pt）</div>
+        <div class="dev-btn-row">
+          <button type="button" class="dev-btn gold" id="dev-add-coins">🪙 コイン +10,000</button>
+          <button type="button" class="dev-btn gold" id="dev-add-pts">🎁 交換pt +1,000</button>
+          <button type="button" class="dev-btn accent" id="dev-reset-daily">📅 無料＆デイリー復活</button>
+        </div>
+        <div class="dev-btn-row">
+          <button type="button" class="dev-btn" id="dev-anim-N">演出 N</button>
+          <button type="button" class="dev-btn" id="dev-anim-R">演出 R</button>
+          <button type="button" class="dev-btn gold" id="dev-anim-SR">演出 SR</button>
+          <button type="button" class="dev-btn gold" id="dev-anim-SSR">演出 SSR</button>
+          <button type="button" class="dev-btn gold" id="dev-anim-SEC">🌟演出 SEC</button>
+        </div>
+        <div class="dev-btn-row">
+          <button type="button" class="dev-btn accent" id="dev-unlock-cards">🃏 カード全118種解放</button>
+          <button type="button" class="dev-btn danger" id="dev-clear-cards">🃏 カード初期化</button>
+        </div>
+      </div>
+
+      <div class="dev-sec">
+        <div class="dev-sec-title">⚔️ バトル＆問題チェック</div>
+        <div style="display:flex;gap:5px;flex-wrap:wrap;">
+          <select id="dev-sel-area" style="flex:1;padding:5px;border-radius:7px;background:#020617;color:#f8fafc;border:1px solid #475569;font-size:11px;">${areaOpts}</select>
+          <select id="dev-sel-elem" style="flex:1;padding:5px;border-radius:7px;background:#020617;color:#f8fafc;border:1px solid #475569;font-size:11px;">${elemOpts}</select>
+        </div>
+        <div class="dev-btn-row" style="align-items:center;">
+          <label style="font-size:11px;display:flex;align-items:center;gap:4px;"><input type="checkbox" id="dev-chk-iso"> ✨同位体</label>
+          <button type="button" class="dev-btn accent" id="dev-start-custom">⚔️ 指定バトル開始</button>
+          <button type="button" class="dev-btn ${showAnsCheat ? 'gold' : ''}" id="dev-toggle-ans">👁️ 答え表示: ${showAnsCheat ? 'ON' : 'OFF'}</button>
+        </div>
+        <div class="dev-btn-row">
+          <button type="button" class="dev-btn accent" id="dev-btl-heal" ${btl ? '' : 'disabled'}>💚 味方HP全回復</button>
+          <button type="button" class="dev-btn gold" id="dev-btl-mp" ${btl ? '' : 'disabled'}>⚡ MP100チャージ</button>
+          <button type="button" class="dev-btn danger" id="dev-btl-win" ${btl ? '' : 'disabled'}>💥 即勝利</button>
+        </div>
+      </div>
+
+      <div class="dev-sec">
+        <div class="dev-sec-title">🧬 育成・図鑑・チュートリアル確認</div>
+        <div class="dev-btn-row">
+          <button type="button" class="dev-btn accent" id="dev-all-dex">📖 全113元素解放＆素材+10</button>
+          <button type="button" class="dev-btn accent" id="dev-all-comp">⚗️ 全化合物素材+10</button>
+        </div>
+        <div class="dev-btn-row">
+          <button type="button" class="dev-btn gold" id="dev-buddy-lv">⬆️ 先発 Lv+10</button>
+          <button type="button" class="dev-btn gold" id="dev-buddy-ivs">✨ 先発 個体値S化</button>
+        </div>
+        <div class="dev-btn-row">
+          <button type="button" class="dev-btn" id="dev-retest-tut">🎓 本編チュートリアル再テスト</button>
+          <button type="button" class="dev-btn" id="dev-retest-gtut">🎴 ガチャ初回説明再テスト</button>
+        </div>
+        <div class="dev-btn-row">
+          <button type="button" class="dev-btn danger" id="dev-wipe-save">🗑️ セーブ完全初期化</button>
+          <button type="button" class="dev-btn" id="dev-lockout">🔒 開発者モード終了</button>
+        </div>
+      </div>
+    `;
+
+    box.querySelector('#dev-close-btn').onclick = closePanel;
+    box.querySelector('#dev-add-coins').onclick = () => { st.coins += 10000; api.commit(); openPanel(); };
+    box.querySelector('#dev-add-pts').onclick = () => { st.gachaPts += 1000; api.commit(); openPanel(); };
+    box.querySelector('#dev-reset-daily').onclick = () => {
+      st.gachaFreeDate = '';
+      st.daily = { date: '', correct: 0, calcCorrect: 0, wins: 0, freePull: 0, claimed: {} };
+      CardGacha.ensureState(st);
+      api.commit();
+      alert('✅ 本日の無料ガチャ＆デイリーミッションをリセットしました！');
+      openPanel();
+    };
+    ['N','R','SR','SSR','SEC'].forEach(r => {
+      box.querySelector('#dev-anim-' + r).onclick = () => testGachaAnim(r);
+    });
+    box.querySelector('#dev-unlock-cards').onclick = () => {
+      CardGacha.CARDS.forEach(c => { st.gachaCards[c.id] = Math.max(1, st.gachaCards[c.id] || 0); });
+      api.commit();
+      alert('🃏 全118種類の化学カードを解放しました！');
+      openPanel();
+    };
+    box.querySelector('#dev-clear-cards').onclick = () => {
+      st.gachaCards = {};
+      api.commit();
+      alert('🃏 化学カード所持をリセットしました。');
+      openPanel();
+    };
+    box.querySelector('#dev-start-custom').onclick = () => {
+      const aid = Number(box.querySelector('#dev-sel-area').value) || 1;
+      const ez = Number(box.querySelector('#dev-sel-elem').value) || 1;
+      const iso = !!box.querySelector('#dev-chk-iso').checked;
+      closePanel();
+      api.startCustomBattle(aid, ez, iso);
+    };
+    box.querySelector('#dev-toggle-ans').onclick = () => {
+      showAnsCheat = !showAnsCheat;
+      api.refreshCheatDisplay();
+      openPanel();
+    };
+    box.querySelector('#dev-btl-heal').onclick = () => { api.battleHeal(); closePanel(); };
+    box.querySelector('#dev-btl-mp').onclick = () => { api.battleMaxMp(); closePanel(); };
+    box.querySelector('#dev-btl-win').onclick = () => { closePanel(); api.battleInstantWin(); };
+    box.querySelector('#dev-all-dex').onclick = () => {
+      for (let z = 1; z <= 113; z++) {
+        if (!st.dex[z]) st.dex[z] = { count: 1, iso: false, bestIv: 'A' };
+        st.elements[z] = (st.elements[z] || 0) + 10;
+      }
+      api.commit();
+      alert('📖 全113元素を図鑑登録し、全元素素材を +10 しました！');
+      openPanel();
+    };
+    box.querySelector('#dev-all-comp').onclick = () => {
+      if (typeof RECIPES !== 'undefined') {
+        RECIPES.forEach(r => { st.compounds[r.id] = (st.compounds[r.id] || 0) + 10; });
+      }
+      api.commit();
+      alert('⚗️ 全化合物アイテムを +10 しました！');
+      openPanel();
+    };
+    box.querySelector('#dev-buddy-lv').onclick = () => {
+      const b = api.getBuddy();
+      if (b) { b.lv = (b.lv || 1) + 10; api.commit(); alert(`⬆️ 先発モンスターが Lv.${b.lv} になりました！`); }
+      openPanel();
+    };
+    box.querySelector('#dev-buddy-ivs').onclick = () => {
+      const b = api.getBuddy();
+      if (b) { b.ivRank = 'S'; b.ivScale = 1.22; b.ivMult = 1.22; api.commit(); alert('✨ 先発モンスターの個体値を S にしました！'); }
+      openPanel();
+    };
+    box.querySelector('#dev-retest-tut').onclick = () => {
+      api.resetMainTutorial();
+      closePanel();
+    };
+    box.querySelector('#dev-retest-gtut').onclick = () => {
+      st.gachaTutDone = false;
+      api.commit();
+      closePanel();
+      Game.openSubpage('gacha');
+    };
+    box.querySelector('#dev-wipe-save').onclick = () => {
+      if (confirm('本当にセーブデータを完全初期化しますか？')) {
+        api.wipeSave();
+      }
+    };
+    box.querySelector('#dev-lockout').onclick = lockOut;
+
+    bd.classList.remove('hidden');
+  }
+
+  return { onLogoTap, unlockWithPassword, openPanel, closePanel, lockOut, isAnswerCheatOn, testGachaAnim };
+})();
+
 
 const Game = (() => {
   const SAVE_KEY = 'chem_mon2_save_v1';
@@ -12128,6 +13233,31 @@ const Game = (() => {
     startWildBattle(firstAreaId, ch.areaIds, `第${ch.id}章まとめ`);
   }
 
+  // 直近3体と同じ元素・化合物を連続出現させない＋未捕集元素を優先出現させる
+  let recentEnemyKeys = [];
+  function rememberEnemyKey(key) {
+    recentEnemyKeys.push(key);
+    if (recentEnemyKeys.length > 3) recentEnemyKeys.shift();
+  }
+  function pickSmartEnemyZ(poolArr) {
+    const valid = poolArr.filter(z => !recentEnemyKeys.includes('Z' + z));
+    const cands = valid.length > 0 ? valid : poolArr;
+    const uncollected = cands.filter(z => !state.dex[z]);
+    let chosen;
+    if (uncollected.length > 0 && Math.random() < 0.72) {
+      chosen = uncollected[Math.floor(Math.random() * uncollected.length)];
+    } else {
+      chosen = cands[Math.floor(Math.random() * cands.length)];
+    }
+    rememberEnemyKey('Z' + chosen);
+    return chosen;
+  }
+  function pickGlobalSmartEnemyZ() {
+    const allZ = [];
+    for (let z = 1; z <= 113; z++) allZ.push(z);
+    return pickSmartEnemyZ(allZ);
+  }
+
   function startWildBattle(areaId, chapterAreaIds = null, chapterLabel = null) {
     SoundEngine.seClick();
     if (tutorialPhase === 'pick_area1' && areaId === 1) {
@@ -12146,7 +13276,10 @@ const Game = (() => {
 
     let eMon;
     if (isRareCompound && RECIPES.length > 0) {
-      const r = RECIPES[Math.floor(Math.random() * RECIPES.length)];
+      const validRec = RECIPES.filter(x => !recentEnemyKeys.includes('C' + x.id));
+      const rPool = validRec.length > 0 ? validRec : RECIPES;
+      const r = rPool[Math.floor(Math.random() * rPool.length)];
+      rememberEnemyKey('C' + r.id);
       eMon = {
         z: 1,
         isCompound: true,
@@ -12161,11 +13294,11 @@ const Game = (() => {
     } else {
       let enemyZ;
       if (isIsotope && Math.random() < 0.70) {
-        enemyZ = RARE_ISOTOPE_Z_POOL[Math.floor(Math.random() * RARE_ISOTOPE_Z_POOL.length)];
+        enemyZ = pickSmartEnemyZ(RARE_ISOTOPE_Z_POOL);
       } else {
-        enemyZ = Math.random() < 0.12
-          ? Math.floor(Math.random() * 113) + 1
-          : area.pool[Math.floor(Math.random() * area.pool.length)];
+        enemyZ = Math.random() < 0.20
+          ? pickGlobalSmartEnemyZ()
+          : pickSmartEnemyZ(area.pool);
       }
       // 同位体または章まとめの低確率強敵は「中ボス」、それ以外の野生モンスターは「通常(低HP)」
       const role = chapterAreaIds ? (Math.random() < 0.45 ? 'boss' : 'midboss') : (isIsotope ? 'midboss' : (Math.random() < 0.14 ? 'midboss' : 'normal'));
@@ -12199,7 +13332,7 @@ const Game = (() => {
     SoundEngine.seClick();
     const buddy = getBuddy();
     const floor = 1;
-    const enemyZ = Math.floor(Math.random() * 113) + 1;
+    const enemyZ = pickGlobalSmartEnemyZ();
     const eMon = {
       z: enemyZ, lv: buddy.lv + floor - 1, isIsotope: Math.random() < 0.18,
       role: 'normal', ivRank: 'A', ivScale: 1.08, ivMult: 1.08
@@ -12244,7 +13377,7 @@ const Game = (() => {
     const firstM = state.mistakes[targetIdx !== null ? targetIdx : 0] || state.mistakes[0];
     const areaId = firstM.areaId || 1;
     const area = AREAS.find(a => a.id === areaId) || AREAS[0];
-    const enemyZ = area.pool[Math.floor(Math.random() * area.pool.length)];
+    const enemyZ = pickSmartEnemyZ(area.pool);
     const buddy = getBuddy();
     const iv = rollIV();
     const eMon = {
@@ -12280,6 +13413,7 @@ const Game = (() => {
       mp: 0,
       streak: 0,
       lastExpLog: '',
+      askedQs: new Set(),
       pHp: teamStates[0].hp,
       pMaxHp: teamStates[0].maxHp
     });
@@ -12871,7 +14005,9 @@ const Game = (() => {
         areaId = Math.floor(Math.random() * 21) + 1;
         battle.areaId = areaId;
       }
-      q = QuestionEngine.generate(areaId);
+      if (!battle.askedQs) battle.askedQs = new Set();
+      q = QuestionEngine.generate(areaId, battle.askedQs);
+      if (q && q.q) battle.askedQs.add(q.q);
     }
     const area = AREAS.find(a => a.id === areaId) || AREAS[0];
     const ch = CHAPTERS.find(c => c.areaIds.includes(area.id));
@@ -12894,6 +14030,13 @@ const Game = (() => {
     qBody.textContent = q.q;
     qBox.appendChild(qLbl);
     qBox.appendChild(qBody);
+    if (typeof DevMode !== 'undefined' && DevMode.isAnswerCheatOn && DevMode.isAnswerCheatOn()) {
+      const cheatDiv = document.createElement('div');
+      cheatDiv.className = 'dev-ans-cheat';
+      const ansDisp = q.type === 'quiz' ? `${['①','②','③','④'][q.ansIdx]} ${q.opts[q.ansIdx]}` : `${q.ans}${q.unit ? ' ' + q.unit : ''}`;
+      cheatDiv.textContent = '[DEV答え] ' + ansDisp;
+      qBox.appendChild(cheatDiv);
+    }
     qBox.classList.remove('hidden');
 
     hideAllSubPanels();
@@ -15460,8 +16603,74 @@ const Game = (() => {
     bd.classList.remove('hidden');
   }
 
+
+  function _devApi() {
+    return {
+      getState: () => state,
+      getBattle: () => battle,
+      getBuddy: () => getBuddy(),
+      commit: () => { save(); updateHomeBar(); renderAreaList(); },
+      startCustomBattle: (areaId, enemyZ, isIso) => {
+        const buddy = getBuddy();
+        const eMon = {
+          z: enemyZ, lv: Math.max(2, buddy.lv), isIsotope: !!isIso,
+          role: isIso ? 'midboss' : 'normal', ivRank: 'A', ivScale: isIso ? 1.12 : 1.0, ivMult: isIso ? 1.12 : 1.0
+        };
+        const eHpVal = calcEnemyMaxHp(eMon);
+        launchBattle({
+          kind: 'wild', areaId, chapterAreaIds: null, chapterLabel: null,
+          enemy: eMon, eHp: eHpVal, eMaxHp: eHpVal, atkBuff: 1.0, catchBonus: 0, locked: false
+        });
+      },
+      refreshCheatDisplay: () => {
+        const qBox = document.getElementById('battle-question');
+        if (!qBox || !battle || !battle.currentQ) return;
+        const old = qBox.querySelector('.dev-ans-cheat');
+        if (old) old.remove();
+        if (DevMode.isAnswerCheatOn()) {
+          const q = battle.currentQ;
+          const cheatDiv = document.createElement('div');
+          cheatDiv.className = 'dev-ans-cheat';
+          const ansDisp = q.type === 'quiz' ? `${['①','②','③','④'][q.ansIdx]} ${q.opts[q.ansIdx]}` : `${q.ans}${q.unit ? ' ' + q.unit : ''}`;
+          cheatDiv.textContent = '[DEV答え] ' + ansDisp;
+          qBox.appendChild(cheatDiv);
+        }
+      },
+      battleHeal: () => {
+        if (!battle || !battle.teamStates) return;
+        battle.teamStates.forEach(s => { s.hp = s.maxHp; });
+        battle.pHp = battle.pMaxHp;
+        updateBattleHUD();
+      },
+      battleMaxMp: () => {
+        if (!battle) return;
+        battle.mp = 100;
+        battle.streak = 3;
+        renderMoveSelector();
+        updateBattleHUD();
+      },
+      battleInstantWin: () => {
+        if (!battle) return;
+        battle.eHp = 0;
+        battle.locked = false;
+        updateBattleHUD();
+        onEnemyDefeated();
+      },
+      resetMainTutorial: () => {
+        localStorage.removeItem('chemimon2_tutorial_v1');
+        returnToTitle();
+        alert('🎓 本編チュートリアルを未完了に戻しました。タイトル画面をタップすると最初から再生されます！');
+      },
+      wipeSave: () => {
+        localStorage.removeItem(SAVE_KEY);
+        localStorage.removeItem('chemimon2_tutorial_v1');
+        location.reload();
+      }
+    };
+  }
+
   return {
-    init, startFromTitle, returnToTitle, startWildBattle, startTower,
+    _devApi, init, startFromTitle, returnToTitle, startWildBattle, startTower,
     onCommandFight, onCommandFlask, onCommandBag, onCommandSwitch, onCommandRun,
     onConfirmCatch, openSubpage, closeSubpage,
     openAreaNote, closeAreaNote, showQuestionHint,
